@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -8,30 +9,36 @@ datasource db {
 }
 
 // User Model
+
 model User {
-  id        String     @id @default(uuid())
-  email     String     @unique
-  name      String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  
+  id             String          @id @default(uuid())
+  email          String          @unique
+  name           String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
   socialAccounts SocialAccount[]
+  emailVerified  Boolean         @default(false)
+  image          String?
+  sessions       Session[]
+  accounts       Account[]
+
+  @@map("user")
 }
 
 // Social Account Model (for Agency Mode)
+
 model SocialAccount {
-  id        String     @id @default(uuid())
-  userId    String
-  user      User       @relation(fields: [userId], references: [id])
-  username  String     // The handle/identifier for this account
-  
+  id         String     @id @default(uuid())
+  userId     String
+  user       User       @relation(fields: [userId], references: [id])
+  username   String // The handle/identifier for this account
   researches Research[]
-  
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 // Research Model
+
 model Research {
   id              String        @id @default(uuid())
   socialAccountId String
@@ -45,39 +52,41 @@ model Research {
 }
 
 // Maps to LLM_script_ideas
+
 model ScriptIdea {
   id         String   @id @default(uuid())
   researchId String
   research   Research @relation(fields: [researchId], references: [id])
 
-  type                  String
-  rank                  Int
-  topicTitle            String
-  scriptTitle           String
-  viralPotentialScore   Float
-  estimatedDuration     String
-  fullText              String
-  scriptWordCount       Int
-  scriptHook            String
-  scriptBuildup         String
-  scriptValue           String
-  scriptCta             String
-  captionFull           String
-  captionFirstLine      String
-  hashtagsPrimary       String[]
-  hashtagsNiche         String[]
-  hashtagsTrending      String[]
-  hashtagsAll           String[]
-  hashtagsCount         Int
-  targetAudience        String
-  emotionalTrigger      String
-  contentGapAddressed   String
-  whyThisWorks          String
-  competitorReference   String
-  generatedAt           DateTime  @default(now())
+  type                String
+  rank                Int
+  topicTitle          String
+  scriptTitle         String
+  viralPotentialScore Float
+  estimatedDuration   String
+  fullText            String
+  scriptWordCount     Int
+  scriptHook          String
+  scriptBuildup       String
+  scriptValue         String
+  scriptCta           String
+  captionFull         String
+  captionFirstLine    String
+  hashtagsPrimary     String[]
+  hashtagsNiche       String[]
+  hashtagsTrending    String[]
+  hashtagsAll         String[]
+  hashtagsCount       Int
+  targetAudience      String
+  emotionalTrigger    String
+  contentGapAddressed String
+  whyThisWorks        String
+  competitorReference String
+  generatedAt         DateTime @default(now())
 }
 
 // Maps to llm_research_summary
+
 model ResearchSummary {
   id         String   @id @default(uuid())
   researchId String
@@ -92,14 +101,15 @@ model ResearchSummary {
   postingTimes             String
   hookFormula              String
   instagramSummaryResearch String
-  generatedAt              DateTime  @default(now())
+  generatedAt              DateTime @default(now())
 }
 
 // Maps to latest_tweets_data and top_tweets_data
+
 model Tweet {
-  id         String   @id
+  id         String        @id
   researchId String
-  research   Research @relation(fields: [researchId], references: [id])
+  research   Research      @relation(fields: [researchId], references: [id])
   category   TweetCategory
 
   url              String
@@ -153,6 +163,7 @@ enum TweetCategory {
 }
 
 // Maps to user_performance_research
+
 model PerformanceReport {
   id         String   @id @default(uuid())
   researchId String   @unique
@@ -182,11 +193,11 @@ model PerformanceReport {
   commentsUniqueCommenters Int?
 
   // Benchmarks
-  benchmarkViewsToBeat      Int?
-  benchmarkLikesToBeat      Int?
-  benchmarkEngagementToBeat Float?
+  benchmarkViewsToBeat       Int?
+  benchmarkLikesToBeat       Int?
+  benchmarkEngagementToBeat  Float?
   benchmarkDurationSweetSpot Float?
-  benchmarkSpeakingPace     Float?
+  benchmarkSpeakingPace      Float?
   benchmarkTopPerformerScore Float?
 
   // Arrays/Relations
@@ -209,47 +220,47 @@ model Reel {
   performanceReportId String
   performanceReport   PerformanceReport @relation(fields: [performanceReportId], references: [id])
 
-  url                     String
-  thumbnail               String?
-  rank                    Int?
-  velocityScore           Float?
-  finalScore              Float?
-  ageHours                Float?
-  ageLabel                String?
-  engagementRate          Float?
-  commentToLikeRatio      Float?
-  isQualityEngagement     Boolean?
-  viewsOverExpected       Float?
-  isPunchingAboveWeight   Boolean?
-  foundInHashtags         String[]
-  hashtagAppearances      Int?
-  isCrossHashtagViral     Boolean?
-  caption                 String?
-  captionHook             String?
-  spokenHook              String?
-  hasTranscript           Boolean?
-  transcript              String?
-  wordsPerMinute          Float?
-  detectedLanguage        String?
-  hashtags                String[]
-  hashtagCount            Int?
-  views                   Int?
-  likes                   Int?
-  comments                Int?
-  shares                  Int?
-  saves                   Int?
-  duration                Float?
-  captionLength           Int?
+  url                   String
+  thumbnail             String?
+  rank                  Int?
+  velocityScore         Float?
+  finalScore            Float?
+  ageHours              Float?
+  ageLabel              String?
+  engagementRate        Float?
+  commentToLikeRatio    Float?
+  isQualityEngagement   Boolean?
+  viewsOverExpected     Float?
+  isPunchingAboveWeight Boolean?
+  foundInHashtags       String[]
+  hashtagAppearances    Int?
+  isCrossHashtagViral   Boolean?
+  caption               String?
+  captionHook           String?
+  spokenHook            String?
+  hasTranscript         Boolean?
+  transcript            String?
+  wordsPerMinute        Float?
+  detectedLanguage      String?
+  hashtags              String[]
+  hashtagCount          Int?
+  views                 Int?
+  likes                 Int?
+  comments              Int?
+  shares                Int?
+  saves                 Int?
+  duration              Float?
+  captionLength         Int?
 
   // Audio flattened
-  audioSongName           String?
-  audioArtistName         String?
-  audioIsOriginal         Boolean?
+  audioSongName   String?
+  audioArtistName String?
+  audioIsOriginal Boolean?
 
-  postedAt          DateTime?
-  postDay           String?
-  performanceTier   String?
-  performanceScore  Float?
+  postedAt         DateTime?
+  postDay          String?
+  performanceTier  String?
+  performanceScore Float?
 }
 
 model TopHook {
@@ -324,4 +335,52 @@ model DurationPerformance {
   posts               Int
   avgViews            Float
   avgEngagement       Float
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
 }

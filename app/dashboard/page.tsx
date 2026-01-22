@@ -1,4 +1,5 @@
-import React from "react";
+"use client"
+import React, { useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import MobileHeader from "../components/MobileHeader";
 import { DASHBOARD_STATIC_DATA } from "../dashboard/data/staticData";
@@ -8,9 +9,21 @@ import ResearchSummaryView from "./components/ResearchSummaryView";
 import { ScriptIdeasLink, QuickActions } from "./components/DashboardCards";
 import { SCRIPT_IDEAS } from "../data/mockData";
 
+import { useSession } from "@/lib/auth-client";
 export const dynamic = 'force-dynamic'; // Ensure we read file on each request in dev
 
+
 export default function DashboardPage() {
+
+    const {
+        data: session,
+        isPending, //loading state
+        error, //error object 
+        refetch //refetch the session
+    } = useSession();
+
+    console.log(session);
+
     const today = new Date();
     const formattedDate = today.toLocaleDateString("en-US", {
         weekday: "long",
