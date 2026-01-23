@@ -90,6 +90,7 @@ export const TOP_REELS = TOP_PERFORMING_REELS.map((reel) => ({
 }));
 
 // Competitor Reels from CompetitorData
+// Competitor Reels from CompetitorData
 export const COMPETITORS = COMPETITOR_DATA.map((reel) => ({
     id: reel.rank,
     creator: `@${reel.ownerUsername}`,
@@ -99,16 +100,21 @@ export const COMPETITORS = COMPETITOR_DATA.map((reel) => ({
     views: formatNumber(reel.videoPlayCount),
     likes: formatNumber(reel.likesCount),
     comments: formatNumber(reel.commentsCount),
+    shares: "0",
     likesRaw: reel.likesCount,
     commentsRaw: reel.commentsCount,
+    sharesRaw: 0,
     viewsRaw: reel.videoPlayCount,
     thumbnail: reel.displayUrl,
+    trend: "Competitor",
     velocityScore: reel.velocity_score,
     finalScore: reel.final_score,
     engagementRate: reel.engagement_rate,
+    isQualityEngagement: false,
+    hashtags: [],
     url: reel.url,
     ageHours: reel.age_hours,
-    ageLabel: reel.age_label,
+    ageLabel: reel.age_label as "fresh" | "recent" | "established",
     timestamp: reel.timestamp,
     duration: reel.videoDuration
 }));
