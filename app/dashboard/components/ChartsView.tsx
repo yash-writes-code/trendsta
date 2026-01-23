@@ -13,71 +13,112 @@ interface ReelData {
 }
 
 export function VelocityChart({ data }: { data: ReelData[] }) {
-    // Take top 6 for chart
-    const chartData = data.slice(0, 6).map(reel => ({
+    // Take top 4 for pie chart uniqueness
+    const chartData = data.slice(0, 4).map(reel => ({
         label: reel.creator.substring(0, 10),
-        velocity: reel.velocityScore || 0,
-        views: reel.views || 0,
+        value: reel.velocityScore || 0,
+        color: '' // assigned below
     }));
 
-    const maxVelocity = Math.max(...chartData.map(d => d.velocity), 1);
+    const colors = [
+        '#3b82f6', // Blue 500
+        '#10b981', // Emerald 500
+        '#f59e0b', // Amber 500
+        '#6366f1'  // Indigo 500
+    ];
+
+    let total = 0;
+    chartData.forEach((d, i) => {
+        d.color = colors[i % colors.length];
+        total += d.value;
+    });
+
+    // Calculate pie segments
+    let currentAngle = 0;
+    const segments = chartData.map(d => {
+        const percentage = d.value / total;
+        const angle = percentage * 360;
+
+        // Basic SVG Arc calc
+        const x1 = 50 + 40 * Math.cos(Math.PI * (currentAngle - 90) / 180);
+        const y1 = 50 + 40 * Math.sin(Math.PI * (currentAngle - 90) / 180);
+        const x2 = 50 + 40 * Math.cos(Math.PI * (currentAngle + angle - 90) / 180);
+        const y2 = 50 + 40 * Math.sin(Math.PI * (currentAngle + angle - 90) / 180);
+
+        const largeArc = angle > 180 ? 1 : 0;
+
+        const pathData = `M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArc} 1 ${x2} ${y2} Z`;
+
+        const segment = { ...d, path: pathData, percentage };
+        currentAngle += angle;
+        return segment;
+    });
 
     return (
-        <div className="glass-card p-5">
-            <div className="flex items-center justify-between mb-4">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col h-full">
+            <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
-                    <BarChart3 size={18} className="text-blue-500" />
-                    <h3 className="font-semibold text-slate-900">Velocity Scores</h3>
+                    <PieChartIcon size={18} className="text-blue-600" />
+                    <h3 className="font-semibold text-slate-900">Velocity Distribution</h3>
                 </div>
-                <span className="text-xs text-slate-500">Top 6 Reels</span>
+                <span className="text-xs text-slate-500 font-medium bg-slate-100 px-2 py-1 rounded-md border border-slate-200">Top 4</span>
             </div>
 
-            <div className="chart-container" style={{ display: 'flex', alignItems: 'flex-end', height: '150px', gap: '8px' }}>
-                {chartData.map((d, index) => (
-                    <div key={index} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-                        <div
-                            className="chart-bar w-full rounded-t-sm transition-all duration-500"
-                            style={{
-                                height: `${(d.velocity / maxVelocity) * 100}%`,
-                                background: d.velocity >= 5 ? 'var(--gradient-success)' :
-                                    d.velocity >= 1 ? 'var(--gradient-primary)' :
-                                        'var(--gradient-warning)',
-                                minHeight: '10px',
-                                opacity: 0.8
-                            }}
-                            title={`${d.velocity.toFixed(1)} velocity`}
-                        />
-                        <span className="text-xs text-slate-500 truncate w-full text-center">
-                            {d.velocity.toFixed(1)}
-                        </span>
-                    </div>
-                ))}
-            </div>
+            <div className="flex-1 flex items-center justify-center gap-8">
+                {/* Pie Chart SVG - Resized from w-40 to w-56 */}
+                <div className="relative w-56 h-56 shrink-0">
+                    <svg viewBox="0 0 100 100" className="w-full h-full transform transition-transform hover:scale-105 duration-300">
+                        {segments.map((s, i) => (
+                            <path
+                                key={i}
+                                d={s.path}
+                                fill={s.color}
+                                stroke="#ffffff"
+                                strokeWidth="2"
+                                className="hover:opacity-90 transition-opacity cursor-pointer"
+                            >
+                                <title>{s.label}: {s.value.toFixed(1)}</title>
+                            </path>
+                        ))}
+                        {/* Inner Circle for Doughnut effect */}
+                        <circle cx="50" cy="50" r="25" fill="#ffffff" />
+                        <text x="50" y="52" textAnchor="middle" fontSize="8" fill="#0f172a" fontWeight="bold">
+                            {total.toFixed(0)}
+                        </text>
+                    </svg>
+                </div>
 
-            <div className="flex justify-between mt-2 px-1 gap-2">
-                {chartData.map((d, index) => (
-                    <span key={index} className="text-xs text-slate-400 truncate flex-1 text-center" title={d.label}>
-                        {d.label}
-                    </span>
-                ))}
+                {/* Legend */}
+                <div className="flex flex-col gap-3">
+                    {segments.map((s, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                            <div className="w-3 h-3 rounded-full" style={{ background: s.color }} />
+                            <div>
+                                <p className="text-xs font-semibold text-slate-700">{s.label}</p>
+                                <p className="text-[10px] text-slate-500">{(s.percentage * 100).toFixed(0)}% ({s.value.toFixed(1)})</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
 }
+
+// Add PieChartIcon locally or import it. Assuming Lucide has PieChart
+import { PieChart as PieChartIcon } from "lucide-react";
 
 export function EngagementChart({ data }: { data: ReelData[] }) {
     // Top 5 reels
     const chartData = data.slice(0, 5);
 
     // simple normalization helpers
-    // Assuming likes can be up to 1M+, comments up to 10k+, shares up to 100k+
-    // We want relative bars. We can use max of current set.
     const maxLikes = Math.max(...chartData.map(d => d.likes), 100);
     const maxComments = Math.max(...chartData.map(d => d.comments), 10);
     const maxShares = Math.max(...chartData.map(d => d.shares), 10);
 
     return (
-        <div className="glass-card p-5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                     <TrendingUp size={18} className="text-emerald-500" />
@@ -85,26 +126,26 @@ export function EngagementChart({ data }: { data: ReelData[] }) {
                 </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
                 {chartData.map((d, index) => (
                     <div key={index} className="flex items-center gap-3">
                         <div className="w-24 flex-shrink-0">
-                            <p className="text-xs font-medium text-slate-700 truncate" title={d.creator}>{d.creator}</p>
+                            <p className="text-xs font-medium text-slate-600 truncate" title={d.creator}>{d.creator}</p>
                         </div>
-                        <div className="flex-1 flex flex-col gap-1.5">
+                        <div className="flex-1 flex flex-col gap-2">
                             {/* Likes */}
-                            <div className="flex items-center gap-2 h-2">
-                                <div className="h-full rounded-full bg-rose-400"
+                            <div className="flex items-center gap-2 h-1.5">
+                                <div className="h-full rounded-full bg-rose-500/80"
                                     style={{ width: `${(d.likes / maxLikes) * 100}%`, minWidth: '2px' }} />
                             </div>
                             {/* Comments */}
-                            <div className="flex items-center gap-2 h-2">
-                                <div className="h-full rounded-full bg-blue-400"
+                            <div className="flex items-center gap-2 h-1.5">
+                                <div className="h-full rounded-full bg-blue-500/80"
                                     style={{ width: `${(d.comments / maxComments) * 100}%`, minWidth: '2px' }} />
                             </div>
                             {/* Shares */}
-                            <div className="flex items-center gap-2 h-2">
-                                <div className="h-full rounded-full bg-emerald-400"
+                            <div className="flex items-center gap-2 h-1.5">
+                                <div className="h-full rounded-full bg-emerald-500/80"
                                     style={{ width: `${(d.shares / maxShares) * 100}%`, minWidth: '2px' }} />
                             </div>
                         </div>
@@ -114,15 +155,15 @@ export function EngagementChart({ data }: { data: ReelData[] }) {
 
             <div className="flex items-center gap-6 mt-6 pt-3 border-t border-slate-100">
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-rose-400" />
+                    <div className="w-2 h-2 rounded-full bg-rose-500" />
                     <span className="text-xs text-slate-500">Likes</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-400" />
-                    <span className="text-xs text-slate-500">Comments</span>
+                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                    <span className="text-xs text-slate-400">Comments</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-emerald-400" />
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
                     <span className="text-xs text-slate-500">Shares</span>
                 </div>
             </div>

@@ -1,10 +1,10 @@
+"use client";
+
 import React, { useState } from "react";
 import { Play, Eye, Heart, MessageCircle, Share2, Clock, ExternalLink, Zap } from "lucide-react";
-import { TOP_REELS } from "../data/mockData";
+import { ReelData } from "../types/trendsta";
 
-// Type matching the mock data structure
-type Reel = typeof TOP_REELS[0];
-
+// Helper for relative time (e.g. 2d ago) from hours
 function formatTimeAgo(hours: number): string {
     if (hours < 24) {
         return `${hours}h ago`;
@@ -33,7 +33,7 @@ export function VelocityBadge({ score }: { score: number }) {
 }
 
 interface ReelCardProps {
-    reel: Reel;
+    reel: ReelData;
     index: number;
     onViewDetails: () => void;
 }
@@ -41,9 +41,14 @@ interface ReelCardProps {
 export default function ReelCard({ reel, index, onViewDetails }: ReelCardProps) {
     const [isHovered, setIsHovered] = useState(false);
 
+    // Fallback for title/caption logic
+    const displayTitle = reel.captionHook || reel.caption || "No caption";
+    // Fallback for creator
+    const displayCreator = reel.creator || "Unknown Creator";
+
     return (
         <div
-            className="glass-card overflow-hidden hover-glow group"
+            className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{ animationDelay: `${index * 0.05}s` }}
@@ -57,27 +62,27 @@ export default function ReelCard({ reel, index, onViewDetails }: ReelCardProps) 
             >
                 <img
                     src={reel.thumbnail}
-                    alt={reel.title}
+                    alt={displayTitle}
                     className={`w-full h-full object-cover transition-all duration-500 ${isHovered ? "scale-110 brightness-90" : "scale-100 brightness-100"}`}
                 />
 
                 {/* Top badges */}
                 <div className="absolute top-3 left-3 right-3 flex items-start justify-between">
-                    <div className="px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full flex items-center gap-1.5 shadow-sm">
-                        <Eye size={14} className="text-slate-600" />
-                        <span className="text-sm font-semibold text-slate-700">{reel.views}</span>
+                    <div className="px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full flex items-center gap-1.5 shadow-sm border border-slate-100">
+                        <Eye size={14} className="text-slate-500" />
+                        <span className="text-sm font-semibold text-slate-900">{reel.views}</span>
                     </div>
                     {/* Posted time ago - top right */}
-                    <div className="px-2.5 py-1 bg-white/95 backdrop-blur-sm rounded-full flex items-center gap-1.5 shadow-sm">
+                    <div className="px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full flex items-center gap-1.5 shadow-sm border border-slate-100">
                         <Clock size={12} className="text-slate-500" />
-                        <span className="text-xs font-medium text-slate-600">{formatTimeAgo(reel.ageHours)}</span>
+                        <span className="text-xs font-medium text-slate-600">{formatTimeAgo(reel.age_hours)}</span>
                     </div>
                 </div>
 
                 {/* Play Icon Overlay */}
                 <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}>
-                    <div className="w-16 h-16 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl transform transition-transform duration-300 hover:scale-110">
-                        <Play size={28} className="text-slate-900 ml-1" fill="currentColor" />
+                    <div className="w-16 h-16 bg-slate-900/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl transform transition-transform duration-300 hover:scale-110">
+                        <Play size={28} className="text-white ml-1" fill="currentColor" />
                     </div>
                 </div>
 
@@ -100,20 +105,20 @@ export default function ReelCard({ reel, index, onViewDetails }: ReelCardProps) 
                 </div>
             </a>
 
-            {/* Card Footer - White area */}
+            {/* Card Footer - Dark area */}
             <div className="p-4">
                 {/* Title and Creator */}
-                <p className="text-sm font-semibold text-slate-900 line-clamp-2 mb-2">{reel.title}</p>
+                <p className="text-sm font-semibold text-slate-900 line-clamp-2 mb-2">{displayTitle}</p>
                 <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-slate-500">{reel.creator}</span>
+                    <span className="text-xs text-slate-500">{displayCreator}</span>
                     {/* Velocity Score */}
-                    <VelocityBadge score={reel.velocityScore} />
+                    <VelocityBadge score={reel.velocity_score} />
                 </div>
 
                 {/* View Details Button */}
                 <button
                     onClick={onViewDetails}
-                    className="w-full py-2.5 text-sm font-medium text-blue-600 hover:text-white hover:bg-blue-500 border border-blue-200 hover:border-blue-500 rounded-xl transition-all duration-200"
+                    className="w-full py-2.5 text-sm font-medium text-blue-600 hover:text-white hover:bg-blue-600 border border-blue-200 hover:border-blue-600 rounded-xl transition-all duration-200"
                 >
                     View Details
                 </button>

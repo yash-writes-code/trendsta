@@ -98,7 +98,7 @@ function Navbar() {
             <div className="hidden md:block">
               <a
                 href="#waitlist"
-                className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-all shadow-sm hover:shadow-md"
+                className="px-4 py-2 bg-white text-slate-900 text-sm font-medium rounded-lg hover:bg-slate-200 transition-all shadow-sm hover:shadow-md"
               >
                 Join Waitlist
               </a>
@@ -122,7 +122,7 @@ function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden fixed inset-x-0 top-16 backdrop-blur-md z-50 overflow-hidden shadow-xl"
+            className="md:hidden fixed inset-x-0 top-16 backdrop-blur-md z-50 overflow-hidden shadow-xl bg-white/90 border-b border-slate-200"
           >
             <div className="px-4 py-6 space-y-4">
               <a
@@ -176,7 +176,7 @@ function Navbar() {
                       .getElementById("waitlist")
                       ?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="block w-full text-center px-4 py-3 bg-slate-900 text-white text-base font-semibold rounded-xl hover:bg-slate-800 transition-all shadow-md active:scale-95"
+                  className="block w-full text-center px-4 py-3 bg-white text-slate-900 text-base font-semibold rounded-xl hover:bg-slate-200 transition-all shadow-md active:scale-95"
                 >
                   Join Waitlist
                 </a>
@@ -203,10 +203,10 @@ function Hero({ email, submitted, setEmail, handleSubmit }: WaitListProps) {
           >
             <motion.h1
               variants={fadeInUp}
-              className="text-4xl sm:text-5xl font-semibold lg:text-6xl text-slate-700 tracking-tight leading-[1.1] mb-6 "
+              className="text-4xl sm:text-5xl font-semibold lg:text-6xl text-slate-900 tracking-tight leading-[1.1] mb-6 "
             >
               Your AI content consultant. <br />
-              <span className="text-slate-400">Not just a tool.</span>
+              <span className="text-slate-500">Not just a tool.</span>
             </motion.h1>
             <motion.p
               variants={fadeInUp}
@@ -236,14 +236,14 @@ function Hero({ email, submitted, setEmail, handleSubmit }: WaitListProps) {
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    className="flex-1 px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                    className="flex-1 px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 transition-all"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
                   <button
                     type="submit"
-                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 whitespace-nowrap"
+                    className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-500 transition-all shadow-lg shadow-blue-500/30 whitespace-nowrap"
                   >
                     Join Waitlist
                   </button>
@@ -268,7 +268,7 @@ function Hero({ email, submitted, setEmail, handleSubmit }: WaitListProps) {
             className="relative w-full flex items-center justify-center lg:justify-end"
           >
             {/* Abstract Background Decoration */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-linear-to-tr from-blue-50 to-indigo-50 rounded-full blur-3xl -z-10 opacity-60" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-blue-900/20 to-indigo-900/20 rounded-full blur-3xl -z-10 opacity-60" />
 
             {/* Float Cards */}
             <div className="relative w-full max-w-md">
@@ -299,8 +299,8 @@ function Hero({ email, submitted, setEmail, handleSubmit }: WaitListProps) {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                    <p className="text-sm font-medium text-slate-400 mb-1 uppercase tracking-wider text-[10px]">
+                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <p className="text-sm font-medium text-slate-500 mb-1 uppercase tracking-wider text-[10px]">
                       Title Idea
                     </p>
                     <p className="text-slate-900 font-medium">
@@ -460,7 +460,7 @@ function HowItWorks() {
           <h2 className="text-3xl font-bold text-slate-900 mb-4">
             How Trendsta Works
           </h2>
-          <p className="text-slate-500 text-lg">
+          <p className="text-slate-600 text-lg">
             Your personal content strategist, simplified into three steps.
           </p>
         </motion.div>
@@ -476,7 +476,7 @@ function HowItWorks() {
             <motion.div
               key={i}
               variants={fadeInUp}
-              className="p-8 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
+              className="p-8 rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6">
                 <step.icon size={24} strokeWidth={2} />
@@ -484,12 +484,12 @@ function HowItWorks() {
               <h3 className="text-xl font-bold text-slate-900 mb-3">
                 {step.title}
               </h3>
-              <p className="text-slate-500 leading-relaxed">{step.desc}</p>
+              <p className="text-slate-600 leading-relaxed">{step.desc}</p>
             </motion.div>
           ))}
         </motion.div>
       </div>
-    </section>
+    </section >
   );
 }
 
@@ -777,7 +777,7 @@ function FAQS() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="bg-white border border-slate-200 rounded-xl overflow-hidden transition-all duration-200 hover:border-blue-300"
+              className="bg-white border border-slate-200 rounded-xl overflow-hidden transition-all duration-200 hover:border-blue-500/50"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
@@ -794,7 +794,7 @@ function FAQS() {
               </button>
 
               {openIndex === i && (
-                <div className="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-50 pt-4">
+                <div className="px-6 pb-6 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
                   {faq.a}
                 </div>
               )}

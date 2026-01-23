@@ -1,29 +1,30 @@
 import { Sparkles, Clock, Users, Zap } from "lucide-react";
 
-export function StatsOverview() {
+interface StatsOverviewProps {
+    scriptCount: number;
+    avgViralScore: number;
+    audience: string;
+    bestTime: string;
+}
+
+export function StatsOverview({ scriptCount, avgViralScore, audience, bestTime }: StatsOverviewProps) {
     const stats = [
-        { label: "Scripts Ready", value: "3", icon: Sparkles, color: "var(--gradient-primary)" },
-        { label: "Viral Score Avg", value: "92", icon: Zap, color: "var(--gradient-success)" },
-        { label: "Target Audience", value: "Non-tech", icon: Users, color: "var(--gradient-info)" },
-        { label: "Best Time", value: "6-9 PM", icon: Clock, color: "var(--gradient-warning)" },
+        { label: "Scripts Ready", value: scriptCount.toString(), icon: Sparkles, color: "var(--gradient-primary)" },
+        { label: "Viral Score Avg", value: avgViralScore.toFixed(0), icon: Zap, color: "var(--gradient-success)" },
+        { label: "Target Audience", value: audience, icon: Users, color: "var(--gradient-info)" },
+        { label: "Best Time", value: bestTime, icon: Clock, color: "var(--gradient-warning)" },
     ];
 
     return (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 h-full">
             {stats.map((stat) => (
-                <div key={stat.label} className="stat-card hover-glow">
-                    <div className="flex items-center gap-3">
-                        <div
-                            className="w-10 h-10 rounded-xl flex items-center justify-center"
-                            style={{ background: stat.color }}
-                        >
-                            <stat.icon className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                            <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
-                            <p className="text-xs text-slate-500">{stat.label}</p>
-                        </div>
-                    </div>
+                <div key={stat.label} className="bg-white/60 backdrop-blur-md border border-slate-200/50 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col items-center justify-center text-center group">
+                    <p className="text-3xl md:text-4xl font-black text-slate-900 leading-none mb-1 group-hover:scale-110 transition-transform duration-200">
+                        {stat.value}
+                    </p>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest truncate w-full">
+                        {stat.label}
+                    </p>
                 </div>
             ))}
         </div>
