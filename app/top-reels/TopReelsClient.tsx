@@ -45,14 +45,14 @@ export default function TopReelsClient({ data }: TopReelsClientProps) {
         { id: "long", label: "Long (> 60s)" },
     ];
 
-    const filteredReels = activeFilter === "all"
+    const filteredReels = (activeFilter === "all"
         ? reels
         : reels.filter(reel => {
             if (activeFilter === "viral") return reel.views > 50000;
             if (activeFilter === "short") return reel.duration < 30;
             if (activeFilter === "long") return reel.duration > 60;
             return true;
-        });
+        })).slice(0, 7);
 
     return (
         <div className="min-h-screen bg-slate-50">

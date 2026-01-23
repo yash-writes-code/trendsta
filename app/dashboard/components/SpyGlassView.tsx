@@ -23,7 +23,7 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
     const viralTriggerText = research.viral_triggers || "Analysis pending...";
 
     // For Top Hooks, use real data but formatted as Leaderboard
-    const topHooks = competitors.top_hooks || [];
+    const topHooks = (competitors.top_hooks || []).slice(0, 7);
 
     return (
         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm animate-fadeInUp">
@@ -100,6 +100,20 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
                         {/* Decor */}
                         <div className="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full blur-xl" />
                     </div>
+
+                    {/* Content Gap Card */}
+                    <div className="p-5 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl text-white relative overflow-hidden mt-4">
+                        <div className="flex items-center gap-2 mb-2 relative z-10">
+                            <TrendingUp size={16} className="text-emerald-100" />
+                            <span className="text-xs font-bold text-emerald-50 uppercase">Opportunity</span>
+                        </div>
+                        <h4 className="font-bold text-lg mb-1 relative z-10">Content Gap</h4>
+                        <p className="text-emerald-50 text-sm leading-relaxed relative z-10 opacity-90">
+                            {research.content_gap || "Analysis pending..."}
+                        </p>
+                        {/* Decor */}
+                        <div className="absolute -right-4 -bottom-4 bg-white/10 w-24 h-24 rounded-full blur-xl" />
+                    </div>
                 </div>
 
                 {/* Middle Col: Thief's Gallery (Leaderboard) */}
@@ -127,8 +141,8 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
                                 <div className="col-span-1 flex justify-center">
                                     {idx < 3 ? (
                                         <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-white ${idx === 0 ? 'bg-yellow-400 shadow-yellow-200' :
-                                                idx === 1 ? 'bg-slate-300' :
-                                                    'bg-amber-600'
+                                            idx === 1 ? 'bg-slate-300' :
+                                                'bg-amber-600'
                                             }`}>
                                             {idx + 1}
                                         </div>

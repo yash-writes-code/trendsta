@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import { Send, Sparkles, TrendingUp, Menu, Zap, BrainCircuit, History, ArrowRight, User, Paperclip } from "lucide-react";
+import { Send, Sparkles, TrendingUp, Menu, Zap, BrainCircuit, History, ArrowRight, User, Paperclip, Mic } from "lucide-react";
 import { useSidebar } from "../context/SidebarContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -229,24 +229,25 @@ export default function AIConsultantPage() {
                     {/* Search Bar Container */}
                     <div className="relative group">
                         {/* Input Wrapper */}
-                        <div className="bg-white p-2 rounded-full shadow-lg border border-slate-200 flex items-center gap-2 transition-colors hover:border-blue-300">
+                        <div className="bg-white p-2 rounded-full shadow-lg border border-slate-200 flex items-center gap-2 transition-colors focus-within:ring-0 focus-within:border-slate-300">
 
-                            {/* Attachment Button */}
-                            <button className="p-3 text-slate-400 hover:text-slate-600 transition-colors ml-1">
-                                <Paperclip size={20} />
-                            </button>
-
+                            {/* Text Input */}
                             <textarea
                                 ref={inputRef}
                                 value={input}
                                 onChange={handleInputChange}
                                 onKeyDown={handleKeyDown}
                                 placeholder="Message Trendsta..."
-                                className="flex-1 bg-transparent border-none focus:ring-0 text-base md:text-lg p-2 min-h-[48px] max-h-[120px] resize-none text-slate-800 placeholder-slate-400 align-middle leading-[1.5] py-3"
+                                className="flex-1 bg-transparent border-none outline-none focus:ring-0 focus:outline-none text-base md:text-lg p-2 min-h-[48px] max-h-[120px] resize-none text-slate-800 placeholder-slate-400 align-middle leading-[1.5] py-3 ml-2"
                                 rows={1}
                             />
 
-                            {/* Mode Button (Inside Bar? Or Send? Let's put Send here) */}
+                            {/* Voice Button */}
+                            <button className="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+                                <Mic size={20} />
+                            </button>
+
+                            {/* Send Button */}
                             <button
                                 onClick={() => handleSend()}
                                 disabled={!input.trim() || isLoading}

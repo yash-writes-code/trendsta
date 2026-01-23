@@ -91,25 +91,12 @@ export default function DashboardClient({ data }: DashboardClientProps) {
                         </div>
                     </div>
 
-                    {/* Top Section: Bar Chart + Stats Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeInUp">
-                        {/* New Metric Bar Chart (Top Left - 2/3 width) */}
-                        <div className="lg:col-span-2">
-                            <NewMetricBarChart
-                                timeRange={dateRange as '7d' | '30d'}
-                                reels={performanceData?.reels || []}
-                            />
-                        </div>
-
-                        {/* Stats Overview (Top Right - 1/3 width - 2x2 Grid) */}
-                        <div className="lg:col-span-1 h-full">
-                            <StatsOverview
-                                scriptCount={scriptIdeas.length}
-                                avgViralScore={performanceData?.aggregates?.avgEngagement || 0} // Using engagement as score proxy
-                                audience={scriptIdeas[0]?.target_audience || "General"}
-                                bestTime={summaryData?.posting_times?.split('\n')[0]?.split(':')[1]?.trim() || "6-9 PM"}
-                            />
-                        </div>
+                    {/* Top Section: Bar Chart */}
+                    <div className="animate-fadeInUp">
+                        <NewMetricBarChart
+                            timeRange={dateRange as '7d' | '30d'}
+                            reels={performanceData?.reels || []}
+                        />
                     </div>
 
                     {/* Charts Section */}

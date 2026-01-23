@@ -2,13 +2,17 @@
 
 import React, { useState, useMemo } from "react";
 import Sidebar from "../components/Sidebar";
-import { TrendingUp, ArrowUp, Minus, Heart, Repeat2, MessageCircle, ExternalLink, Eye, Users, Zap, Menu, Clock } from "lucide-react";
+import { TrendingUp, ArrowUp, Minus, Heart, Repeat2, MessageCircle, ExternalLink, Eye, Users, Zap, Menu, Clock, LayoutGrid, Sparkles } from "lucide-react";
 import MobileHeader from "../components/MobileHeader";
-import { TweetData } from "@/app/types/trendsta";
+import { TweetData, ResearchSummary } from "@/app/types/trendsta";
+import SmartInsightsView from "../components/SmartInsightsView";
+
+export const dynamic = 'force-dynamic';
 
 interface TwitterClientProps {
     topTweets: TweetData[];
     latestTweets: TweetData[];
+    researchSummary?: ResearchSummary[];
 }
 
 // Score Badge for Tweets
@@ -189,14 +193,14 @@ function LatestTweetItem({ tweet, index }: { tweet: TweetData; index: number }) 
 }
 
 // Main Twitter Insights Page
-export default function TwitterClient({ topTweets, latestTweets }: TwitterClientProps) {
+export default function TwitterClient({ topTweets, latestTweets, researchSummary }: TwitterClientProps) {
+    const [viewMode, setViewMode] = useState<'tweets' | 'insights'>('tweets');
     const [activeTab, setActiveTab] = useState<"top" | "latest">("top");
 
     // Derive Trending Topics from hashtags
     const hashtags = useMemo(() => {
         const counts: Record<string, number> = {};
         topTweets.forEach(t => {
-            // Basic regex if hashtags array is empty or just use the array
             if (t.hashtags && t.hashtags.length > 0) {
                 t.hashtags.forEach(tag => counts[tag] = (counts[tag] || 0) + 1);
             }
@@ -213,120 +217,159 @@ export default function TwitterClient({ topTweets, latestTweets }: TwitterClient
     }, [topTweets]);
 
     // Stats
-    const totalViews = topTweets.reduce((acc, t) => acc + (t.totalEngagement || 0), 0); // Using engagement as views proxy or just views? TweetData has views.
-
     const maxViews = Math.max(0, ...topTweets.map(t => t.views || 0));
     const maxFollowers = Math.max(0, ...topTweets.map(t => t.authorFollowers || 0));
     const topScore = Math.max(0, ...topTweets.map(t => t.viralScore || 0));
 
+    // Sort tweets by viral score for "Top Tweets" view
+    const sortedTopTweets = [...topTweets].sort((a, b) => b.viralScore - a.viralScore);
+
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen bg-slate-50">
             <Sidebar />
             <MobileHeader />
 
-            <main className="md:ml-64 p-4 md:p-8">
+            <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">
                 <div className="max-w-7xl mx-auto space-y-8">
-                    {/* Page Header */}
-                    <div className="animate-fadeInUp">
-                        <h1 className="text-3xl md:text-4xl font-bold text-slate-900 flex items-center gap-3">
-                            <svg className="w-8 h-8 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                            </svg>
-                            Twitter Insights
-                        </h1>
-                        <p className="text-slate-500 mt-2">
-                            Trending topics and viral tweets in your niche
-                        </p>
+
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 animate-fadeInUp">
+                        <div>
+                            <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                                {viewMode === 'tweets' ? 'X (Twitter) Intelligence' : 'Twitter AI Strategy'}
+                            </h1>
+                            <p className="text-slate-500 mt-2">
+                                {viewMode === 'tweets'
+                                    ? `Tracking ${latestTweets.length} tweets in your niche.`
+                                    : 'Strategic analysis of the Twitter landscape.'}
+                            </p>
+                        </div>
+
+                        {/* View Toggle */}
+                        <div className="bg-white p-1 rounded-xl border border-slate-200 shadow-sm inline-flex">
+                            <button
+                                onClick={() => setViewMode('tweets')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'tweets'
+                                    ? 'bg-blue-50 text-blue-600'
+                                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                                    }`}
+                            >
+                                <LayoutGrid size={18} />
+                                Tweets
+                            </button>
+                            <button
+                                onClick={() => setViewMode('insights')}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'insights'
+                                    ? 'bg-blue-50 text-blue-600'
+                                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+                                    }`}
+                            >
+                                <Sparkles size={18} />
+                                AI Insights
+                            </button>
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-                        <div className="stat-card">
-                            <p className="text-2xl font-bold text-slate-900">{topTweets.length}</p>
-                            <p className="text-xs text-slate-500">Top Tweets</p>
-                        </div>
-                        <div className="stat-card">
-                            <p className="text-2xl font-bold text-emerald-600">{(maxViews / 1000).toFixed(1)}K</p>
-                            <p className="text-xs text-slate-500">Max Views</p>
-                        </div>
-                        <div className="stat-card">
-                            <p className="text-2xl font-bold text-slate-900">{(maxFollowers / 1000).toFixed(1)}K</p>
-                            <p className="text-xs text-slate-500">Top Followers</p>
-                        </div>
-                        <div className="stat-card">
-                            <p className="text-2xl font-bold text-slate-900">{topScore.toFixed(1)}</p>
-                            <p className="text-xs text-slate-500">Top Score</p>
-                        </div>
-                    </div>
-
-                    {/* Two Panel Layout */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        {/* Left Panel - Trending Topics */}
-                        <div className="lg:col-span-1">
-                            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden sticky top-8 shadow-sm">
-                                <div className="p-5 border-b border-slate-100 flex items-center gap-2">
-                                    <TrendingUp size={20} className="text-blue-600" />
-                                    <h2 className="font-semibold text-slate-900">Trending Topics</h2>
-                                    <div className="live-indicator ml-2" />
+                    {viewMode === 'insights' ? (
+                        <SmartInsightsView
+                            insightText={researchSummary?.[0]?.twitter_insights || ""}
+                            title="X (Twitter) Strategy"
+                            description="Actionable opportunities found in the latest Twitter discourse."
+                            theme="twitter"
+                        />
+                    ) : (
+                        <div className="space-y-8 animate-fadeIn">
+                            {/* Stats Grid */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+                                <div className="stat-card">
+                                    <p className="text-2xl font-bold text-slate-900">{topTweets.length}</p>
+                                    <p className="text-xs text-slate-500">Top Tweets</p>
                                 </div>
-                                <div className="divide-y divide-slate-100 stagger-children">
-                                    {hashtags.map((topic, index) => (
-                                        <TrendingItem key={topic.rank} topic={topic} index={index} />
-                                    ))}
-                                    {hashtags.length === 0 && (
-                                        <div className="p-4 text-center text-slate-400 text-sm">No trending topics found</div>
+                                <div className="stat-card">
+                                    <p className="text-2xl font-bold text-emerald-600">{(maxViews / 1000).toFixed(1)}K</p>
+                                    <p className="text-xs text-slate-500">Max Views</p>
+                                </div>
+                                <div className="stat-card">
+                                    <p className="text-2xl font-bold text-slate-900">{(maxFollowers / 1000).toFixed(1)}K</p>
+                                    <p className="text-xs text-slate-500">Top Followers</p>
+                                </div>
+                                <div className="stat-card">
+                                    <p className="text-2xl font-bold text-slate-900">{topScore.toFixed(1)}</p>
+                                    <p className="text-xs text-slate-500">Top Score</p>
+                                </div>
+                            </div>
+
+                            {/* Two Panel Layout */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                {/* Left Panel - Trending Topics */}
+                                <div className="lg:col-span-1">
+                                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden sticky top-8 shadow-sm">
+                                        <div className="p-5 border-b border-slate-100 flex items-center gap-2">
+                                            <TrendingUp size={20} className="text-blue-600" />
+                                            <h2 className="font-semibold text-slate-900">Trending Topics</h2>
+                                            <div className="live-indicator ml-2" />
+                                        </div>
+                                        <div className="divide-y divide-slate-100 stagger-children">
+                                            {hashtags.map((topic, index) => (
+                                                <TrendingItem key={topic.rank} topic={topic} index={index} />
+                                            ))}
+                                            {hashtags.length === 0 && (
+                                                <div className="p-4 text-center text-slate-400 text-sm">No trending topics found</div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Right Panel - Tweet Feed */}
+                                <div className="lg:col-span-2 space-y-4">
+                                    {/* Tab Switcher */}
+                                    <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-xl w-fit border border-slate-200">
+                                        <button
+                                            onClick={() => setActiveTab("top")}
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "top"
+                                                ? "bg-white text-blue-600 shadow-sm"
+                                                : "text-slate-500 hover:text-slate-700"
+                                                }`}
+                                        >
+                                            <Zap size={14} className="inline mr-1.5" />
+                                            Top Tweets
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab("latest")}
+                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "latest"
+                                                ? "bg-white text-blue-600 shadow-sm"
+                                                : "text-slate-500 hover:text-slate-700"
+                                                }`}
+                                        >
+                                            <Clock size={14} className="inline mr-1.5" />
+                                            Latest
+                                        </button>
+                                    </div>
+
+                                    {activeTab === "top" ? (
+                                        <div className="space-y-4 stagger-children">
+                                            {sortedTopTweets.map((tweet, index) => (
+                                                <TweetCard key={tweet.id} tweet={tweet} index={index} />
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="glass-card overflow-hidden border border-slate-200 bg-white">
+                                            <div className="p-4 border-b border-slate-100 flex items-center gap-2">
+                                                <div className="live-indicator" />
+                                                <span className="text-sm font-medium text-slate-900">Live Feed</span>
+                                                <span className="text-xs text-slate-500">• Updates in real-time</span>
+                                            </div>
+                                            <div className="stagger-children">
+                                                {latestTweets.map((tweet, index) => (
+                                                    <LatestTweetItem key={tweet.id} tweet={tweet} index={index} />
+                                                ))}
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
                             </div>
                         </div>
-
-                        {/* Right Panel - Tweet Feed */}
-                        <div className="lg:col-span-2 space-y-4">
-                            {/* Tab Switcher */}
-                            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-xl w-fit border border-slate-200">
-                                <button
-                                    onClick={() => setActiveTab("top")}
-                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "top"
-                                        ? "bg-white text-blue-600 shadow-sm"
-                                        : "text-slate-500 hover:text-slate-700"
-                                        }`}
-                                >
-                                    <Zap size={14} className="inline mr-1.5" />
-                                    Top Tweets
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab("latest")}
-                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "latest"
-                                        ? "bg-white text-blue-600 shadow-sm"
-                                        : "text-slate-500 hover:text-slate-700"
-                                        }`}
-                                >
-                                    <Clock size={14} className="inline mr-1.5" />
-                                    Latest
-                                </button>
-                            </div>
-
-                            {activeTab === "top" ? (
-                                <div className="space-y-4 stagger-children">
-                                    {topTweets.map((tweet, index) => (
-                                        <TweetCard key={tweet.id} tweet={tweet} index={index} />
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="glass-card overflow-hidden border border-slate-200 bg-white">
-                                    <div className="p-4 border-b border-slate-100 flex items-center gap-2">
-                                        <div className="live-indicator" />
-                                        <span className="text-sm font-medium text-slate-900">Live Feed</span>
-                                        <span className="text-xs text-slate-500">• Updates in real-time</span>
-                                    </div>
-                                    <div className="stagger-children">
-                                        {latestTweets.map((tweet, index) => (
-                                            <LatestTweetItem key={tweet.id} tweet={tweet} index={index} />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                    )}
                 </div>
             </main>
         </div>

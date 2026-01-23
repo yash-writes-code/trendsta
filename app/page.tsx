@@ -506,40 +506,14 @@ function Features() {
             transition={{ duration: 0.7 }}
             className="order-2 lg:order-1"
           >
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white p-2">
-              <div className="bg-slate-50 rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center relative">
-                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
-
-                {/* Mock UI */}
-                <div className="w-3/4 space-y-3">
-                  <div className="h-2 bg-slate-200 rounded w-1/2 mb-4"></div>
-                  <div className="space-y-2">
-                    <div className="h-16 bg-white rounded-lg border border-slate-200 p-3 shadow-sm flex gap-3">
-                      <div className="w-10 h-10 bg-slate-100 rounded-md"></div>
-                      <div className="flex-1 space-y-1">
-                        <div className="h-2 bg-slate-200 rounded w-3/4"></div>
-                        <div className="h-2 bg-slate-100 rounded w-1/2"></div>
-                      </div>
-                    </div>
-                    <div className="h-16 bg-white rounded-lg border border-blue-200 p-3 shadow-md ring-1 ring-blue-100 flex gap-3">
-                      <div className="w-10 h-10 bg-blue-50 rounded-md flex items-center justify-center text-blue-500">
-                        <TrendingUp size={16} />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="h-2 bg-slate-200 rounded w-3/4"></div>
-                        <div className="h-2 bg-slate-100 rounded w-1/2"></div>
-                      </div>
-                    </div>
-                    <div className="h-16 bg-white rounded-lg border border-slate-200 p-3 shadow-sm flex gap-3 opacity-60">
-                      <div className="w-10 h-10 bg-slate-100 rounded-md"></div>
-                      <div className="flex-1 space-y-1">
-                        <div className="h-2 bg-slate-200 rounded w-3/4"></div>
-                        <div className="h-2 bg-slate-100 rounded w-1/2"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
+              <Image
+                src="/landing/execution-plan.png"
+                alt="Execution Plan"
+                width={600}
+                height={400}
+                className="w-full h-auto"
+              />
             </div>
           </motion.div>
 
@@ -618,40 +592,14 @@ function Features() {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white p-2">
-              <div className="bg-slate-50 rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center p-8">
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 w-full max-w-sm">
-                  <div className="flex gap-2 mb-4">
-                    <span className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded uppercase">
-                      High Potential
-                    </span>
-                    <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded uppercase">
-                      1m 30s
-                    </span>
-                  </div>
-                  <h4 className="font-bold text-slate-900 mb-4">
-                    "The 3 mistakes draining your budget..."
-                  </h4>
-                  <div className="space-y-3">
-                    <div className="p-3 bg-blue-50 rounded-lg border-l-2 border-blue-500">
-                      <p className="text-xs text-slate-500 mb-1 font-semibold">
-                        HOOK
-                      </p>
-                      <p className="text-sm text-slate-900 italic">
-                        "Stop spending on ads until you fix this one thing."
-                      </p>
-                    </div>
-                    <div className="p-3 bg-slate-50 rounded-lg">
-                      <p className="text-xs text-slate-500 mb-1 font-semibold">
-                        VALUE
-                      </p>
-                      <p className="text-sm text-slate-900">
-                        Break down the funnel leak...
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white">
+              <Image
+                src="/landing/script-ideas.png"
+                alt="Script Ideas"
+                width={600}
+                height={400}
+                className="w-full h-auto"
+              />
             </div>
           </motion.div>
         </div>

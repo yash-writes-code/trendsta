@@ -11,7 +11,6 @@ export function StatsOverview({ scriptCount, avgViralScore, audience, bestTime }
     const stats = [
         { label: "Scripts Ready", value: scriptCount.toString(), icon: Sparkles, color: "var(--gradient-primary)" },
         { label: "Viral Score Avg", value: avgViralScore.toFixed(0), icon: Zap, color: "var(--gradient-success)" },
-        { label: "Target Audience", value: audience, icon: Users, color: "var(--gradient-info)" },
         { label: "Best Time", value: bestTime, icon: Clock, color: "var(--gradient-warning)" },
     ];
 
