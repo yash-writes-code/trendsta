@@ -26,7 +26,6 @@ model User {
 }
 
 // Social Account Model (for Agency Mode)
-
 model SocialAccount {
   id         String     @id @default(uuid())
   userId     String
