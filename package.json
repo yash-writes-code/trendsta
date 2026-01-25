@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@dodopayments/better-auth": "^1.4.2",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
     "better-auth": "^1.4.17",
+    "dodopayments": "^2.17.1",
     "dotenv": "^17.2.3",
     "framer-motion": "^12.26.1",
     "lucide-react": "^0.562.0",
@@ -20,9 +22,12 @@
     "prisma": "^7.2.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+
     "react-markdown": "^10.1.0",
     "recharts": "^3.7.0",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "zod": "^4.3.6"
+
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
