@@ -1,11 +1,16 @@
+"use client";
+
 import React from 'react';
 import CompetitorsClient from './CompetitorsClient';
-import { getTrendstaData } from '../lib/dataLoader';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+// Create a client for this page
+const queryClient = new QueryClient();
 
 export default function CompetitorsPage() {
-    const data = getTrendstaData();
-    const competitorResearch = data.competitor_research || { reels: [], summary: {}, top_hooks: [], top_captions: [] };
-    const researchSummary = data.llm_research_summary || [];
-
-    return <CompetitorsClient data={competitorResearch} researchSummary={researchSummary} />;
+    return (
+        <QueryClientProvider client={queryClient}>
+            <CompetitorsClient />
+        </QueryClientProvider>
+    );
 }

@@ -4,7 +4,7 @@ import SmartInsightsView from './SmartInsightsView';
 
 interface AIInsightsViewProps {
     researchSummary: ResearchSummary[];
-    userPerformance: UserPerformanceResearch;
+    userPerformance?: UserPerformanceResearch | null;
 }
 
 export default function AIInsightsView({ researchSummary }: AIInsightsViewProps) {

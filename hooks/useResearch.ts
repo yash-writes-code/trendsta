@@ -1,25 +1,21 @@
 "use client";
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    RawResearchData,
+    RawScriptSuggestion,
+    RawOverallStrategy,
+    RawUserResearch,
+    RawCompetitorResearch,
+    RawNicheResearch,
+    RawTwitterResearch
+} from "@/app/types/rawApiTypes";
 
-// Types for the research data
-export interface ResearchData {
-    id: string;
-    socialAccountId: string;
-    createdAt: string;
-    scriptSuggestions: unknown | null;
-    overallStrategy: unknown | null;
-    userResearch: unknown | null;
-    competitorResearch: unknown | null;
-    nicheResearch: unknown | null;
-    twitterResearch: {
-        latest: unknown;
-        top: unknown;
-    } | null;
-}
+// Re-export for convenience
+export type { RawResearchData } from "@/app/types/rawApiTypes";
 
 // Fetch function
-async function fetchResearch(): Promise<ResearchData> {
+async function fetchResearch(): Promise<RawResearchData> {
     const res = await fetch("/api/research/latest");
     if (!res.ok) {
         throw new Error("Failed to fetch research data");

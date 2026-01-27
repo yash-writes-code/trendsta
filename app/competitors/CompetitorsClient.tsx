@@ -1,30 +1,35 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Play, TrendingUp, Users, X, Search, Loader2, Sparkles, LayoutGrid } from "lucide-react";
+import { Users, X, Sparkles, LayoutGrid, Loader2 } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import MobileHeader from "../components/MobileHeader";
 import ReelCard from "../components/ReelCard";
 import ReelModal from "../components/ReelModal";
 import SmartInsightsView from "../components/SmartInsightsView";
-import { CompetitorResearch, ReelData, ResearchSummary } from "@/app/types/trendsta";
+import { ReelData } from "@/app/types/trendsta";
 
-interface CompetitorsClientProps {
-    data: CompetitorResearch;
-    researchSummary?: ResearchSummary[];
-}
+// Hooks & Transformers
+import { useCompetitorResearch, useOverallStrategy } from "@/hooks/useResearch";
+import { transformCompetitorResearch, formatCompetitorInsights } from "@/lib/transformers";
 
 type SortField = "velocity" | "views" | "likes" | "engagement";
 
-export default function CompetitorsClient({ data, researchSummary }: CompetitorsClientProps) {
+export default function CompetitorsClient() {
     const [viewMode, setViewMode] = useState<'reels' | 'insights'>('insights');
     const [sortBy, setSortBy] = useState<SortField>("velocity");
     const [selectedCreator, setSelectedCreator] = useState<string | null>(null);
     const [selectedReel, setSelectedReel] = useState<ReelData | null>(null);
 
-    // State for filtering/adding (Visual only)
-    const [searchQuery, setSearchQuery] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    // Fetch data via hooks
+    const { data: rawCompetitorData, isLoading: competitorLoading, error: competitorError } = useCompetitorResearch();
+    const { data: rawStrategyData, isLoading: strategyLoading } = useOverallStrategy();
+
+    // Transform raw data to UI types
+    const competitorResearch = transformCompetitorResearch(rawCompetitorData);
+    const competitorInsightsText = formatCompetitorInsights(rawStrategyData?.competitor_reverse_engineering);
+
+    const isLoading = competitorLoading || strategyLoading;
 
     // Derive Competitors List from Reels
     const competitorsList = useMemo(() => {
@@ -38,14 +43,14 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
             avgEngagement: number;
         }>();
 
-        if (!data || !data.reels) return [];
+        if (!competitorResearch || !competitorResearch.reels) return [];
 
-        data.reels.forEach(reel => {
+        competitorResearch.reels.forEach(reel => {
             const username = reel.creator || reel.creatorName || "Unknown";
             if (!map.has(username)) {
                 map.set(username, {
                     username,
-                    fullName: reel.creatorName || username, // Best guess
+                    fullName: reel.creatorName || username,
                     reels: [],
                     totalViews: 0,
                     totalLikes: 0,
@@ -57,7 +62,6 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
             comp.reels.push(reel);
             comp.totalViews += reel.views || 0;
             comp.totalLikes += reel.likes || 0;
-            // Aggregates for avg later
         });
 
         const list = Array.from(map.values()).map(comp => {
@@ -74,9 +78,9 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
 
         return list;
 
-    }, [data]);
+    }, [competitorResearch]);
 
-    const allReels = data.reels || [];
+    const allReels = competitorResearch?.reels || [];
 
     const sortedReels = [...allReels].sort((a, b) => {
         switch (sortBy) {
@@ -92,14 +96,37 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
         ? sortedReels.filter(r => (r.creator === selectedCreator || r.creatorName === selectedCreator))
         : sortedReels;
 
-    const handleAddCompetitor = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setTimeout(() => {
-            setIsLoading(false);
-            setSearchQuery("");
-        }, 1000);
-    };
+    // Loading State
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <Sidebar />
+                <MobileHeader />
+                <main className="md:ml-64 p-4 md:p-8 flex items-center justify-center min-h-screen">
+                    <div className="flex flex-col items-center gap-4">
+                        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+                        <p className="text-slate-500">Loading competitor data...</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    // Error State
+    if (competitorError) {
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <Sidebar />
+                <MobileHeader />
+                <main className="md:ml-64 p-4 md:p-8 flex items-center justify-center min-h-screen">
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
+                        <p className="text-red-600 font-medium">Failed to load competitor data</p>
+                        <p className="text-red-500 text-sm mt-2">{(competitorError as Error).message}</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -117,7 +144,7 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
                             </h1>
                             <p className="text-slate-500 mt-2">
                                 {viewMode === 'reels'
-                                    ? `Tracking ${data.summary?.competitorsTracked || 0} competitors and ${data.reels?.length || 0} viral uploads.`
+                                    ? `Tracking ${competitorResearch?.summary?.competitorsTracked || 0} competitors and ${competitorResearch?.reels?.length || 0} viral uploads.`
                                     : 'AI breakdown of what your competitors are doing right.'}
                             </p>
                         </div>
@@ -149,7 +176,7 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
 
                     {viewMode === 'insights' ? (
                         <SmartInsightsView
-                            insightText={researchSummary?.[0]?.competitor_insights || ""}
+                            insightText={competitorInsightsText}
                             title="Competitor Strategy Breakdown"
                             description="Reverse-engineering the top performing strategies in your niche."
                             theme="competitor"
@@ -170,7 +197,7 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
                                                 onClick={() => setSelectedCreator(null)}
                                                 className="px-3 py-1.5 text-xs bg-slate-800 text-slate-400 rounded-lg hover:bg-slate-700 flex items-center gap-1"
                                             >
-                                                <X size={12} /> Clear Filter
+                                                <X size={12} />Clear Filter
                                             </button>
                                         )}
                                         <select
@@ -206,8 +233,6 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
 
                             {/* Right Sidebar - Filters */}
                             <div className="w-full lg:w-80 space-y-6 order-1 lg:order-2 h-fit static lg:sticky lg:top-8">
-                                {/* Search Section removed as per request */}
-
                                 {/* Tracked Competitors List - Compact Filter Style */}
                                 <div>
                                     <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2 px-1">
