@@ -1,30 +1,35 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Play, TrendingUp, Users, X, Search, Loader2, Sparkles, LayoutGrid } from "lucide-react";
+import { Users, X, Sparkles, LayoutGrid, Loader2 } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import MobileHeader from "../components/MobileHeader";
 import ReelCard from "../components/ReelCard";
 import ReelModal from "../components/ReelModal";
 import SmartInsightsView from "../components/SmartInsightsView";
-import { CompetitorResearch, ReelData, ResearchSummary } from "@/app/types/trendsta";
+import { ReelData } from "@/app/types/trendsta";
 
-interface CompetitorsClientProps {
-    data: CompetitorResearch;
-    researchSummary?: ResearchSummary[];
-}
+// Hooks & Transformers
+import { useCompetitorResearch, useOverallStrategy } from "@/hooks/useResearch";
+import { transformCompetitorResearch, formatCompetitorInsights } from "@/lib/transformers";
 
 type SortField = "velocity" | "views" | "likes" | "engagement";
 
-export default function CompetitorsClient({ data, researchSummary }: CompetitorsClientProps) {
-    const [viewMode, setViewMode] = useState<'reels' | 'insights'>('reels');
+export default function CompetitorsClient() {
+    const [viewMode, setViewMode] = useState<'reels' | 'insights'>('insights');
     const [sortBy, setSortBy] = useState<SortField>("velocity");
     const [selectedCreator, setSelectedCreator] = useState<string | null>(null);
     const [selectedReel, setSelectedReel] = useState<ReelData | null>(null);
 
-    // State for filtering/adding (Visual only)
-    const [searchQuery, setSearchQuery] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    // Fetch data via hooks
+    const { data: rawCompetitorData, isLoading: competitorLoading, error: competitorError } = useCompetitorResearch();
+    const { data: rawStrategyData, isLoading: strategyLoading } = useOverallStrategy();
+
+    // Transform raw data to UI types
+    const competitorResearch = transformCompetitorResearch(rawCompetitorData);
+    const competitorInsightsText = formatCompetitorInsights(rawStrategyData?.competitor_reverse_engineering);
+
+    const isLoading = competitorLoading || strategyLoading;
 
     // Derive Competitors List from Reels
     const competitorsList = useMemo(() => {
@@ -38,14 +43,14 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
             avgEngagement: number;
         }>();
 
-        if (!data || !data.reels) return [];
+        if (!competitorResearch || !competitorResearch.reels) return [];
 
-        data.reels.forEach(reel => {
+        competitorResearch.reels.forEach(reel => {
             const username = reel.creator || reel.creatorName || "Unknown";
             if (!map.has(username)) {
                 map.set(username, {
                     username,
-                    fullName: reel.creatorName || username, // Best guess
+                    fullName: reel.creatorName || username,
                     reels: [],
                     totalViews: 0,
                     totalLikes: 0,
@@ -57,7 +62,6 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
             comp.reels.push(reel);
             comp.totalViews += reel.views || 0;
             comp.totalLikes += reel.likes || 0;
-            // Aggregates for avg later
         });
 
         const list = Array.from(map.values()).map(comp => {
@@ -74,9 +78,9 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
 
         return list;
 
-    }, [data]);
+    }, [competitorResearch]);
 
-    const allReels = data.reels || [];
+    const allReels = competitorResearch?.reels || [];
 
     const sortedReels = [...allReels].sort((a, b) => {
         switch (sortBy) {
@@ -92,14 +96,37 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
         ? sortedReels.filter(r => (r.creator === selectedCreator || r.creatorName === selectedCreator))
         : sortedReels;
 
-    const handleAddCompetitor = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-        setTimeout(() => {
-            setIsLoading(false);
-            setSearchQuery("");
-        }, 1000);
-    };
+    // Loading State
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <Sidebar />
+                <MobileHeader />
+                <main className="md:ml-64 p-4 md:p-8 flex items-center justify-center min-h-screen">
+                    <div className="flex flex-col items-center gap-4">
+                        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+                        <p className="text-slate-500">Loading competitor data...</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    // Error State
+    if (competitorError) {
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <Sidebar />
+                <MobileHeader />
+                <main className="md:ml-64 p-4 md:p-8 flex items-center justify-center min-h-screen">
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
+                        <p className="text-red-600 font-medium">Failed to load competitor data</p>
+                        <p className="text-red-500 text-sm mt-2">{(competitorError as Error).message}</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -117,7 +144,7 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
                             </h1>
                             <p className="text-slate-500 mt-2">
                                 {viewMode === 'reels'
-                                    ? `Tracking ${data.summary?.competitorsTracked || 0} competitors and ${data.reels?.length || 0} viral uploads.`
+                                    ? `Tracking ${competitorResearch?.summary?.competitorsTracked || 0} competitors and ${competitorResearch?.reels?.length || 0} viral uploads.`
                                     : 'AI breakdown of what your competitors are doing right.'}
                             </p>
                         </div>
@@ -149,126 +176,111 @@ export default function CompetitorsClient({ data, researchSummary }: Competitors
 
                     {viewMode === 'insights' ? (
                         <SmartInsightsView
-                            insightText={researchSummary?.[0]?.competitor_insights || ""}
+                            insightText={competitorInsightsText}
                             title="Competitor Strategy Breakdown"
                             description="Reverse-engineering the top performing strategies in your niche."
                             theme="competitor"
                         />
                     ) : (
-                        <div className="space-y-8 animate-fadeIn">
-                            {/* Header with Search */}
-                            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                                <div>
-                                    {/* Subheader if needed, or just keep spacing */}
+                        <div className="flex flex-col lg:flex-row gap-8 animate-fadeIn">
+                            {/* Main Content - Reels Grid */}
+                            <div className="flex-1 order-2 lg:order-1">
+                                {/* Sort Controls */}
+                                <div className="flex items-center justify-between mb-6">
+                                    <h2 className="text-lg font-semibold text-slate-900">
+                                        {selectedCreator ? `@${selectedCreator}'s Reels` : 'All Competitor Reels'}
+                                        <span className="ml-2 text-sm font-normal text-slate-500">({filteredReels.length})</span>
+                                    </h2>
+                                    <div className="flex gap-3">
+                                        {selectedCreator && (
+                                            <button
+                                                onClick={() => setSelectedCreator(null)}
+                                                className="px-3 py-1.5 text-xs bg-slate-800 text-slate-400 rounded-lg hover:bg-slate-700 flex items-center gap-1"
+                                            >
+                                                <X size={12} />Clear Filter
+                                            </button>
+                                        )}
+                                        <select
+                                            value={sortBy}
+                                            onChange={(e) => setSortBy(e.target.value as SortField)}
+                                            className="px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            <option value="velocity">Sort by Velocity</option>
+                                            <option value="views">Sort by Views</option>
+                                            <option value="likes">Sort by Likes</option>
+                                            <option value="engagement">Sort by Engagement</option>
+                                        </select>
+                                    </div>
                                 </div>
 
-                                {/* Add Competitor Input */}
-                                <form onSubmit={handleAddCompetitor} className="flex gap-2 w-full md:w-auto">
-                                    <div className="relative flex-1 md:w-64">
-                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                                        <input
-                                            type="text"
-                                            placeholder="Enter username (e.g. alexhormozi)"
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                            className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-sm"
+                                {/* Reels Grid */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+                                    {filteredReels.map((reel, index) => (
+                                        <ReelCard
+                                            key={reel.id}
+                                            reel={reel}
+                                            index={index}
+                                            onViewDetails={() => setSelectedReel(reel)}
                                         />
-                                    </div>
-                                    <button
-                                        type="submit"
-                                        disabled={isLoading || !searchQuery}
-                                        className="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all shadow-md"
-                                    >
-                                        {isLoading ? <Loader2 size={16} className="animate-spin" /> : 'Add'}
-                                    </button>
-                                </form>
+                                    ))}
+                                    {filteredReels.length === 0 && (
+                                        <div className="col-span-full text-center py-12 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                                            <p className="text-slate-500">No reels found matching your criteria.</p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
-                            {/* Competitor Cards */}
-                            <div className="animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
-                                <h2 className="text-lg font-semibold text-slate-900 mb-4">Tracked Competitors</h2>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {competitorsList.map((competitor, idx) => (
-                                        <div
-                                            key={idx}
-                                            onClick={() => setSelectedCreator(selectedCreator === competitor.username ? null : competitor.username)}
-                                            className={`p-4 rounded-2xl border transition-all cursor-pointer ${selectedCreator === competitor.username
-                                                ? 'bg-blue-50 border-blue-200 shadow-md'
-                                                : 'bg-white border-slate-200 hover:shadow-lg hover:border-slate-300'
-                                                }`}
-                                        >
-                                            <div className="flex items-center gap-3 mb-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold shrink-0">
+                            {/* Right Sidebar - Filters */}
+                            <div className="w-full lg:w-80 space-y-6 order-1 lg:order-2 h-fit static lg:sticky lg:top-8">
+                                {/* Tracked Competitors List - Compact Filter Style */}
+                                <div>
+                                    <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2 px-1">
+                                        <Users size={16} className="text-slate-500" />
+                                        Filter by Creator
+                                    </h3>
+                                    <div className="space-y-2">
+                                        {competitorsList.map((competitor, idx) => (
+                                            <div
+                                                key={idx}
+                                                onClick={() => setSelectedCreator(selectedCreator === competitor.username ? null : competitor.username)}
+                                                className={`
+                                                    group flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-200
+                                                    ${selectedCreator === competitor.username
+                                                        ? 'bg-blue-600 border-blue-600 text-white shadow-md transform scale-[1.02]'
+                                                        : 'bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm'
+                                                    }
+                                                `}
+                                            >
+                                                {/* Avatar */}
+                                                <div className={`
+                                                    w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0
+                                                    ${selectedCreator === competitor.username ? 'bg-white/20 text-white' : 'bg-gradient-to-br from-blue-500 to-indigo-500 text-white'}
+                                                `}>
                                                     {competitor.username[0].toUpperCase()}
                                                 </div>
+
+                                                {/* Info */}
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="font-semibold text-slate-900 truncate">@{competitor.username}</p>
-                                                    <p className="text-xs text-slate-500 truncate">{competitor.fullName || 'Creator'}</p>
+                                                    <div className="flex items-center justify-between">
+                                                        <p className={`text-sm font-semibold truncate ${selectedCreator === competitor.username ? 'text-white' : 'text-slate-900'}`}>
+                                                            @{competitor.username}
+                                                        </p>
+                                                        {/* Badge */}
+                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${selectedCreator === competitor.username ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                                                            {competitor.reels.length}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div className="grid grid-cols-2 gap-2 text-sm">
-                                                <div className="bg-slate-50 rounded-lg p-2 text-center">
-                                                    <p className="text-slate-500 text-xs">Reels</p>
-                                                    <p className="font-bold text-slate-900">{competitor.reels.length}</p>
-                                                </div>
-                                                <div className="bg-slate-50 rounded-lg p-2 text-center">
-                                                    <p className="text-slate-500 text-xs">Avg Velocity</p>
-                                                    <p className="font-bold text-blue-600">{competitor.avgVelocity.toFixed(1)}</p>
-                                                </div>
+                                        ))}
+                                        {competitorsList.length === 0 && (
+                                            <div className="text-center py-6 text-slate-400 text-xs italic">
+                                                No competitors added yet.
                                             </div>
-                                        </div>
-                                    ))}
-                                    {competitorsList.length === 0 && (
-                                        <div className="col-span-full py-8 text-center text-slate-500 bg-white border border-slate-200 rounded-xl border-dashed">
-                                            No competitors found. Use the search to add more.
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* Sort Controls */}
-                            <div className="flex items-center justify-between mb-6 animate-fadeInUp" style={{ animationDelay: '0.15s' }}>
-                                <h2 className="text-lg font-semibold text-slate-900">
-                                    {selectedCreator ? `@${selectedCreator}'s Reels` : 'All Competitor Reels'}
-                                    <span className="ml-2 text-sm font-normal text-slate-500">({filteredReels.length})</span>
-                                </h2>
-                                <div className="flex gap-3">
-                                    {selectedCreator && (
-                                        <button
-                                            onClick={() => setSelectedCreator(null)}
-                                            className="px-3 py-2 text-sm bg-slate-800 text-slate-400 rounded-lg hover:bg-slate-700 flex items-center gap-1"
-                                        >
-                                            <X size={14} /> Clear
-                                        </button>
-                                    )}
-                                    <select
-                                        value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value as SortField)}
-                                        className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        <option value="velocity">Sort by Velocity</option>
-                                        <option value="views">Sort by Views</option>
-                                        <option value="likes">Sort by Likes</option>
-                                        <option value="engagement">Sort by Engagement</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {/* Reels Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 stagger-children animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-                                {filteredReels.map((reel, index) => (
-                                    <ReelCard
-                                        key={reel.id}
-                                        reel={reel}
-                                        index={index}
-                                        onViewDetails={() => setSelectedReel(reel)}
-                                    />
-                                ))}
-                                {filteredReels.length === 0 && (
-                                    <div className="col-span-full text-center py-12">
-                                        <p className="text-slate-500">No reels found.</p>
+                                        )}
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </div>
                     )}

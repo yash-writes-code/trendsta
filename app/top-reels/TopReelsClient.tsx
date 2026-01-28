@@ -2,13 +2,17 @@
 
 import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
-import { Play, TrendingUp, Sparkles, LayoutGrid, ListFilter } from "lucide-react";
+import { Sparkles, LayoutGrid, Loader2 } from "lucide-react";
 
 import MobileHeader from "../components/MobileHeader";
 import ReelCard from "../components/ReelCard";
 import ReelModal from "../components/ReelModal";
 import AIInsightsView from "../components/AIInsightsView";
-import { ReelData, TrendstaData } from "../types/trendsta";
+import { ReelData, ResearchSummary } from "../types/trendsta";
+
+// Hooks & Transformers
+import { useNicheResearch, useOverallStrategy, useUserResearch } from "@/hooks/useResearch";
+import { transformNicheResearch, transformUserResearch, buildResearchSummary } from "@/lib/transformers";
 
 // Filter Button
 function FilterButton({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
@@ -25,18 +29,25 @@ function FilterButton({ active, children, onClick }: { active: boolean; children
     );
 }
 
-interface TopReelsClientProps {
-    data: TrendstaData;
-}
-
-export default function TopReelsClient({ data }: TopReelsClientProps) {
-    const [viewMode, setViewMode] = useState<'reels' | 'insights'>('reels');
+export default function TopReelsClient() {
+    const [viewMode, setViewMode] = useState<'reels' | 'insights'>('insights');
     const [activeFilter, setActiveFilter] = useState("all");
     const [selectedReel, setSelectedReel] = useState<ReelData | null>(null);
 
-    const reels = data.niche_research?.reels || [];
-    const researchSummary = data.llm_research_summary || [];
-    const userPerformance = data.user_performance_research;
+    // Fetch data via hooks
+    const { data: rawNicheData, isLoading: nicheLoading, error: nicheError } = useNicheResearch();
+    const { data: rawStrategyData, isLoading: strategyLoading } = useOverallStrategy();
+    const { data: rawUserData, isLoading: userLoading } = useUserResearch();
+
+    // Transform raw data to UI types
+    const nicheResearch = transformNicheResearch(rawNicheData);
+    const userPerformance = transformUserResearch(rawUserData);
+    const researchSummary: ResearchSummary[] = rawStrategyData
+        ? [buildResearchSummary(rawStrategyData)]
+        : [];
+
+    const reels = nicheResearch?.reels || [];
+    const isLoading = nicheLoading || strategyLoading || userLoading;
 
     const filters = [
         { id: "all", label: "All Reels" },
@@ -53,6 +64,38 @@ export default function TopReelsClient({ data }: TopReelsClientProps) {
             if (activeFilter === "long") return reel.duration > 60;
             return true;
         })).slice(0, 7);
+
+    // Loading State
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <Sidebar />
+                <MobileHeader />
+                <main className="md:ml-64 p-4 md:p-8 flex items-center justify-center min-h-screen">
+                    <div className="flex flex-col items-center gap-4">
+                        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                        <p className="text-slate-500">Loading research data...</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
+
+    // Error State
+    if (nicheError) {
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <Sidebar />
+                <MobileHeader />
+                <main className="md:ml-64 p-4 md:p-8 flex items-center justify-center min-h-screen">
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
+                        <p className="text-red-600 font-medium">Failed to load data</p>
+                        <p className="text-red-500 text-sm mt-2">{(nicheError as Error).message}</p>
+                    </div>
+                </main>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-slate-50">
