@@ -7,23 +7,23 @@ import { headers } from "next/headers";
 // Returns the most recent research for the logged-in user
 export async function GET(request: Request) {
     try {
-        // 1. Auth check
-        // const session = await auth.api.getSession({
-        //     headers: await headers(),
-        // });
 
-        // if (!session?.user) {
-        //     return NextResponse.json(
-        //         { error: "Unauthorized" },
-        //         { status: 401 }
-        //     );
-        // }
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
 
-        // const userId = session.user.id;
+        if (!session?.user) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
+        const userId = session.user.id;
 
         // TESTING: Get userId from query params
-        const { searchParams } = new URL(request.url);
-        const userId = searchParams.get("userId");
+        // const { searchParams } = new URL(request.url);
+        // const userId = searchParams.get("userId");
 
         if (!userId) {
             return NextResponse.json(
