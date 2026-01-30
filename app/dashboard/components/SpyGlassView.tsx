@@ -94,7 +94,7 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
                             <span className="text-xs font-bold text-blue-600 uppercase">Viral Trigger</span>
                         </div>
                         <h4 className="font-bold text-lg mb-1 relative z-10 text-blue-800">Core insight</h4>
-                        <p className="text-blue-700 text-sm leading-relaxed relative z-10">
+                        <p className="text-blue-700 text-sm leading-relaxed relative z-10 whitespace-pre-wrap">
                             {viralTriggerText}
                         </p>
                         {/* Decor */}
@@ -108,7 +108,7 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
                             <span className="text-xs font-bold text-amber-600 uppercase">Opportunity</span>
                         </div>
                         <h4 className="font-bold text-lg mb-1 relative z-10 text-amber-800">Content Gap</h4>
-                        <p className="text-amber-700 text-sm leading-relaxed relative z-10">
+                        <p className="text-amber-700 text-sm leading-relaxed relative z-10 whitespace-pre-wrap">
                             {research.content_gap || "Analysis pending..."}
                         </p>
                         {/* Decor */}

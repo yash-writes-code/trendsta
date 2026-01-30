@@ -1,6 +1,6 @@
 import finalDataset from '../../finaldataset.json';
 import baapDataset from '../../baap file.json';
-import { TrendstaData, ReelData } from '../types/trendsta';
+import { TrendstaData, ReelData, ScriptIdea } from '../types/trendsta';
 
 // Define sources
 const sourceFinal = finalDataset as any;
@@ -61,10 +61,46 @@ const mapBaapReel = (r: any): ReelData => ({
     // Audio
     audio: r.audio || { songName: "Original Audio", artistName: "Unknown", isOriginal: true },
 
-    // Performance
-    performanceTier: r.performanceTier || "average",
     performanceScore: r.performanceScore || 1
 });
+
+// Helper to map Baap scripts to ScriptIdea interface
+const mapBaapScript = (s: any): ScriptIdea => ({
+    type: "video_script",
+    rank: s.rank || 0,
+    topic_title: s.topic_title || "",
+    script_title: s.script_title || "",
+    viral_potential_score: s.viral_potential_score || 0,
+    estimated_duration: s.estimated_duration || "",
+    full_text: s.full_script || "",
+    script_word_count: s.full_script ? s.full_script.split(' ').length : 0,
+    script_hook: s.script_breakdown?.hook || "",
+    script_buildup: s.script_breakdown?.buildup || "",
+    script_value: s.script_breakdown?.value || "",
+    script_cta: s.script_breakdown?.cta || "",
+    caption_full: s.caption?.full_caption || "",
+    caption_first_line: s.caption?.first_line_hook || "",
+    hashtags_primary: (s.hashtags?.primary || []).join(" "),
+    hashtags_niche: "", // Not explicitly in source
+    hashtags_trending: (s.hashtags?.trending || []).join(" "),
+    hashtags_all: [...(s.hashtags?.primary || []), ...(s.hashtags?.trending || [])].join(" "),
+    hashtags_count: ((s.hashtags?.primary || []).length + (s.hashtags?.trending || []).length),
+    target_audience: s.metadata?.target_audience || "",
+    emotional_trigger: s.metadata?.emotional_trigger || "",
+    content_gap_addressed: s.metadata?.content_gap_addressed || "",
+    why_this_works: s.metadata?.why_this_works || "",
+    competitor_reference: "", // Not explicitly in source
+    visual_storyboard: {
+        opening_frame: s.visual_storyboard?.opening_frame || "",
+        main_visual_style: s.visual_storyboard?.main_visual_style || "",
+        b_roll_suggestions: typeof s.visual_storyboard?.b_roll_suggestions === 'string'
+            ? [s.visual_storyboard.b_roll_suggestions]
+            : (s.visual_storyboard?.b_roll_suggestions || [])
+    },
+    audio_vibe: s.audio_vibe || "",
+    generatedAt: new Date().toISOString()
+});
+
 
 export const getTrendstaData = (): TrendstaData => {
     // 1. Get Base Data reliably
@@ -83,11 +119,14 @@ export const getTrendstaData = (): TrendstaData => {
     }
 
     // 2. Extract Reels from Baap file
-    const rawBaapReels = sourceBaap.niche_research_json?.reels || [];
+    // Handle array structure of baap file
+    const baapRoot = Array.isArray(sourceBaap) ? sourceBaap[0] : sourceBaap;
+
+    const rawBaapReels = baapRoot.niche_research_json?.reels || [];
     const mappedReels = rawBaapReels.map(mapBaapReel);
 
     // 3. Extract Instagram Insights from Baap file (overall_strategy)
-    const baapStrategy = sourceBaap.overall_strategy || {};
+    const baapStrategy = baapRoot.overall_strategy || {};
 
     const insightsArray = baapStrategy.instagram_niche_insights || [];
 
@@ -107,12 +146,12 @@ export const getTrendstaData = (): TrendstaData => {
     // A. Reels
     // User requested "competitor_research_json", but file analysis suggests "user_research_json" might contain the target reels.
     // robust fallback to ensure data loads.
-    const baapCompetitorReels = sourceBaap.competitor_research_json?.reels || sourceBaap.user_research_json?.reels || [];
+    const baapCompetitorReels = baapRoot.competitor_research_json?.reels || baapRoot.user_research_json?.reels || [];
     const mappedCompetitorReels = baapCompetitorReels.map(mapBaapReel);
 
     // B. AI Insights (competitor_reverse_engineering)
     // Corrected Path: baap -> overall_strategy -> competitor_reverse_engineering
-    const baapCompInsights = sourceBaap.overall_strategy?.competitor_reverse_engineering || [];
+    const baapCompInsights = baapRoot.overall_strategy?.competitor_reverse_engineering || [];
 
     // Format for SmartInsightsView (Competitor Theme)
     // Map: Tactic -> Title, Why -> Evidence, Diff -> Action
@@ -121,7 +160,27 @@ export const getTrendstaData = (): TrendstaData => {
         .map((i: any, idx: number) => `${idx + 1}. [${i.competitor_name || 'Competitor'}] ${i.tactic_observed} → Evidence: ${i.why_it_worked} → Action: ${i.differentiation_plan}`)
         .join('\n');
 
+    // E. Viral Triggers & Content Gap
+    const viralTriggers = baapStrategy.viral_triggers || [];
+    const viralTriggersString = viralTriggers.map((v: any) => `• ${v.trigger}: ${v.why_works}`).join("\n\n");
+
+    const contentGap = baapStrategy.content_gap || {};
+    const contentGapString = contentGap.gap
+        ? `Gap: ${contentGap.gap}\n\nOpportunity: ${contentGap.opportunity}`
+        : "";
+
     // 6. Return merged data
+
+    // C. Script Ideas
+    let baapScripts = baapRoot.script_suggestion || baapRoot.script_suggestions || [];
+
+    // Ensure it's an array (handle single object case)
+    if (!Array.isArray(baapScripts)) {
+        baapScripts = [baapScripts];
+    }
+
+    const mappedScripts = baapScripts.map(mapBaapScript);
+
     return {
         ...baseData,
         // Override Niche Research Reels
@@ -134,6 +193,9 @@ export const getTrendstaData = (): TrendstaData => {
             ...(baseData.competitor_research || {}),
             reels: mappedCompetitorReels
         },
+        // Override Script Ideas
+        LLM_script_ideas: mappedScripts.length > 0 ? mappedScripts : (baseData.LLM_script_ideas || []),
+
         // Override Summary Fields
         llm_research_summary: (baseData.llm_research_summary || []).map(summary => ({
             ...summary,
@@ -141,7 +203,30 @@ export const getTrendstaData = (): TrendstaData => {
             posting_times: researchViewString || summary.posting_times,
             instagram_insights: smartInsightsString || summary.instagram_insights,
             // Competitor Insights
-            competitor_insights: competitorInsightsString || summary.competitor_insights
-        }))
+            competitor_insights: competitorInsightsString || summary.competitor_insights,
+            // New Fields - Pass Raw Structured Data
+            viral_triggers: baapStrategy.viral_triggers || [],
+            content_gap: baapStrategy.content_gap || {},
+            hook_formula: baapStrategy.viral_hook_formula || {},
+
+            // Map structured execution plan
+            execution_plan: (baapRoot.overall_strategy && baapRoot.overall_strategy.execution_plan) ? {
+                immediate_action_checklist: baapRoot.overall_strategy.execution_plan.immediate_action_checklist || [],
+                production_spec_sheet: baapRoot.overall_strategy.execution_plan.production_spec_sheet || {},
+                experiment_this: baapRoot.overall_strategy.execution_plan.experiment_this || {}
+            } : summary.execution_plan,
+
+        })),
+
+        // Dashboard Graphs
+        dashboard_graphs: baapStrategy.dashboard_graphs,
+
+        // Top Hooks
+        hooks: (baapRoot.hooks || baapStrategy.hooks || []).map((h: any) => ({
+            rank: h.rank,
+            hook: h.hook,
+            reelcaption: h.reelcaption,
+            sourceusername: h.sourceusername
+        })),
     };
 };

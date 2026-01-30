@@ -379,7 +379,6 @@ export default function ScriptIdeasClient() {
                                 <FileText size={48} className="mx-auto text-slate-200 mb-4" />
                                 <h3 className="text-lg font-bold text-slate-900">No scripts generated yet</h3>
                                 <p className="text-slate-500">Run a new analysis to generate script ideas.</p>
-                                <p className="text-slate-500">{JSON.stringify(rawData)}</p>
                             </div>
 
                         )}

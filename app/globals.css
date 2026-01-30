@@ -237,3 +237,25 @@ body::before {
   font-size: 0.75rem;
   font-weight: 500;
 }
+
+/* Recharts Global Styles */
+.recharts-wrapper,
+.recharts-surface,
+.recharts-sector,
+.recharts-pie-sector,
+.recharts-tooltip-wrapper,
+.recharts-layer,
+.recharts-curve,
+.recharts-dot {
+  outline: none !important;
+}
+
+.recharts-wrapper:focus,
+.recharts-surface:focus,
+.recharts-layer:focus {
+  outline: none !important;
+}
+
+*:focus {
+  outline: none !important;
+}

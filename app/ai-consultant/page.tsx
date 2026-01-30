@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
+import MobileHeader from "../components/MobileHeader";
 import { Send, Sparkles, TrendingUp, Menu, Zap, BrainCircuit, History, ArrowRight, User, Paperclip, Mic, MicOff, Volume2, VolumeX, Target, ScrollText, Copy, Check, Lightbulb, BarChart3, Users, Hash, PenTool, Calendar, HelpCircle, FileText, Instagram } from "lucide-react";
 import { useSidebar } from "../context/SidebarContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -203,25 +204,6 @@ function ChatMessage({
                 )}
             </div>
         </motion.div>
-    );
-}
-
-// ============================================================
-// MOBILE HEADER
-// ============================================================
-function MobileHeader() {
-    return (
-        <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-200 bg-white sticky top-0 z-40">
-            <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-600">
-                    <TrendingUp className="w-4 h-4 text-white" strokeWidth={2.5} />
-                </div>
-                <span className="font-bold text-slate-900">Trendsta</span>
-            </div>
-            <button className="p-2 text-slate-400 hover:text-slate-600">
-                <Menu size={24} />
-            </button>
-        </div>
     );
 }
 

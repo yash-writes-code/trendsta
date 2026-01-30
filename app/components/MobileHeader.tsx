@@ -1,10 +1,21 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { TrendingUp, Menu, User, LogOut } from "lucide-react";
+import { TrendingUp, Menu, User, LogOut, Home, Play, Users, FileText, Hash, Sparkles, Settings } from "lucide-react";
 import Image from "next/image";
 import { useSession, authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+
+const navItems = [
+    { href: "/dashboard", label: "Dashboard", icon: Home },
+    { href: "/top-reels", label: "Instagram Reels", icon: Play },
+    { href: "/competitors", label: "Competitors", icon: Users },
+    { href: "/script-ideas", label: "Script Ideas", icon: FileText },
+    { href: "/twitter-insights", label: "Twitter Insights", icon: Hash },
+    { href: "/ai-consultant", label: "AI Consultant", icon: Sparkles },
+    { href: "/account", label: "Account", icon: Settings },
+];
 
 export default function MobileHeader(): React.JSX.Element {
     const [showMenu, setShowMenu] = useState(false);
@@ -12,6 +23,7 @@ export default function MobileHeader(): React.JSX.Element {
     const menuRef = useRef<HTMLDivElement>(null);
     const { data: session } = useSession();
     const router = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
         if (session?.user?.name) {
@@ -67,7 +79,29 @@ export default function MobileHeader(): React.JSX.Element {
                 </button>
 
                 {showMenu && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden z-50">
+                    <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden z-50 animate-fadeInUp">
+                        {/* Navigation Links */}
+                        <div className="p-2 border-b border-slate-100">
+                            {navItems.map((item) => {
+                                const isActive = pathname === item.href;
+                                const Icon = item.icon;
+                                return (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={() => setShowMenu(false)}
+                                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
+                                                ? "bg-blue-50 text-blue-600"
+                                                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                                            }`}
+                                    >
+                                        <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
+                                        {item.label}
+                                    </Link>
+                                );
+                            })}
+                        </div>
+
                         <div className="p-4 border-b border-slate-200 bg-slate-50">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600">
