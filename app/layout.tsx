@@ -19,14 +19,16 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
-        <QueryProvider>
-          <AnalysisProvider>
-            <SidebarProvider>
-              <AnalysingIndicator />
-              {children}
-            </SidebarProvider>
-          </AnalysisProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <AnalysisProvider>
+              <SidebarProvider>
+                <AnalysingIndicator />
+                {children}
+              </SidebarProvider>
+            </AnalysisProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

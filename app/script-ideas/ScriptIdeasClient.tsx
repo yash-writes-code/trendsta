@@ -63,7 +63,7 @@ export default function ScriptIdeasClient() {
     // No research state for logged-in users
     if (isNoResearch && session?.user) {
         return (
-            <div className="min-h-screen bg-slate-50">
+            <div className="min-h-screen bg-transparent">
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8">
@@ -85,7 +85,7 @@ export default function ScriptIdeasClient() {
             errorMessage.toLowerCase().includes("connect your instagram");
 
         return (
-            <div className="min-h-screen bg-slate-50">
+            <div className="min-h-screen bg-transparent">
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8 flex items-center justify-center min-h-screen">
@@ -419,14 +419,10 @@ export default function ScriptIdeasClient() {
                         })}
 
                         {scripts.length === 0 && (
-                            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-200">
-                                <FileText size={48} className="mx-auto text-slate-200 mb-4" />
-                                <h3 className="text-lg font-bold text-slate-900">No scripts generated yet</h3>
-                                <p className="text-slate-500">Run a new analysis to generate script ideas.</p>
-<<<<<<< HEAD
-=======
-
->>>>>>> 9a527460fae2247ec9e1e2deacac7567f6923f6f
+                            <div className="text-center py-20 glass-panel border-dashed border-slate-200">
+                                <FileText size={48} className="mx-auto text-theme-muted mb-4" />
+                                <h3 className="text-lg font-bold text-theme-primary">No scripts generated yet</h3>
+                                <p className="text-theme-secondary">Run a new analysis to generate script ideas.</p>
                             </div>
 
                         )}

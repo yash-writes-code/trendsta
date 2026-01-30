@@ -65,7 +65,7 @@ export default function DashboardClient({ data }: DashboardClientProps) {
     }
 
     return (
-        <div className="min-h-screen neu-flat relative selection:bg-blue-200">
+        <div className="min-h-screen relative selection:bg-blue-200">
 
 
             <Sidebar />

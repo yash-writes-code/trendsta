@@ -81,7 +81,7 @@ export default function TopReelsClient() {
     // No research state for logged-in users
     if (isNoResearch && session?.user) {
         return (
-            <div className="min-h-screen bg-slate-50">
+            <div className="min-h-screen bg-transparent">
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">
@@ -114,7 +114,7 @@ export default function TopReelsClient() {
     // No Social Account State (user hasn't connected Instagram)
     if (hasNoAccount) {
         return (
-            <div className="min-h-screen bg-slate-50">
+            <div className="min-h-screen bg-transparent">
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8">
@@ -131,7 +131,7 @@ export default function TopReelsClient() {
 
         if (is404 && !isAnalysing) {
             return (
-                <div className="min-h-screen bg-slate-50">
+                <div className="min-h-screen bg-transparent">
                     <Sidebar />
                     <MobileHeader />
                     <main className="md:ml-64 p-4 md:p-8">

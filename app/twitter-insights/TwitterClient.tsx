@@ -328,7 +328,7 @@ export default function TwitterClient() {
     // No Social Account State
     if (hasNoAccount) {
         return (
-            <div className="min-h-screen bg-slate-50">
+            <div className="min-h-screen bg-transparent">
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">
@@ -346,7 +346,7 @@ export default function TwitterClient() {
 
         if (is404 && !isAnalysing && session?.user) {
             return (
-                <div className="min-h-screen bg-slate-50">
+                <div className="min-h-screen bg-transparent">
                     <Sidebar />
                     <MobileHeader />
                     <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">

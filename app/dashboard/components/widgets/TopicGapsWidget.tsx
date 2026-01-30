@@ -53,7 +53,7 @@ export default function TopicGapsWidget({ data }: TopicGapsProps) {
                             domain={[0, 100]}
                             tick={{ fontSize: 10, fill: '#64748b' }}
                             dy={10}
-                            label={{ value: 'Competition Lvl', position: 'insideBottom', offset: -20, fill: '#cbd5e1', fontSize: 10 }}
+                            label={{ value: 'Competition Lvl', position: 'insideBottom', offset: -20, fill: '#64748b', fontSize: 10 }}
                         />
                         <YAxis
                             type="number"
@@ -62,7 +62,7 @@ export default function TopicGapsWidget({ data }: TopicGapsProps) {
                             domain={[0, 100]}
                             tick={{ fontSize: 10, fill: '#64748b' }}
                             dx={-10}
-                            label={{ value: 'Viral Potential', angle: -90, position: 'insideLeft', fill: '#cbd5e1', fontSize: 10, dy: 40 }}
+                            label={{ value: 'Viral Potential', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 10, dy: 40 }}
                             width={30}
                         />
                         <ZAxis type="number" dataKey="z_volume_size" range={[60, 400]} />

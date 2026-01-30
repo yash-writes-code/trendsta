@@ -48,7 +48,7 @@ export default function TopHooksView({ hooks }: TopHooksProps) {
                             )}
                         </div>
                         <div className="col-span-8">
-                            <p className="text-sm font-semibold text-slate-100 leading-relaxed group-hover:text-indigo-400 transition-colors">
+                            <p className="text-sm font-semibold text-slate-900 leading-relaxed group-hover:text-indigo-400 transition-colors">
                                 "{item.hook}"
                             </p>
                             <p className="text-xs text-slate-400 mt-1 truncate">

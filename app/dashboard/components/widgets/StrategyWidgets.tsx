@@ -32,11 +32,11 @@ export function ViralTriggerWidget({ data }: ViralTriggerProps) {
                                 {idx + 1}
                             </span>
                             <div className="min-w-0 flex-1">
-                                <h4 className="font-bold text-slate-200 text-sm mb-1 break-words">{item.trigger}</h4>
-                                <p className="text-xs text-slate-400 leading-relaxed mb-2 break-words text-wrap whitespace-normal">{item.why_works}</p>
+                                <h4 className="font-bold text-slate-900 text-sm mb-1 break-words">{item.trigger}</h4>
+                                <p className="text-xs text-slate-500 leading-relaxed mb-2 break-words text-wrap whitespace-normal">{item.why_works}</p>
                                 <div className="flex items-start gap-1.5 mt-2 opacity-80 p-2 rounded-lg bg-white/5 border border-white/5">
                                     <Sparkles size={12} className="text-amber-400 mt-0.5 flex-shrink-0" />
-                                    <span className="text-[10px] text-slate-300 font-medium italic break-words text-wrap whitespace-normal">"{item.example}"</span>
+                                    <span className="text-[10px] text-slate-500 font-medium italic break-words text-wrap whitespace-normal">"{item.example}"</span>
                                 </div>
                             </div>
                         </div>

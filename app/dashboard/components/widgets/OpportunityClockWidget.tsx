@@ -41,7 +41,7 @@ export default function OpportunityClockWidget({ data }: OpportunityClockProps) 
                                     <Clock size={14} />
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <h4 className={`text-xs font-bold truncate ${isUser ? 'text-indigo-300' : 'text-violet-300'}`}>{slot.day} @ {slot.time}</h4>
+                                    <h4 className={`text-xs font-bold truncate ${isUser ? 'text-indigo-500' : 'text-violet-500'}`}>{slot.day} @ {slot.time}</h4>
                                     <p className={`text-[9px] font-medium uppercase tracking-wider truncate ${isUser ? 'text-indigo-400' : 'text-violet-400'}`}>
                                         {isUser ? 'Your Prime Time' : 'Competitor Spike'}
                                     </p>

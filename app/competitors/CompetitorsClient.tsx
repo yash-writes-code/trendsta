@@ -122,7 +122,7 @@ export default function CompetitorsClient() {
     // No research state for logged-in users
     if (isNoResearch && session?.user) {
         return (
-            <div className="min-h-screen bg-slate-50">
+            <div className="min-h-screen bg-transparent">
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8">
