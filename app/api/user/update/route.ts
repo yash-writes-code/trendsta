@@ -23,7 +23,6 @@ export async function POST(request: Request) {
             image,
             niche,
             subNiche,
-            creatorProfile,
             instagramUsername,
         } = body;
 
@@ -41,7 +40,6 @@ export async function POST(request: Request) {
         if (image !== undefined) userUpdateData.image = image;
         if (niche !== undefined) userUpdateData.niche = niche;
         if (subNiche !== undefined) userUpdateData.subNiche = subNiche;
-        if (creatorProfile !== undefined) userUpdateData.creatorProfile = creatorProfile;
 
         // Update user if there's data to update
         if (Object.keys(userUpdateData).length > 0) {
@@ -90,7 +88,6 @@ export async function POST(request: Request) {
                 image: true,
                 niche: true,
                 subNiche: true,
-                creatorProfile: true,
                 socialAccounts: {
                     select: {
                         id: true,

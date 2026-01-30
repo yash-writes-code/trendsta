@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { useSidebar } from "../context/SidebarContext";
 import { useSession } from "@/lib/auth-client";
 import { Camera, Trash2, ChevronDown, Check, Save, Zap, Instagram } from "lucide-react";
-import Image from "next/image";
+
 import {
     NICHE_OPTIONS,
     SUB_NICHE_MAPPING,
-    CREATOR_PROFILE_OPTIONS,
+
 } from "../onboarding/onboardingData";
 
 // Country codes for phone
@@ -62,7 +62,6 @@ export default function AccountPage() {
     // STATIC: Removed useSession for debugging -> Restored for checkout
     const { isCollapsed } = useSidebar();
     const { data: session } = useSession();
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Tab state
     const [activeTab, setActiveTab] = useState<'profile' | 'plan'>('profile');
@@ -73,18 +72,25 @@ export default function AccountPage() {
     const [email, setEmail] = useState("john.doe@example.com");
     const [phoneCode, setPhoneCode] = useState("+1");
     const [phoneNumber, setPhoneNumber] = useState("555-0123");
-    const [profileImage, setProfileImage] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
-    // Effect to pre-fill user data from session
+    // Effect to pre-fill user data from session and DB
     React.useEffect(() => {
         if (session?.user) {
             if (!firstName || firstName === "John") setFirstName(session.user.name?.split(' ')[0] || "");
             if (!lastName || lastName === "Doe") setLastName(session.user.name?.split(' ').slice(1).join(' ') || "");
-            // email is usually read-only in this form but let's set it
             setEmail(session.user.email || "");
-            if (session.user.image) setProfileImage(session.user.image);
+
+            // Fetch onboarding data
+            fetch('/api/user/profile')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.niche) setNiche(data.niche);
+                    if (data.subNiche) setSubNiche(data.subNiche);
+                    if (data.instagramUsername) setInstagramUsername(data.instagramUsername);
+                })
+                .catch(err => console.error('Failed to fetch profile:', err));
         }
     }, [session]);
 
@@ -94,10 +100,24 @@ export default function AccountPage() {
     const [instagramUsername, setInstagramUsername] = useState("");
     const [niche, setNiche] = useState("");
     const [subNiche, setSubNiche] = useState("");
-    const [creatorProfile, setCreatorProfile] = useState("");
 
     // Dropdown states
     const [showPhoneCodeDropdown, setShowPhoneCodeDropdown] = useState(false);
+    const phoneDropdownRef = useRef<HTMLDivElement>(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (phoneDropdownRef.current && !phoneDropdownRef.current.contains(event.target as Node)) {
+                setShowPhoneCodeDropdown(false);
+            }
+        }
+
+        if (showPhoneCodeDropdown) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }
+    }, [showPhoneCodeDropdown]);
 
     // Subscription State
     const [plans, setPlans] = useState<Plan[]>([]);
@@ -269,21 +289,6 @@ export default function AccountPage() {
     };
 
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setProfileImage(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const handleRemoveImage = () => {
-        setProfileImage(null);
-    };
-
     const handleNicheChange = (value: string) => {
         setNiche(value);
         setSubNiche(""); // Reset sub-niche when niche changes
@@ -310,10 +315,8 @@ export default function AccountPage() {
                     firstName,
                     lastName,
                     phoneNumber,
-                    image: profileImage,
                     niche,
                     subNiche,
-                    creatorProfile,
                     instagramUsername,
                 }),
             });
@@ -389,51 +392,6 @@ export default function AccountPage() {
                                 </div>
 
                                 <div className="p-6">
-                                    {/* Profile Picture */}
-                                    <div className="flex items-center gap-6 mb-8">
-                                        <div className="relative">
-                                            <div className="w-24 h-24 rounded-full bg-slate-100 overflow-hidden border-4 border-white shadow-lg">
-                                                {profileImage ? (
-                                                    <Image
-                                                        src={profileImage}
-                                                        alt="Profile"
-                                                        width={96}
-                                                        height={96}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-slate-400">
-                                                        <Camera size={32} />
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-3">
-                                            <input
-                                                type="file"
-                                                ref={fileInputRef}
-                                                onChange={handleImageUpload}
-                                                accept="image/*"
-                                                className="hidden"
-                                            />
-                                            <button
-                                                onClick={() => fileInputRef.current?.click()}
-                                                className="px-4 py-2.5 bg-slate-900 text-white rounded-xl font-medium hover:bg-slate-800 transition-colors"
-                                            >
-                                                Upload An Image
-                                            </button>
-                                            {profileImage && (
-                                                <button
-                                                    onClick={handleRemoveImage}
-                                                    className="p-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-colors"
-                                                >
-                                                    <Trash2 size={20} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-
                                     {/* Form Fields */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {/* First Name */}
@@ -487,7 +445,7 @@ export default function AccountPage() {
                                             </label>
                                             <div className="flex gap-2">
                                                 {/* Country Code Dropdown */}
-                                                <div className="relative">
+                                                <div className="relative" ref={phoneDropdownRef}>
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowPhoneCodeDropdown(!showPhoneCodeDropdown)}
@@ -551,18 +509,19 @@ export default function AccountPage() {
                                         <input
                                             type="text"
                                             value={instagramUsername}
-                                            onChange={handleInstagramChange}
+                                            readOnly
+                                            disabled
                                             placeholder="@yourusername"
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition-all font-medium"
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 placeholder-slate-400 focus:outline-none transition-all font-medium cursor-not-allowed"
                                         />
-                                        <p className="text-xs text-slate-400 mt-1">Used for content analysis and competitor research</p>
+                                        <p className="text-xs text-slate-400 mt-1">Username cannot be changed</p>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {/* Niche */}
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">
-                                                Content Niche
+                                                Content Niche <span className="text-red-500">*</span>
                                             </label>
                                             <select
                                                 value={niche}
@@ -587,7 +546,7 @@ export default function AccountPage() {
                                         {/* Sub-Niche */}
                                         <div>
                                             <label className="block text-sm font-medium text-slate-700 mb-2">
-                                                Sub-Niche
+                                                Sub-Niche <span className="text-red-500">*</span>
                                             </label>
                                             <select
                                                 value={subNiche}
@@ -613,44 +572,7 @@ export default function AccountPage() {
                                         </div>
                                     </div>
 
-                                    {/* Creator Profile */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-3">
-                                            Creator Profile
-                                        </label>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            {CREATOR_PROFILE_OPTIONS.map((option) => (
-                                                <button
-                                                    key={option.value}
-                                                    type="button"
-                                                    onClick={() => setCreatorProfile(option.value)}
-                                                    className={`p-4 text-left border-2 rounded-xl transition-all duration-200 ${creatorProfile === option.value
-                                                        ? 'border-blue-500 bg-blue-50/50 shadow-md'
-                                                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
-                                                        }`}
-                                                >
-                                                    <div className="flex items-start justify-between">
-                                                        <div>
-                                                            <h3 className={`font-semibold text-sm ${creatorProfile === option.value ? 'text-blue-700' : 'text-slate-700'}`}>
-                                                                {option.label}
-                                                            </h3>
-                                                            <p className="mt-1 text-xs text-slate-500">
-                                                                {option.description}
-                                                            </p>
-                                                        </div>
-                                                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${creatorProfile === option.value
-                                                            ? 'border-blue-500 bg-blue-500'
-                                                            : 'border-slate-300'
-                                                            }`}>
-                                                            {creatorProfile === option.value && (
-                                                                <Check size={12} className="text-white" strokeWidth={3} />
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
 

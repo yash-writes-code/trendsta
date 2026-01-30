@@ -7,11 +7,13 @@ import MobileHeader from "../components/MobileHeader";
 import { TweetData, ResearchSummary } from "@/app/types/trendsta";
 import SmartInsightsView from "../components/SmartInsightsView";
 import NoResearchFound from "../components/NoResearchFound";
+import NoResearchState from "../components/NoResearchState";
 import NoSocialAccount from "../components/NoSocialAccount";
 import AnalyseConfirmModal from "../components/AnalyseConfirmModal";
 import { useTwitterResearch, useOverallStrategy } from "@/hooks/useResearch";
 import { useSocialAccount } from "@/hooks/useSocialAccount";
 import { useAnalysis } from "@/app/context/AnalysisContext";
+import { useSession } from "@/lib/auth-client";
 import { RawTweet, RawTwitterResearch } from "@/app/types/rawApiTypes";
 
 export const dynamic = 'force-dynamic';
@@ -253,6 +255,7 @@ export default function TwitterClient() {
     const { data: overallStrategy } = useOverallStrategy();
     const { data: socialAccount, isLoading: socialLoading, hasNoAccount } = useSocialAccount();
     const { isAnalysing } = useAnalysis();
+    const { data: session } = useSession();
 
     // Transform raw tweets to TweetData format
     const topTweets = useMemo(() => {
@@ -340,13 +343,13 @@ export default function TwitterClient() {
         const errorStatus = (error as { status?: number })?.status;
         const is404 = errorStatus === 404;
 
-        if (is404 && !isAnalysing) {
+        if (is404 && !isAnalysing && session?.user) {
             return (
                 <div className="min-h-screen bg-slate-50">
                     <Sidebar />
                     <MobileHeader />
                     <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">
-                        <NoResearchFound onAnalyse={() => setShowAnalyseModal(true)} />
+                        <NoResearchState onAnalyse={() => setShowAnalyseModal(true)} />
                         <AnalyseConfirmModal
                             open={showAnalyseModal}
                             onOpenChange={setShowAnalyseModal}

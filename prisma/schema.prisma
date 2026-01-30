@@ -29,7 +29,6 @@ model User {
   // Onboarding fields
   niche          String?
   subNiche       String?
-  creatorProfile String?
 
   // Plan & Stella relations
   subscriptions      Subscription[]

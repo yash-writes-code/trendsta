@@ -6,14 +6,31 @@ import { motion, AnimatePresence } from "framer-motion";
 import Sidebar from "../components/Sidebar";
 import MobileHeader from "../components/MobileHeader";
 import NoSocialAccount from "../components/NoSocialAccount";
+import NoResearchState from "../components/NoResearchState";
+import AnalyseConfirmModal from "../components/AnalyseConfirmModal";
 import { useScriptSuggestions } from "@/hooks/useResearch";
 import { transformScriptSuggestion } from "@/lib/transformers";
+import { useSession } from "@/lib/auth-client";
+import { useSocialAccount } from "@/hooks/useSocialAccount";
 
 export default function ScriptIdeasClient() {
-    const { data: rawData, isLoading, error } = useScriptSuggestions();
+    const { data: rawData, isLoading, error, isNoResearch } = useScriptSuggestions();
+    const { data: session } = useSession();
+    const { data: socialAccount } = useSocialAccount();
+    const [showAnalyseModal, setShowAnalyseModal] = useState(false);
 
     const [expandedScript, setExpandedScript] = useState<number | null>(null);
     const [copiedSection, setCopiedSection] = useState<string | null>(null);
+
+    // Debug logging
+    console.log("ScriptIdeas Debug:", {
+        hasSession: !!session?.user,
+        sessionEmail: session?.user?.email,
+        isNoResearch,
+        hasData: !!rawData,
+        error: error?.message,
+    });
+    console.log("=== COMPONENT RENDER ===");
 
     const scripts = Array.isArray(rawData) ? rawData.map(transformScriptSuggestion) : [];
 
@@ -27,8 +44,8 @@ export default function ScriptIdeasClient() {
         setExpandedScript(expandedScript === id ? null : id);
     };
 
-    // Loading State
-    if (isLoading) {
+    // Loading State - only show loading if not in error state
+    if (isLoading && !error && !isNoResearch) {
         return (
             <div className="min-h-screen bg-slate-50">
                 <Sidebar />
@@ -38,6 +55,24 @@ export default function ScriptIdeasClient() {
                         <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
                         <p className="text-slate-500">Generating script ideas...</p>
                     </div>
+                </main>
+            </div>
+        );
+    }
+
+    // No research state for logged-in users
+    if (isNoResearch && session?.user) {
+        return (
+            <div className="min-h-screen bg-slate-50">
+                <Sidebar />
+                <MobileHeader />
+                <main className="md:ml-64 p-4 md:p-8">
+                    <NoResearchState onAnalyse={() => setShowAnalyseModal(true)} />
+                    <AnalyseConfirmModal
+                        open={showAnalyseModal}
+                        onOpenChange={setShowAnalyseModal}
+                        socialAccountId={socialAccount?.id || ""}
+                    />
                 </main>
             </div>
         );
