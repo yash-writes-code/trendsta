@@ -1,171 +1,114 @@
 "use client";
 
 import React from "react";
-import { Zap, Clock, Calendar, CheckCircle2, Lightbulb, AlertTriangle, ArrowRight, Sparkles } from "lucide-react";
+import { Zap, CheckCircle2, Lightbulb, AlertTriangle, ArrowRight, Sparkles, Target, FlaskConical, Music, Timer } from "lucide-react";
+
+import { ResearchSummary } from "../../types/trendsta";
 
 interface ResearchSummaryProps {
-    summary: {
-        instagram_insights?: string;
-        twitter_insights?: string;
-        competitor_insights?: string;
-        content_gap?: string;
-        viral_triggers?: string;
-        postingSchedule?: string;
-        posting_times?: string;
-        hook_formula?: string;
-        [key: string]: any;
-    };
+    summary: ResearchSummary;
 }
 
-// --- Parsing Helpers ---
-const parseKeyValues = (text?: string) => {
-    if (!text) return [];
-    return text.split("\n").map(line => {
-        const [key, value] = line.split(":").map(s => s.trim());
-        if (!value) return null;
-        return { key, value };
-    }).filter(Boolean) as { key: string, value: string }[];
-};
-
 export default function ResearchSummaryView({ summary }: ResearchSummaryProps) {
-    // Parse data for the "Execution Plan" view
-    const rawDetails = parseKeyValues(summary.postingSchedule || summary.posting_times);
-    const hookDetails = parseKeyValues(summary.hook_formula);
+    const { execution_plan } = summary;
 
-    // Check if we have "Insight" data structure
-    const isInsightMode = rawDetails.some(d => d.key === "Insight");
-
-    // Group insights if in Insight Mode
-    const insightsGrouped = [];
-    if (isInsightMode) {
-        let currentGroup: any = {};
-        rawDetails.forEach((item) => {
-            if (item.key === "Insight") {
-                if (currentGroup.Insight) insightsGrouped.push(currentGroup);
-                currentGroup = { Insight: item.value };
-            } else if (item.key === "Action" || item.key === "Evidence") {
-                currentGroup[item.key] = item.value;
-            } else {
-                // Fallback for other keys
-                currentGroup[item.key] = item.value;
-            }
-        });
-        if (currentGroup.Insight) insightsGrouped.push(currentGroup);
-    }
-
-    const validPostingDetails = rawDetails.length > 0 ? rawDetails : [
-        { key: "Times", value: "6:00 PM - 9:00 PM" },
-        { key: "Days", value: "Tuesday, Thursday" },
-        { key: "Frequency", value: "Daily" },
-        { key: "Evidence", value: "High engagement during evening commute hours." }
-    ];
-
-    const validHookDetails = hookDetails.length > 0 ? hookDetails : [
-        { key: "Pattern", value: "Statement of Disbelief + Visual Proof" },
-        { key: "Examples", value: "\"Power without wires?! This is not CGI.\"" },
-        { key: "Why", value: "Immediate pattern interrupt that forces the brain to verify the claim" }
-    ];
+    if (!execution_plan) return null;
 
     return (
         <div className="w-full animate-fadeInUp">
             {/* Execution Card */}
-            <div className="execution-card p-8 md:p-10 relative overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl">
+            <div className="execution-card p-8 md:p-10 relative overflow-hidden neu-convex">
 
                 {/* Header */}
-                <div className="flex items-start gap-4 mb-12 relative z-10">
-                    <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10 shadow-lg">
-                        <Zap size={28} className="text-yellow-400 fill-yellow-400" />
+                <div className="flex items-start gap-4 mb-10 relative z-10">
+                    <div className="w-14 h-14 rounded-2xl neu-pressed flex items-center justify-center shrink-0">
+                        <Zap size={28} className="text-yellow-500 fill-yellow-500" />
                     </div>
                     <div>
-                        <h2 className="text-2xl md:text-3xl font-bold text-white mb-1">Execution Plan</h2>
-                        <p className="text-blue-200/80 font-medium text-sm tracking-wide">Immediate tactical actions</p>
+                        <h2 className="text-2xl md:text-3xl font-bold text-slate-700 mb-1">Execution Plan</h2>
+                        <p className="text-slate-500 font-medium text-sm tracking-wide">Immediate tactical actions & Strategy</p>
                     </div>
                 </div>
 
-                {/* Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 relative z-10">
+                {/* Main Grid */}
+                <div className="relative z-10">
 
-                    {/* Left Column: Posting Window OR Insights */}
-                    <div>
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-8 border-b border-white/5 pb-4">
-                            {isInsightMode ? "Strategic Insights" : "Posting Window"}
-                        </h3>
+                    {/* Tactical Execution (Full Width) */}
+                    <div className="space-y-8">
 
-                        <div className="space-y-8">
-                            {isInsightMode ? (
-                                insightsGrouped.map((group, idx) => (
-                                    <div key={idx} className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-5 hover:bg-slate-800/60 transition-colors">
-
-                                        {/* Insight */}
-                                        <div className="mb-4">
-                                            <span className="text-xs font-bold text-yellow-500 uppercase tracking-wider block mb-1">Insight</span>
-                                            <p className="text-white font-medium leading-relaxed">{group.Insight}</p>
-                                        </div>
-
-                                        {/* Recommended Action (Pink/Rose Block) */}
-                                        <div className="mb-4 p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg">
-                                            <div className="flex items-center gap-2 mb-2">
-                                                <CheckCircle2 size={14} className="text-rose-400" />
-                                                <span className="text-xs font-bold text-rose-400 uppercase tracking-widest">Recommended Action</span>
+                        {/* 1. Immediate Action Checklist */}
+                        <div>
+                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 border-b border-slate-200 pb-2">Immediate Actions</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {execution_plan.immediate_action_checklist.map((action, idx) => (
+                                    <div key={idx} className="flex items-start gap-4 p-4 neu-convex-sm rounded-xl transition-colors group">
+                                        <div className="min-w-[20px] pt-0.5">
+                                            <div className="w-5 h-5 rounded border-2 border-slate-300 group-hover:border-blue-500 transition-colors flex items-center justify-center">
+                                                <div className="w-2.5 h-2.5 bg-blue-500 rounded-sm opacity-0 group-hover:opacity-100 transition-opacity" />
                                             </div>
-                                            <p className="text-rose-100 text-sm font-medium leading-relaxed">
-                                                {group.Action}
-                                            </p>
                                         </div>
-
-                                        {/* Evidence (Separate Block as requested) */}
-                                        {group.Evidence && (
-                                            <div className="pl-4 border-l-2 border-blue-500/30">
-                                                <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider block mb-1">Evidence</span>
-                                                <p className="text-slate-400 text-xs italic leading-relaxed">
-                                                    "{group.Evidence}"
-                                                </p>
-                                            </div>
-                                        )}
+                                        <p className="text-slate-600 text-sm font-medium leading-relaxed">{action}</p>
                                     </div>
-                                ))
-                            ) : (
-                                validPostingDetails.map((item, idx) => (
-                                    <div key={idx} className="group">
-                                        <div className="flex justify-between items-baseline mb-1">
-                                            <span className={`text-sm font-semibold ${item.key === 'Evidence' ? 'text-blue-400' : 'text-slate-400'} min-w-[100px]`}>
-                                                {item.key}
-                                            </span>
-                                            <span className={`text-md font-medium text-right ${item.key === 'Evidence' ? 'text-slate-300 text-sm leading-relaxed max-w-[280px]' : 'text-white'}`}>
-                                                {item.value}
-                                            </span>
-                                        </div>
-                                        {item.key !== 'Evidence' && <div className="h-px w-full bg-white/5 group-hover:bg-white/10 transition-colors mt-2" />}
-                                    </div>
-                                ))
-                            )}
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Right Column: Hook Frameworks */}
-                    <div>
-                        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-8 border-b border-white/5 pb-4">
-                            Hook Frameworks
-                        </h3>
-                        <div className="space-y-4">
-                            {validHookDetails.map((item, idx) => (
-                                <div key={idx} className="inner-card p-5 group hover:-translate-y-1 transition-transform duration-300 bg-slate-800/50 border-slate-700/50">
-                                    <div className="flex items-center gap-2 mb-3">
-                                        <Lightbulb size={14} className="text-yellow-400" />
-                                        <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">{item.key}</span>
+                        {/* Grid for Specs & Experiment */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* 2. Production Spec Sheet */}
+                            <div>
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 border-b border-slate-200 pb-2">Production Specs</h3>
+                                <div className="space-y-4">
+                                    <div className="p-4 neu-convex-sm rounded-xl flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                                            <Timer size={20} />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] uppercase text-emerald-600 font-bold">Duration & Pace</p>
+                                            <p className="text-slate-700 text-xs font-semibold">{execution_plan.production_spec_sheet.target_duration}</p>
+                                            <p className="text-slate-500 text-[10px]">{execution_plan.production_spec_sheet.target_wpm}</p>
+                                        </div>
                                     </div>
-                                    <p className="text-white text-lg font-medium leading-normal">
-                                        {item.value.replace(/^"|"$/g, '')}
-                                    </p>
+                                    <div className="p-4 neu-convex-sm rounded-xl flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center text-purple-600">
+                                            <Music size={20} />
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] uppercase text-purple-600 font-bold">Audio Mood</p>
+                                            <p className="text-slate-700 text-xs font-semibold line-clamp-2">{execution_plan.production_spec_sheet.audio_mood}</p>
+                                        </div>
+                                    </div>
                                 </div>
-                            ))}
+                            </div>
+
+                            {/* 3. Experiment This */}
+                            <div>
+                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em] mb-4 border-b border-slate-200 pb-2">Active Experiment</h3>
+                                <div className="neu-convex-sm rounded-2xl p-5 relative overflow-hidden h-full">
+                                    <div className="absolute top-0 right-0 p-3 opacity-10">
+                                        <FlaskConical size={64} className="text-blue-500" />
+                                    </div>
+                                    <div className="relative z-10 space-y-4">
+                                        <div className="flex gap-4">
+                                            <div className="w-0.5 bg-blue-500/50 self-stretch rounded-full" />
+                                            <div>
+                                                <p className="text-[10px] uppercase text-blue-600 font-bold mb-1">Hypothesis</p>
+                                                <p className="text-slate-600 text-sm leading-relaxed italic">"{execution_plan.experiment_this.hypothesis}"</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-4">
+                                            <div className="w-0.5 bg-emerald-500/50 self-stretch rounded-full" />
+                                            <div>
+                                                <p className="text-[10px] uppercase text-emerald-600 font-bold mb-1">Test Protocol</p>
+                                                <p className="text-slate-600 text-sm leading-relaxed">{execution_plan.experiment_this.how_to_test}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                {/* Decorative Elements */}
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[100px] -mr-32 -mt-32 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-purple-600/10 rounded-full blur-[100px] -ml-24 -mb-24 pointer-events-none" />
             </div>
         </div>
     );

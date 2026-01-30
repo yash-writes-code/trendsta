@@ -47,13 +47,13 @@ export default function ScriptIdeasClient() {
     // Loading State - only show loading if not in error state
     if (isLoading && !error && !isNoResearch) {
         return (
-            <div className="min-h-screen bg-slate-50">
+            <div className="min-h-screen bg-transparent">
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8 flex items-center justify-center min-h-screen">
                     <div className="flex flex-col items-center gap-4">
-                        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
-                        <p className="text-slate-500">Generating script ideas...</p>
+                        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+                        <p className="text-theme-secondary">Generating script ideas...</p>
                     </div>
                 </main>
             </div>
@@ -63,7 +63,7 @@ export default function ScriptIdeasClient() {
     // No research state for logged-in users
     if (isNoResearch && session?.user) {
         return (
-            <div className="min-h-screen bg-slate-50">
+            <div className="min-h-screen bg-transparent">
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8">
@@ -85,7 +85,7 @@ export default function ScriptIdeasClient() {
             errorMessage.toLowerCase().includes("connect your instagram");
 
         return (
-            <div className="min-h-screen bg-slate-50">
+            <div className="min-h-screen bg-transparent">
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8 flex items-center justify-center min-h-screen">
@@ -103,9 +103,9 @@ export default function ScriptIdeasClient() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-transparent">
             {/* Subtle Top Gradient */}
-            <div className="fixed top-0 left-0 right-0 h-64 bg-gradient-to-b from-purple-50/50 to-transparent pointer-events-none" />
+            <div className="fixed top-0 left-0 right-0 h-64 bg-gradient-to-b from-purple-500/10 to-transparent pointer-events-none" />
 
             <Sidebar />
             <MobileHeader />
@@ -114,8 +114,8 @@ export default function ScriptIdeasClient() {
                 <div className="max-w-5xl mx-auto space-y-10">
                     {/* Header */}
                     <div className="space-y-3 animate-fadeInUp">
-                        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Script Ideas</h1>
-                        <p className="text-lg text-slate-600 max-w-xl">
+                        <h1 className="text-3xl font-bold text-theme-primary tracking-tight">Script Ideas</h1>
+                        <p className="text-lg text-theme-secondary max-w-xl">
                             Curated high-viral potential scripts based on current trends.
                         </p>
                     </div>
@@ -135,8 +135,8 @@ export default function ScriptIdeasClient() {
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3, delay: index * 0.1 }}
                                     className={`
-                                        bg-white rounded-2xl border transition-all duration-300 overflow-hidden
-                                        ${isExpanded ? 'border-purple-200 shadow-xl ring-1 ring-purple-100' : 'border-slate-200 shadow-sm hover:shadow-md'}
+                                        glass-panel transition-all duration-300 overflow-hidden
+                                        ${isExpanded ? 'border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.15)] ring-1 ring-purple-500/30' : 'hover:bg-white/5'}
                                     `}
                                 >
                                     {/* Summary Card (Clickable) */}
@@ -181,11 +181,11 @@ export default function ScriptIdeasClient() {
 
                                                     {/* Audio Vibe Badge */}
                                                     {script.audio_vibe && (
-                                                        <div className="flex items-start gap-2 text-left bg-slate-100 p-2 rounded-lg">
-                                                            <div className="mt-0.5"><Sparkles size={10} className="text-purple-500" /></div>
+                                                        <div className="flex items-start gap-2 text-left bg-white/5 border border-white/10 p-2 rounded-lg">
+                                                            <div className="mt-0.5"><Sparkles size={10} className="text-purple-400" /></div>
                                                             <div>
-                                                                <span className="text-[10px] font-bold text-slate-500 uppercase block">Audio Vibe</span>
-                                                                <p className="text-[10px] text-slate-700 font-medium leading-tight">{script.audio_vibe}</p>
+                                                                <span className="text-[10px] font-bold text-slate-400 uppercase block">Audio Vibe</span>
+                                                                <p className="text-[10px] text-slate-300 font-medium leading-tight">{script.audio_vibe}</p>
                                                             </div>
                                                         </div>
                                                     )}
@@ -203,7 +203,7 @@ export default function ScriptIdeasClient() {
                                             <div className="lg:col-span-8 space-y-5 flex flex-col justify-center">
                                                 {/* ... (Keep existing Header & Title ...) */}
                                                 <div className="flex items-start justify-between">
-                                                    <h2 className="text-lg font-bold text-slate-900">{script.script_title}</h2>
+                                                    <h2 className="text-lg font-bold text-theme-primary">{script.script_title}</h2>
                                                     <button className="text-sm font-semibold text-purple-600 flex items-center gap-1 hover:text-purple-700 transition-colors">
                                                         {isExpanded ? 'Collapse' : 'View Details'}
                                                         {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -212,7 +212,7 @@ export default function ScriptIdeasClient() {
 
                                                 {/* The Hook */}
                                                 <div>
-                                                    <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">The Hook</h3>
+                                                    <h3 className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mb-2">The Hook</h3>
                                                     <div className="p-4 bg-slate-900 rounded-xl shadow-md border border-slate-800 relative overflow-hidden group">
                                                         <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                             <Copy size={14} className="text-slate-500 hover:text-white cursor-pointer" onClick={(e) => { e.stopPropagation(); copyToClipboard(script.script_hook, `hook-${scriptId}`); }} />
@@ -226,7 +226,7 @@ export default function ScriptIdeasClient() {
                                                 {/* Strategy Grid */}
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div className="space-y-1">
-                                                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">The Payoff</h3>
+                                                        <h3 className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">The Payoff</h3>
                                                         <div className="p-3 bg-green-50 border border-green-100 rounded-xl h-full">
                                                             <p className="text-xs text-green-800 font-medium leading-relaxed">
                                                                 {script.script_value}
@@ -234,7 +234,7 @@ export default function ScriptIdeasClient() {
                                                         </div>
                                                     </div>
                                                     <div className="space-y-1">
-                                                        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Market Gap</h3>
+                                                        <h3 className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Market Gap</h3>
                                                         <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl h-full">
                                                             <div className="flex items-center gap-1.5 mb-1">
                                                                 <Target size={12} className="text-blue-500" />
@@ -259,15 +259,15 @@ export default function ScriptIdeasClient() {
                                                 exit={{ height: 0, opacity: 0 }}
                                                 transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
                                             >
-                                                <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
+                                                <div className="border-t border-white/10 bg-black/20 p-6 md:p-8">
                                                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                                                         {/* Full Script Text */}
                                                         <div className="lg:col-span-2 space-y-4">
                                                             {/* ... (Keep existing script editor ...) */}
                                                             <div className="flex items-center justify-between">
-                                                                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                                                                    <MessageCircle size={16} className="text-slate-400" />
+                                                                <h3 className="text-sm font-bold text-theme-primary uppercase tracking-wider flex items-center gap-2">
+                                                                    <MessageCircle size={16} className="text-theme-muted" />
                                                                     Video Script
                                                                 </h3>
                                                             </div>
@@ -419,11 +419,10 @@ export default function ScriptIdeasClient() {
                         })}
 
                         {scripts.length === 0 && (
-                            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-200">
-                                <FileText size={48} className="mx-auto text-slate-200 mb-4" />
-                                <h3 className="text-lg font-bold text-slate-900">No scripts generated yet</h3>
-                                <p className="text-slate-500">Run a new analysis to generate script ideas.</p>
-
+                            <div className="text-center py-20 glass-panel border-dashed border-slate-200">
+                                <FileText size={48} className="mx-auto text-theme-muted mb-4" />
+                                <h3 className="text-lg font-bold text-theme-primary">No scripts generated yet</h3>
+                                <p className="text-theme-secondary">Run a new analysis to generate script ideas.</p>
                             </div>
 
                         )}

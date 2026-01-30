@@ -3,6 +3,7 @@ import "./globals.css";
 import { SidebarProvider } from "./context/SidebarContext";
 import { AnalysisProvider } from "./context/AnalysisContext";
 import { QueryProvider } from "./providers/QueryProvider";
+import { ThemeProvider } from "./context/ThemeContext";
 import AnalysingIndicator from "./components/AnalysingIndicator";
 
 export const metadata: Metadata = {
@@ -16,16 +17,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
-        <QueryProvider>
-          <AnalysisProvider>
-            <SidebarProvider>
-              <AnalysingIndicator />
-              {children}
-            </SidebarProvider>
-          </AnalysisProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <AnalysisProvider>
+              <SidebarProvider>
+                <AnalysingIndicator />
+                {children}
+              </SidebarProvider>
+            </AnalysisProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

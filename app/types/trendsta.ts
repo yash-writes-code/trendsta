@@ -34,14 +34,49 @@ export interface ScriptIdea {
 
 export interface ResearchSummary {
     type: string;
-    instagram_insights: string;
-    twitter_insights: string;
-    competitor_insights: string;
-    viral_triggers: string;
-    content_gap: string;
-    posting_times: string;
-    hook_formula: string;
-    instagram_summary_research: string;
+    // Legacy / Flat fields (keep for fallback)
+    instagram_insights?: string;
+    twitter_insights?: string;
+    competitor_insights?: string;
+    posting_times?: string;
+
+    // New Structured Data
+    viral_triggers?: {
+        trigger: string;
+        why_works: string;
+        example: string;
+    }[];
+    content_gap?: {
+        gap: string;
+        opportunity: string;
+        evidence: string;
+    };
+    hook_formula?: {
+        pattern: string;
+        examples: string[];
+        why_works: string;
+    };
+    posting_strategy?: {
+        best_times: string[];
+        best_days: string[];
+        frequency: string;
+        evidence: string;
+    };
+
+    execution_plan?: {
+        immediate_action_checklist: string[];
+        production_spec_sheet: {
+            target_wpm: string;
+            target_duration: string;
+            audio_mood: string;
+        };
+        experiment_this: {
+            hypothesis: string;
+            how_to_test: string;
+        };
+    };
+
+    instagram_summary_research?: string;
     generatedAt: string;
 }
 
@@ -249,6 +284,42 @@ export interface TrendstaData {
     niche_research: NicheResearch;
     latest_research: any[]; // Define if used
     top_research: any[];    // Define if used
+    hooks?: {
+        rank: number;
+        hook: string;
+        reelcaption: string;
+        sourceusername: string;
+    }[];
+    dashboard_graphs?: {
+        scatter_plot_viral_sweet_spot: {
+            insight: string;
+            data_points: { label: string; x_duration_sec: number; y_pace_wpm: number; status: string }[];
+        };
+        bar_chart_hook_leaderboard: {
+            insight: string;
+            data: { pattern_name: string; engagement_score: number }[];
+        };
+        heatmap_opportunity_clock: {
+            insight: string;
+            top_slots: { day: string; time: string; heat_score: number; source: string }[];
+        };
+        bubble_chart_topic_gaps: {
+            insight: string;
+            bubbles: { topic: string; x_competition_level: number; y_viral_potential: number; z_volume_size: number }[];
+        };
+        pie_chart_content_diet: {
+            insight: string;
+            segments: { category_label: string; percentage: number }[];
+        };
+        treemap_topic_dominance: {
+            insight: string;
+            blocks: { keyword: string; value_avg_views: number; frequency_count: number }[];
+        };
+        stacked_bar_consistency: {
+            insight: string;
+            stacks: { entity: string; viral_pct: number; average_pct: number; underperf_pct: number }[];
+        };
+    };
     dashboard_analytics: {
         trends_line: { date: string; value1: number; value2: number }[];
         growth_bar: { month: string; value1: number; value2: number }[];

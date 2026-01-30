@@ -26,7 +26,7 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
     const topHooks = (competitors.top_hooks || []).slice(0, 7);
 
     return (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm animate-fadeInUp">
+        <div className="neu-convex p-6 animate-fadeInUp">
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
                     <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
@@ -94,7 +94,7 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
                             <span className="text-xs font-bold text-blue-600 uppercase">Viral Trigger</span>
                         </div>
                         <h4 className="font-bold text-lg mb-1 relative z-10 text-blue-800">Core insight</h4>
-                        <p className="text-blue-700 text-sm leading-relaxed relative z-10">
+                        <p className="text-blue-700 text-sm leading-relaxed relative z-10 whitespace-pre-wrap">
                             {viralTriggerText}
                         </p>
                         {/* Decor */}
@@ -108,7 +108,7 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
                             <span className="text-xs font-bold text-amber-600 uppercase">Opportunity</span>
                         </div>
                         <h4 className="font-bold text-lg mb-1 relative z-10 text-amber-800">Content Gap</h4>
-                        <p className="text-amber-700 text-sm leading-relaxed relative z-10">
+                        <p className="text-amber-700 text-sm leading-relaxed relative z-10 whitespace-pre-wrap">
                             {research.content_gap || "Analysis pending..."}
                         </p>
                         {/* Decor */}
