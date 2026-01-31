@@ -8,7 +8,6 @@ import ReelCard from "../components/ReelCard";
 import ReelModal from "../components/ReelModal";
 import SmartInsightsView from "../components/SmartInsightsView";
 import NoResearchState from "../components/NoResearchState";
-import AnalyseConfirmModal from "../components/AnalyseConfirmModal";
 import { ReelData } from "@/app/types/trendsta";
 
 // Hooks & Transformers
@@ -30,7 +29,6 @@ export default function CompetitorsClient() {
     const { data: rawStrategyData, isLoading: strategyLoading } = useOverallStrategy();
     const { data: socialAccount } = useSocialAccount();
     const { data: session } = useSession();
-    const [showAnalyseModal, setShowAnalyseModal] = useState(false);
 
     // Transform raw data to UI types
     const competitorResearch = transformCompetitorResearch(rawCompetitorData);
@@ -127,11 +125,6 @@ export default function CompetitorsClient() {
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8">
                     <NoResearchState/>
-                    <AnalyseConfirmModal
-                        open={showAnalyseModal}
-                        onOpenChange={setShowAnalyseModal}
-                        socialAccountId={socialAccount?.id || ""}
-                    />
                 </main>
             </div>
         );
