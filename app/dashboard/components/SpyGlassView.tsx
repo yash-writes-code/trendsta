@@ -95,7 +95,18 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
                         </div>
                         <h4 className="font-bold text-lg mb-1 relative z-10 text-blue-800">Core insight</h4>
                         <p className="text-blue-700 text-sm leading-relaxed relative z-10 whitespace-pre-wrap">
-                            {viralTriggerText}
+                            {Array.isArray(viralTriggerText) ? (
+                                <ul className="list-disc pl-4 space-y-1">
+                                    {viralTriggerText.map((t, i) => (
+                                        <li key={i}>
+                                            <span className="font-semibold block">{t.trigger}</span>
+                                            <span className="text-xs opacity-90">{t.why_works}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                viralTriggerText
+                            )}
                         </p>
                         {/* Decor */}
                         <div className="absolute -right-4 -bottom-4 bg-blue-200/50 w-24 h-24 rounded-full blur-xl" />
@@ -109,7 +120,14 @@ export default function SpyGlassView({ research, competitors }: SpyGlassViewProp
                         </div>
                         <h4 className="font-bold text-lg mb-1 relative z-10 text-amber-800">Content Gap</h4>
                         <p className="text-amber-700 text-sm leading-relaxed relative z-10 whitespace-pre-wrap">
-                            {research.content_gap || "Analysis pending..."}
+                            {typeof research.content_gap === 'string' ? (
+                                research.content_gap || "Analysis pending..."
+                            ) : (
+                                <span>
+                                    <span className="font-semibold block mb-1">{research.content_gap?.gap}</span>
+                                    <span className="opacity-90">{research.content_gap?.opportunity}</span>
+                                </span>
+                            )}
                         </p>
                         {/* Decor */}
                         <div className="absolute -right-4 -bottom-4 bg-amber-200/50 w-24 h-24 rounded-full blur-xl" />

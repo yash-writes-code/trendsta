@@ -124,7 +124,7 @@ function TweetCard({ tweet, index }: { tweet: TweetData; index: number }) {
 
     return (
         <div
-            className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-[#1A1D2D] border border-white/5 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow hover:border-blue-500/20"
             style={{ animationDelay: `${index * 0.05}s` }}
         >
             {/* Author Header */}
@@ -138,7 +138,7 @@ function TweetCard({ tweet, index }: { tweet: TweetData; index: number }) {
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                        <span className="font-semibold text-theme-primary truncate">{tweet.authorName}</span>
+                        <span className="font-semibold text-white truncate">{tweet.authorName}</span>
                         {tweet.isVerified && (
                             <svg className="w-4 h-4 text-blue-500 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .494.083.964.237 1.4-1.272.65-2.147 2.018-2.147 3.6 0 1.495.782 2.798 1.942 3.486-.02.17-.032.34-.032.514 0 2.21 1.708 4 3.818 4 .47 0 .92-.086 1.335-.25.62 1.334 1.926 2.25 3.437 2.25 1.512 0 2.818-.916 3.437-2.25.415.163.865.248 1.336.248 2.11 0 3.818-1.79 3.818-4 0-.174-.012-.344-.034-.033-.513 1.158-.687 1.943-1.99 1.943-3.484z" />
@@ -146,7 +146,7 @@ function TweetCard({ tweet, index }: { tweet: TweetData; index: number }) {
                         )}
                     </div>
 
-                    <div className="flex items-center gap-2 text-sm text-theme-muted">
+                    <div className="flex items-center gap-2 text-sm text-slate-400">
                         <span>@{tweet.author}</span>
                         <span>•</span>
                         <span>{postedAgo(tweet.ageHours)}</span>
@@ -162,38 +162,38 @@ function TweetCard({ tweet, index }: { tweet: TweetData; index: number }) {
                     href={tweet.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 text-theme-muted hover:text-blue-500 transition-colors"
+                    className="p-2 text-slate-400 hover:text-blue-400 transition-colors"
                 >
                     <ExternalLink size={16} />
                 </a>
             </div>
 
             {/* Tweet Content */}
-            <p className="text-theme-primary leading-relaxed mb-4 whitespace-pre-wrap">
+            <p className="text-slate-200 leading-relaxed mb-4 whitespace-pre-wrap">
                 {tweet.text}
             </p>
 
             {/* Follower count */}
-            <div className="flex items-center gap-2 text-xs text-theme-muted mb-4">
+            <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
                 <Users size={12} />
                 <span>{((tweet.authorFollowers || 0) / 1000).toFixed(1)}k followers</span>
             </div>
 
             {/* Engagement Stats */}
-            <div className="flex items-center gap-6 pt-3 border-t border-slate-100">
-                <button className="engagement-item">
+            <div className="flex items-center gap-6 pt-3 border-t border-white/5 text-slate-400">
+                <button className="engagement-item hover:text-blue-400">
                     <MessageCircle size={16} />
                     <span>{tweet.replies}</span>
                 </button>
-                <button className="engagement-item hover:text-emerald-600">
+                <button className="engagement-item hover:text-emerald-400">
                     <Repeat2 size={16} />
                     <span>{tweet.retweets}</span>
                 </button>
-                <button className="engagement-item hover:text-rose-500">
+                <button className="engagement-item hover:text-rose-400">
                     <Heart size={16} />
                     <span>{tweet.likes}</span>
                 </button>
-                <button className="engagement-item">
+                <button className="engagement-item hover:text-blue-400">
                     <Eye size={16} />
                     <span>{tweet.views}</span>
                 </button>
