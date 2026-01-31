@@ -125,7 +125,6 @@ export function EngagementChart({ data }: { data: ReelData[] }) {
     const maxShares = Math.max(...chartData.map(d => d.shares), 10);
 
     return (
-    return (
         <div className="neu-convex p-6">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">

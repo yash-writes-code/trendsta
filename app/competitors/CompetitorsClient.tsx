@@ -126,7 +126,7 @@ export default function CompetitorsClient() {
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8">
-                    <NoResearchState onAnalyse={() => setShowAnalyseModal(true)} />
+                    <NoResearchState/>
                     <AnalyseConfirmModal
                         open={showAnalyseModal}
                         onOpenChange={setShowAnalyseModal}

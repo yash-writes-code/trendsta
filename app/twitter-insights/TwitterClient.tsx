@@ -350,7 +350,7 @@ export default function TwitterClient() {
                     <Sidebar />
                     <MobileHeader />
                     <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">
-                        <NoResearchState onAnalyse={() => setShowAnalyseModal(true)} />
+                        <NoResearchState/>
                         <AnalyseConfirmModal
                             open={showAnalyseModal}
                             onOpenChange={setShowAnalyseModal}
