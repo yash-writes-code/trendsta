@@ -27,8 +27,8 @@ function FilterButton({ active, children, onClick }: { active: boolean; children
         <button
             onClick={onClick}
             className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${active
-                ? "bg-slate-900 text-white shadow-md"
-                : "bg-white text-theme-secondary border border-slate-200 hover:border-slate-300 hover:text-theme-primary"
+                ? "bg-purple-600 dark:bg-purple-500 text-white shadow-md"
+                : "bg-white dark:bg-white/5 text-theme-secondary border border-white/10 dark:border-white/10 hover:border-purple-500/30 dark:hover:border-purple-500/30 hover:text-theme-primary"
                 }`}
         >
             {children}
@@ -85,12 +85,7 @@ export default function TopReelsClient() {
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8 transition-all duration-300">
-                    <NoResearchState onAnalyse={() => setShowAnalyseModal(true)} />
-                    <AnalyseConfirmModal
-                        open={showAnalyseModal}
-                        onOpenChange={setShowAnalyseModal}
-                        socialAccountId={socialAccount?.id || ""}
-                    />
+                    <NoResearchState />
                 </main>
             </div>
         )

@@ -50,8 +50,8 @@ export default function SmartInsightsView({ insightText, title, description, the
     // Theme Config
     const themes = {
         instagram: {
-            bg: "bg-gradient-to-br from-fuchsia-50 to-pink-50",
-            border: "border-pink-100",
+            bg: "bg-gradient-to-br from-fuchsia-50 to-pink-50 dark:from-fuchsia-950/20 dark:to-pink-950/20",
+            border: "border-pink-100 dark:border-pink-900/30",
             icon: (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <defs>
@@ -66,29 +66,29 @@ export default function SmartInsightsView({ insightText, title, description, the
                     <path fill="url(#instagram-gradient)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
                 </svg>
             ),
-            accentData: "text-pink-600",
-            accentAction: "bg-pink-600",
-            lightAction: "bg-pink-50 text-pink-700 border-pink-200"
+            accentData: "text-pink-600 dark:text-pink-400",
+            accentAction: "bg-pink-600 dark:bg-pink-500",
+            lightAction: "bg-pink-50 dark:bg-pink-950/30 text-pink-700 dark:text-pink-300 border-pink-200 dark:border-pink-800/50"
         },
         twitter: {
-            bg: "bg-gradient-to-br from-blue-50 to-sky-50",
-            border: "border-blue-100",
+            bg: "bg-gradient-to-br from-blue-50 to-sky-50 dark:from-blue-950/20 dark:to-sky-950/20",
+            border: "border-blue-100 dark:border-blue-900/30",
             icon: (
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="black">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="text-black dark:text-white">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
             ),
-            accentData: "text-blue-600",
-            accentAction: "bg-blue-600",
-            lightAction: "bg-blue-50 text-blue-700 border-blue-200"
+            accentData: "text-blue-600 dark:text-blue-400",
+            accentAction: "bg-blue-600 dark:bg-blue-500",
+            lightAction: "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800/50"
         },
         competitor: {
-            bg: "bg-gradient-to-br from-indigo-50 to-violet-50",
-            border: "border-indigo-100",
-            icon: <TrendingUp className="text-indigo-600" size={24} />,
-            accentData: "text-indigo-600",
-            accentAction: "bg-indigo-600",
-            lightAction: "bg-indigo-50 text-indigo-700 border-indigo-200"
+            bg: "bg-gradient-to-br from-indigo-50 to-violet-50 dark:from-indigo-950/20 dark:to-violet-950/20",
+            border: "border-indigo-100 dark:border-indigo-900/30",
+            icon: <TrendingUp className="text-indigo-600 dark:text-indigo-400" size={24} />,
+            accentData: "text-indigo-600 dark:text-indigo-400",
+            accentAction: "bg-indigo-600 dark:bg-indigo-500",
+            lightAction: "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800/50"
         }
     };
 
@@ -96,8 +96,8 @@ export default function SmartInsightsView({ insightText, title, description, the
 
     if (!insightText) {
         return (
-            <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 border-dashed">
-                <p className="text-slate-400 font-medium">No insights generated yet.</p>
+            <div className="p-8 text-center bg-white/5 dark:bg-white/5 rounded-2xl border border-white/10 dark:border-white/10 border-dashed">
+                <p className="text-theme-secondary font-medium">No insights generated yet.</p>
             </div>
         );
     }
@@ -107,11 +107,11 @@ export default function SmartInsightsView({ insightText, title, description, the
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+                    <h2 className="text-2xl font-bold text-theme-primary flex items-center gap-3">
                         {currentTheme.icon}
                         {title}
                     </h2>
-                    <p className="text-slate-500 mt-1 max-w-2xl">
+                    <p className="text-theme-secondary mt-1 max-w-2xl">
                         {description}
                     </p>
                 </div>
@@ -124,18 +124,18 @@ export default function SmartInsightsView({ insightText, title, description, the
                         key={idx}
                         className={`
                             relative overflow-hidden p-6 rounded-2xl border transition-all duration-300 hover:shadow-lg
-                            bg-white border-slate-200 hover:border-slate-300
+                            bg-white dark:bg-white/5 border-white/10 dark:border-white/10 hover:border-white/20 dark:hover:border-white/20
                             ${!insight?.action ? 'flex items-center' : ''} 
                         `}
                     >
                         {/* Number Watermark */}
-                        <div className="absolute -top-4 -right-4 text-9xl font-black text-slate-100/50 select-none pointer-events-none">
+                        <div className="absolute -top-4 -right-4 text-9xl font-black text-slate-100 dark:text-white/5 select-none pointer-events-none">
                             {idx + 1}
                         </div>
 
                         <div className="relative z-10 flex flex-col h-full">
                             {/* Title */}
-                            <h3 className="text-lg font-bold text-slate-800 leading-snug mb-3 pr-8">
+                            <h3 className="text-lg font-bold text-theme-primary leading-snug mb-3 pr-8">
                                 {insight?.title}
                             </h3>
 
@@ -144,8 +144,8 @@ export default function SmartInsightsView({ insightText, title, description, the
                                 <div className="mb-6 flex-grow">
                                     <div className="flex gap-2">
                                         <div className={`mt-1.5 w-1 h-1 rounded-full ${currentTheme.accentAction}`} />
-                                        <p className="text-sm text-slate-600 leading-relaxed">
-                                            <span className="font-semibold text-slate-700 uppercase text-[10px] tracking-wider mr-1">Data Signal:</span>
+                                        <p className="text-sm text-theme-secondary leading-relaxed">
+                                            <span className="font-semibold text-theme-primary uppercase text-[10px] tracking-wider mr-1">Data Signal:</span>
                                             {insight.evidence}
                                         </p>
                                     </div>
@@ -171,7 +171,7 @@ export default function SmartInsightsView({ insightText, title, description, the
 
                             {/* Fallback layout if parsing failed to find structure but text exists */}
                             {(!insight?.evidence && !insight?.action) && (
-                                <p className="text-slate-600 text-sm leading-relaxed">
+                                <p className="text-theme-secondary text-sm leading-relaxed">
                                     {insight?.title}
                                 </p>
                             )}
