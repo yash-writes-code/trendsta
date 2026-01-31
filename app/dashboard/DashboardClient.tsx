@@ -9,16 +9,11 @@ import { StatsOverview } from "./components/StatsOverview";
 import ResearchSummaryView from "./components/ResearchSummaryView";
 import { ScriptIdeasLink, QuickActions } from "./components/DashboardCards";
 import { useSidebar } from "../context/SidebarContext";
-<<<<<<< HEAD
 import { TrendstaData } from "../types/trendsta";
 import { Calendar, Loader2 } from "lucide-react";
 
 // Hooks & Transformers
-import { useResearch } from "../../hooks/useResearch";
 import { buildResearchSummary, transformScriptSuggestion } from "../../lib/transformers";
-=======
-import { Calendar } from "lucide-react";
->>>>>>> b6d66af8aa1ce6459496f3b6ec3780e908f9286f
 
 // Hooks
 import { useSession } from "@/lib/auth-client";
@@ -58,8 +53,7 @@ export default function DashboardClient() {
 
     // Transformation Logic (Replaces dataLoader.ts)
     // Only attempt to build summary if we have data
-    const summaryData = rawData ? buildResearchSummary(rawData.overallStrategy) : null;
-    const graphs = rawData?.overallStrategy?.dashboard_graphs;
+
 
     // Determine which data to use
     const isGuest = !session?.user;
@@ -129,7 +123,7 @@ export default function DashboardClient() {
         trigger_detail: "VS Competitor",
         content_gap: summaryData.content_gap?.gap || "Unknown",
         gap_detail: summaryData.content_gap?.opportunity || "High Demand",
-    } : null;
+    };
 
     // Override with specific data if available
     if (summaryData.execution_plan?.production_spec_sheet?.target_wpm || summaryData.execution_plan?.productionSpecSheet?.targetWpm) {
@@ -359,8 +353,13 @@ export default function DashboardClient() {
                         </div>
                     )}
 
+                    {/* Execution Block (Research Summary) */}
+                    <div className="animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+                        <ResearchSummaryView summary={summaryData} />
+                    </div>
+
                     {/* Strategy & Top Hooks Row */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeInUp" style={{ animationDelay: '0.1s' }}>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
 
                         {/* Left Column: Strategy Widgets (Stacked) */}
                         <div className="space-y-6 flex flex-col h-full">
@@ -376,11 +375,6 @@ export default function DashboardClient() {
                         <div className="lg:col-span-2">
                             <TopHooksView hooks={hooks} />
                         </div>
-                    </div>
-
-                    {/* Execution Block (Research Summary) */}
-                    <div className="animate-fadeInUp" style={{ animationDelay: '0.3s' }}>
-                        <ResearchSummaryView summary={summaryData} />
                     </div>
 
                 </div>

@@ -6,7 +6,8 @@ import {
   useScroll,
   useTransform,
   AnimatePresence,
-  useMotionValueEvent
+  useMotionValueEvent,
+  useSpring
 } from "framer-motion";
 import {
   TrendingUp,
@@ -57,8 +58,8 @@ function Navbar() {
               {[
                 { label: "Features", href: "#features" },
                 { label: "Pricing", href: "/pricing" },
-                { label: "FAQ", href: "#faq" }, // Reverted to generic section link
-                { label: "Contact", href: "#contact" }
+                { label: "FAQ", href: "#faq" },
+                { label: "Contact", href: "mailto:info@trendsta.in" }
               ].map((item) => (
                 <a
                   key={item.label}
@@ -96,7 +97,8 @@ function Navbar() {
               {[
                 { label: "Features", href: "#features" },
                 { label: "Pricing", href: "/pricing" },
-                { label: "FAQ", href: "#faq" }
+                { label: "FAQ", href: "#faq" },
+                { label: "Contact", href: "mailto:info@trendsta.in" }
               ].map((item) => (
                 <a
                   key={item.label}
@@ -128,21 +130,28 @@ function Hero() {
     offset: ["start start", "end start"],
   });
 
-  // Parallax transforms for floating elements
-  const yLeft1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const xLeft1 = useTransform(scrollYProgress, [0, 1], [0, -150]);
+  // Smooth out the raw scroll progress
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
 
-  const yLeft2 = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const xLeft2 = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  // Parallax transforms for floating elements using smoothProgress
+  const yLeft1 = useTransform(smoothProgress, [0, 1], [0, -200]);
+  const xLeft1 = useTransform(smoothProgress, [0, 1], [0, -150]);
 
-  const yRight1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
-  const xRight1 = useTransform(scrollYProgress, [0, 1], [0, 150]);
+  const yLeft2 = useTransform(smoothProgress, [0, 1], [0, -100]);
+  const xLeft2 = useTransform(smoothProgress, [0, 1], [0, -100]);
 
-  const yRight2 = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const xRight2 = useTransform(scrollYProgress, [0, 1], [0, 100]);
+  const yRight1 = useTransform(smoothProgress, [0, 1], [0, -200]);
+  const xRight1 = useTransform(smoothProgress, [0, 1], [0, 150]);
 
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
+  const yRight2 = useTransform(smoothProgress, [0, 1], [0, -100]);
+  const xRight2 = useTransform(smoothProgress, [0, 1], [0, 100]);
+
+  const opacity = useTransform(smoothProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(smoothProgress, [0, 0.5], [1, 0.9]);
 
   return (
     <section ref={containerRef} className="relative min-h-[140vh] pt-32 pb-20 overflow-hidden">
@@ -586,13 +595,19 @@ function UseCaseTabs() {
     offset: ["start start", "end end"]
   });
 
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
   const tabs = [
     { id: "Script Ideas", label: "Script Ideas", color: "from-purple-500 to-pink-500", icon: FileText },
     { id: "Competitor Analysis", label: "Competitor Analysis", color: "from-orange-500 to-red-500", icon: BarChart3 },
     { id: "Dynamic AI Insights", label: "Dynamic AI Insights", color: "from-blue-500 to-cyan-500", icon: Zap },
   ];
 
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+  useMotionValueEvent(smoothProgress, "change", (latest) => {
     if (latest < 0.33) {
       setActiveTab("Script Ideas");
     } else if (latest < 0.66) {
@@ -623,12 +638,12 @@ function UseCaseTabs() {
       title: "Your 24/7 Growth Strategist",
       desc: "Get personalized, data-backed recommendations. Our AI Consultant analyzes your metrics to tell you exactly what to post next.",
       features: ["Growth Forecasting", "Content Gap Analysis", "Real-time Feedback"],
-      image: "/landing/execution-plan.png"
+      image: "/landing/dynamic-ai-insights.png"
     }
   } as any;
 
   return (
-    <section ref={containerRef} className="h-[300vh] relative bg-[#0B0F19]">
+    <section id="features" ref={containerRef} className="h-[300vh] relative bg-[#0B0F19]">
       <div className="sticky top-0 h-screen overflow-hidden flex items-center">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[128px] pointer-events-none" />
 
@@ -637,19 +652,23 @@ function UseCaseTabs() {
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               Use Trendsta for <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-400">{activeTab}</span>
             </h2>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4 relative">
               {tabs.map(tab => (
                 <button
                   key={tab.id}
-                  onClick={() => {
-                    // Optional: Scroll to specific section logic could be added here
-                    setActiveTab(tab.id)
-                  }}
-                  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 border ${activeTab === tab.id
-                    ? "bg-white text-black border-white shadow-lg shadow-white/10"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`relative px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 border ${activeTab === tab.id
+                    ? "text-black border-white"
                     : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white"
                     }`}
                 >
+                  {activeTab === tab.id && (
+                    <motion.div
+                      layoutId="activeTabIndicator"
+                      className="absolute inset-0 bg-white rounded-full -z-10"
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
                   <tab.icon size={16} />
                   {tab.label}
                 </button>
@@ -657,53 +676,59 @@ function UseCaseTabs() {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <h3 className="text-3xl font-bold text-white mb-6">{content[activeTab].title}</h3>
-              <p className="text-lg text-slate-400 mb-8 leading-relaxed">
-                {content[activeTab].desc}
-              </p>
-              <ul className="space-y-4 mb-8">
-                {content[activeTab].features.map((feature: string, i: number) => (
-                  <li key={i} className="flex items-center gap-3 text-slate-300">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-gradient-to-br ${tabs.find(t => t.id === activeTab)?.color}`}>
-                      <CheckCircle2 size={14} className="text-white" />
-                    </div>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="/dashboard"
-                className="inline-flex items-center gap-2 text-white font-semibold hover:gap-3 transition-all group"
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[450px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               >
-                Start creating now <ArrowRight size={18} className="group-hover:text-violet-400 transition-colors" />
-              </a>
-            </motion.div>
+                <h3 className="text-3xl font-bold text-white mb-6">{content[activeTab].title}</h3>
+                <p className="text-lg text-slate-400 mb-8 leading-relaxed">
+                  {content[activeTab].desc}
+                </p>
+                <ul className="space-y-4 mb-8">
+                  {content[activeTab].features.map((feature: string, i: number) => (
+                    <li key={i} className="flex items-center gap-3 text-slate-300">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-gradient-to-br ${tabs.find(t => t.id === activeTab)?.color}`}>
+                        <CheckCircle2 size={14} className="text-white" />
+                      </div>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href="/dashboard"
+                  className="inline-flex items-center gap-2 text-white font-semibold hover:gap-3 transition-all group"
+                >
+                  Start creating now <ArrowRight size={18} className="group-hover:text-violet-400 transition-colors" />
+                </a>
+              </motion.div>
+            </AnimatePresence>
 
-            <motion.div
-              key={`${activeTab}-img`}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-              className="relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-tr from-violet-600/20 to-pink-600/20 rounded-2xl blur-2xl -z-10" />
-              <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#131625] shadow-2xl">
-                <Image
-                  src={content[activeTab].image}
-                  alt={activeTab}
-                  width={600}
-                  height={400}
-                  className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
-                />
-              </div>
-            </motion.div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`${activeTab}-img`}
+                initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="relative"
+              >
+                <div className="absolute inset-0 bg-gradient-to-tr from-violet-600/20 to-pink-600/20 rounded-2xl blur-2xl -z-10" />
+                <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#131625] shadow-2xl">
+                  <Image
+                    src={content[activeTab].image}
+                    alt={activeTab}
+                    width={600}
+                    height={400}
+                    className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
+                  />
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </div>
@@ -712,19 +737,43 @@ function UseCaseTabs() {
 }
 
 function CommunityGrid() {
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
+
+  const testimonials = [
+    {
+      quote: "I like to describe it as \"steroids for my content strategy.\" Trendsta's insights enable us to spot trends before they peak. It's indispensable.",
+      author: "Sarah Jenkins",
+      role: "Head of Growth, Viral Inc.",
+      image: "/sarah_headshot.png"
+    },
+    {
+      quote: "Trendsta has completely changed how we approach viral content. The AI Consultant is like having a senior strategist on call 24/7.",
+      author: "Marcus Chen",
+      role: "Founder, SocialBoost",
+      image: "/marcus_headshot.png"
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   // Duplicating items for infinite scroll loop
   const column1 = [
-    { src: "/trendsta_building_facade_1769810712585.png", height: "h-64" },
+    { src: "/landing/dashboard-analytics.png", height: "h-64" },
     { src: "/landing/script-ideas.png", height: "h-48" },
-    { src: "/trendsta_building_facade_1769810712585.png", height: "h-64" },
-    { src: "/landing/script-ideas.png", height: "h-48" },
+    { src: "/landing/twitter-insights.png", height: "h-64" },
+    { src: "/landing/content-strategy.png", height: "h-48" },
   ];
 
   const column2 = [
     { src: "/landing/execution-plan.png", height: "h-48" },
-    { src: null, height: "h-64" },
-    { src: "/landing/execution-plan.png", height: "h-48" },
-    { src: null, height: "h-64" },
+    { src: "/landing/dashboard-analytics.png", height: "h-64" },
+    { src: "/landing/twitter-insights.png", height: "h-48" },
+    { src: "/landing/content-strategy.png", height: "h-64" },
   ];
 
   return (
@@ -749,24 +798,48 @@ function CommunityGrid() {
           {/* Right Grid Visual */}
           <div className="relative h-[600px] w-full perspective-1000">
             {/* Floating Quote Card */}
-            <motion.div
-              initial={{ x: 100, opacity: 0 }}
-              whileInView={{ x: 0, opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="absolute top-1/2 -left-20 -translate-y-1/2 z-20 bg-[#1A1D2D]/95 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl max-w-md"
-            >
-              <div className="text-4xl text-white/20 font-serif mb-4">“</div>
-              <p className="text-lg text-slate-200 mb-6 font-medium leading-relaxed">
-                I like to describe it as "steroids for my content strategy." Trendsta's insights enable us to spot trends before they peak. It's indispensable.
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-violet-500 to-orange-500" />
-                <div>
-                  <p className="text-white font-bold">Sarah Jenkins</p>
-                  <p className="text-sm text-slate-500">Head of Growth, Viral Inc.</p>
-                </div>
-              </div>
-            </motion.div>
+            <div className="absolute top-1/2 -left-20 -translate-y-1/2 z-20 w-full max-w-md">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTestimonial}
+                  initial={{ x: 50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -50, opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="bg-[#1A1D2D]/95 backdrop-blur-xl border border-white/10 p-8 rounded-2xl shadow-2xl"
+                >
+                  <div className="text-4xl text-white/20 font-serif mb-4">“</div>
+                  <p className="text-lg text-slate-200 mb-6 font-medium leading-relaxed min-h-[120px]">
+                    {testimonials[activeTestimonial].quote}
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border border-white/20">
+                      <Image
+                        src={testimonials[activeTestimonial].image}
+                        width={48}
+                        height={48}
+                        className="object-cover w-full h-full"
+                        alt={testimonials[activeTestimonial].author}
+                      />
+                    </div>
+                    <div>
+                      <p className="text-white font-bold">{testimonials[activeTestimonial].author}</p>
+                      <p className="text-sm text-slate-500">{testimonials[activeTestimonial].role}</p>
+                    </div>
+                  </div>
+
+                  {/* Indicators */}
+                  <div className="flex gap-1.5 mt-6">
+                    {testimonials.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`h-1 rounded-full transition-all duration-300 ${activeTestimonial === i ? "w-4 bg-indigo-500" : "w-1 bg-white/10"}`}
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
             {/* Auto-Scrolling Image Grid Background */}
             <div className="absolute inset-0 grid grid-cols-2 gap-4 rotate-3 opacity-60">
@@ -899,43 +972,11 @@ function FAQSection() {
 
 function Footer() {
   return (
-    <footer className="bg-[#05080E] border-t border-white/5 py-12 text-slate-400 text-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
-        <div>
-          <div className="text-white font-bold text-lg mb-4">Product</div>
-          <ul className="space-y-2">
-            <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">API</a></li>
-          </ul>
-        </div>
-        <div>
-          <div className="text-white font-bold text-lg mb-4">Company</div>
-          <ul className="space-y-2">
-            <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-          </ul>
-        </div>
-        <div>
-          <div className="text-white font-bold text-lg mb-4">Resources</div>
-          <ul className="space-y-2">
-            <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Guidelines</a></li>
-          </ul>
-        </div>
-        <div>
-          <div className="text-white font-bold text-lg mb-4">Legal</div>
-          <ul className="space-y-2">
-            <li><a href="#" className="hover:text-white transition-colors">Privacy</a></li>
-            <li><a href="#" className="hover:text-white transition-colors">Terms</a></li>
-          </ul>
-        </div>
-      </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-white/5">
-        <div className="flex items-center gap-2">
-          <Image src={"/logo3.png"} width={120} height={40} alt="Logo" />
+    <footer className="bg-[#05080E] border-t border-white/5 py-8 text-slate-400 text-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="flex items-center gap-3">
+          <Image src="/T_logo.png" width={32} height={32} alt="Trendsta" />
+          <span className="text-xl font-bold text-white tracking-tight">Trendsta</span>
         </div>
         <div>© {new Date().getFullYear()} Trendsta Inc. All rights reserved.</div>
       </div>

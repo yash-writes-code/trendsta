@@ -49,7 +49,7 @@ export default function ReelCard({ reel, index, onViewDetails }: ReelCardProps) 
     return (
 
         <div
-            className="bg-[#1A1D2D] border border-white/5 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group hover:border-blue-500/20"
+            className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group hover:border-blue-500/20"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{ animationDelay: `${index * 0.05}s` }}
@@ -108,12 +108,12 @@ export default function ReelCard({ reel, index, onViewDetails }: ReelCardProps) 
                 </div>
             </a>
 
-            {/* Card Footer - Dark area */}
+            {/* Card Footer */}
             <div className="p-4">
                 {/* Title and Creator */}
-                <p className="text-sm font-semibold text-white line-clamp-2 mb-2">{displayTitle}</p>
+                <p className="text-sm font-semibold text-theme-primary line-clamp-2 mb-2">{displayTitle}</p>
                 <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs text-slate-400">{displayCreator}</span>
+                    <span className="text-xs text-theme-secondary">{displayCreator}</span>
                     {/* Velocity Score */}
                     <VelocityBadge score={reel.velocity_score} />
                 </div>
@@ -121,7 +121,7 @@ export default function ReelCard({ reel, index, onViewDetails }: ReelCardProps) 
                 {/* View Details Button */}
                 <button
                     onClick={onViewDetails}
-                    className="w-full py-2.5 text-sm font-medium text-blue-400 hover:text-white hover:bg-blue-600 border border-blue-500/30 hover:border-blue-600 rounded-xl transition-all duration-200"
+                    className="w-full py-2.5 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-white hover:bg-blue-600 border border-blue-500/30 hover:border-blue-600 rounded-xl transition-all duration-200"
                 >
                     View Details
                 </button>
