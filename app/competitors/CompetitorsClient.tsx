@@ -230,10 +230,10 @@ export default function CompetitorsClient() {
                                             onChange={(e) => setSortBy(e.target.value as SortField)}
                                             className="px-3 py-2 glass-panel border border-white/10 rounded-xl text-sm text-theme-primary shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                         >
-                                            <option value="velocity" className="bg-slate-900 text-slate-200">Sort by Velocity</option>
-                                            <option value="views" className="bg-slate-900 text-slate-200">Sort by Views</option>
-                                            <option value="likes" className="bg-slate-900 text-slate-200">Sort by Likes</option>
-                                            <option value="engagement" className="bg-slate-900 text-slate-200">Sort by Engagement</option>
+                                            <option value="velocity" className="bg-gray-800 dark:bg-gray-900 text-theme-primary">Sort by Velocity</option>
+                                            <option value="views" className="bg-gray-800 dark:bg-gray-900 text-theme-primary">Sort by Views</option>
+                                            <option value="likes" className="bg-gray-800 dark:bg-gray-900 text-theme-primary">Sort by Likes</option>
+                                            <option value="engagement" className="bg-gray-800 dark:bg-gray-900 text-theme-primary">Sort by Engagement</option>
                                         </select>
                                     </div>
                                 </div>
@@ -292,7 +292,7 @@ export default function CompetitorsClient() {
                                                             @{competitor.username}
                                                         </p>
                                                         {/* Badge */}
-                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${selectedCreator === competitor.username ? 'bg-white/20 text-white' : 'bg-slate-500/20 text-slate-400'}`}>
+                                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${selectedCreator === competitor.username ? 'bg-white/20 text-white' : 'bg-purple-500/20 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400'}`}>
                                                             {competitor.reels.length}
                                                         </span>
                                                     </div>

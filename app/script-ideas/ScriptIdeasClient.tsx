@@ -67,12 +67,7 @@ export default function ScriptIdeasClient() {
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8">
-                    <NoResearchState onAnalyse={() => setShowAnalyseModal(true)} />
-                    <AnalyseConfirmModal
-                        open={showAnalyseModal}
-                        onOpenChange={setShowAnalyseModal}
-                        socialAccountId={socialAccount?.id || ""}
-                    />
+                    <NoResearchState />
                 </main>
             </div>
         );
@@ -147,11 +142,11 @@ export default function ScriptIdeasClient() {
                                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
                                             {/* Left Col: Viral Gauge & Info */}
-                                            <div className="lg:col-span-4 flex flex-col items-center justify-center text-center p-6 bg-[#1A1D2D] rounded-2xl border border-white/5 relative group/gauge">
+                                            <div className="lg:col-span-4 flex flex-col items-center justify-center text-center p-6 bg-white/5 dark:bg-white/5 rounded-2xl border border-white/10 dark:border-white/10 relative group/gauge">
                                                 <div className="absolute top-3 right-3">
-                                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-white/10 rounded-full border border-white/10 shadow-sm">
+                                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-white/10 dark:bg-white/10 rounded-full border border-white/20 dark:border-white/20 shadow-sm">
                                                         <Sparkles size={10} className="text-purple-400" />
-                                                        <span className="text-[10px] font-bold text-white uppercase tracking-wide">
+                                                        <span className="text-[10px] font-bold text-theme-primary uppercase tracking-wide">
                                                             {viralScore >= 90 ? 'Viral' : 'High'}
                                                         </span>
                                                     </div>
@@ -169,13 +164,13 @@ export default function ScriptIdeasClient() {
                                                         />
                                                     </svg>
                                                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                        <span className="text-3xl font-black text-white">{viralScore}</span>
+                                                        <span className="text-3xl font-black text-theme-primary">{viralScore}</span>
                                                     </div>
                                                 </div>
 
                                                 <div className="w-full space-y-3">
-                                                    <div className="text-xs font-semibold text-slate-400">Why This Works</div>
-                                                    <p className="text-xs text-slate-300 leading-snug line-clamp-2">
+                                                    <div className="text-xs font-semibold text-theme-secondary">Why This Works</div>
+                                                    <p className="text-xs text-theme-secondary leading-snug line-clamp-2">
                                                         {script.why_this_works}
                                                     </p>
 
@@ -184,15 +179,15 @@ export default function ScriptIdeasClient() {
                                                         <div className="flex items-start gap-2 text-left bg-white/5 border border-white/10 p-2 rounded-lg">
                                                             <div className="mt-0.5"><Sparkles size={10} className="text-purple-400" /></div>
                                                             <div>
-                                                                <span className="text-[10px] font-bold text-slate-400 uppercase block">Audio Vibe</span>
-                                                                <p className="text-[10px] text-slate-300 font-medium leading-tight">{script.audio_vibe}</p>
+                                                                <span className="text-[10px] font-bold text-theme-secondary uppercase block">Audio Vibe</span>
+                                                                <p className="text-[10px] text-theme-secondary font-medium leading-tight">{script.audio_vibe}</p>
                                                             </div>
                                                         </div>
                                                     )}
 
-                                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg shadow-sm w-full justify-center">
-                                                        <Clock size={12} className="text-slate-400" />
-                                                        <span className="text-[10px] font-bold text-slate-300">
+                                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 dark:bg-white/10 border border-white/20 dark:border-white/20 rounded-lg shadow-sm w-full justify-center">
+                                                        <Clock size={12} className="text-theme-secondary" />
+                                                        <span className="text-[10px] font-bold text-theme-primary">
                                                             {script.estimated_duration} • {script.script_word_count} words
                                                         </span>
                                                     </div>
@@ -213,9 +208,9 @@ export default function ScriptIdeasClient() {
                                                 {/* The Hook */}
                                                 <div>
                                                     <h3 className="text-[10px] font-bold text-theme-muted uppercase tracking-widest mb-2">The Hook</h3>
-                                                    <div className="p-4 bg-slate-900 rounded-xl shadow-md border border-slate-800 relative overflow-hidden group">
+                                                    <div className="p-4 bg-slate-900 dark:bg-slate-800 rounded-xl shadow-md border border-slate-800 dark:border-slate-700 relative overflow-hidden group">
                                                         <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                            <Copy size={14} className="text-slate-500 hover:text-white cursor-pointer" onClick={(e) => { e.stopPropagation(); copyToClipboard(script.script_hook, `hook-${scriptId}`); }} />
+                                                            <Copy size={14} className="text-slate-400 hover:text-white cursor-pointer" onClick={(e) => { e.stopPropagation(); copyToClipboard(script.script_hook, `hook-${scriptId}`); }} />
                                                         </div>
                                                         <p className="text-lg md:text-xl font-bold text-white leading-snug">
                                                             "{script.script_hook}"
@@ -227,20 +222,20 @@ export default function ScriptIdeasClient() {
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div className="space-y-1">
                                                         <h3 className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">The Payoff</h3>
-                                                        <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-xl h-full">
-                                                            <p className="text-xs text-green-400 font-medium leading-relaxed">
+                                                        <div className="p-3 bg-green-500/10 dark:bg-green-500/10 border border-green-500/30 dark:border-green-500/30 rounded-xl h-full">
+                                                            <p className="text-xs text-green-700 dark:text-green-300 font-medium leading-relaxed">
                                                                 {script.script_value}
                                                             </p>
                                                         </div>
                                                     </div>
                                                     <div className="space-y-1">
                                                         <h3 className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">Market Gap</h3>
-                                                        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl h-full">
+                                                        <div className="p-3 bg-blue-500/10 dark:bg-blue-500/10 border border-blue-500/30 dark:border-blue-500/30 rounded-xl h-full">
                                                             <div className="flex items-center gap-1.5 mb-1">
-                                                                <Target size={12} className="text-blue-400" />
-                                                                <span className="text-[10px] font-bold text-blue-400 uppercase">Fills Void</span>
+                                                                <Target size={12} className="text-blue-500" />
+                                                                <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase">Fills Void</span>
                                                             </div>
-                                                            <p className="text-xs text-blue-300 font-medium leading-relaxed">
+                                                            <p className="text-xs text-blue-700 dark:text-blue-300 font-medium leading-relaxed">
                                                                 {script.content_gap_addressed}
                                                             </p>
                                                         </div>
@@ -272,7 +267,7 @@ export default function ScriptIdeasClient() {
                                                                 </h3>
                                                             </div>
 
-                                                            <div className="rounded-xl overflow-hidden border border-slate-200 shadow-lg group relative">
+                                                            <div className="rounded-xl overflow-hidden border border-slate-700 dark:border-slate-600 shadow-lg group relative">
                                                                 {/* Mock Window Controls */}
                                                                 <div className="bg-slate-900 px-4 py-2 flex items-center justify-between border-b border-slate-800">
                                                                     <div className="flex gap-1.5">
@@ -313,24 +308,24 @@ export default function ScriptIdeasClient() {
                                                             </div>
 
                                                             {/* Caption Preview */}
-                                                            <div className="bg-blue-500/5 p-5 rounded-xl border border-blue-500/20 mt-6">
+                                                            <div className="bg-blue-500/10 dark:bg-blue-500/10 p-5 rounded-xl border border-blue-500/30 dark:border-blue-500/30 mt-6">
                                                                 <div className="flex items-center justify-between mb-3">
-                                                                    <h3 className="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-2">
+                                                                    <h3 className="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider flex items-center gap-2">
                                                                         <Hash size={14} /> Recommended Caption
                                                                     </h3>
                                                                     <button
                                                                         onClick={() => copyToClipboard(script.caption_full, `caption-${scriptId}`)}
-                                                                        className="text-xs text-blue-400 font-semibold hover:text-blue-300 hover:underline"
+                                                                        className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline"
                                                                     >
                                                                         {copiedSection === `caption-${scriptId}` ? 'Copied' : 'Copy'}
                                                                     </button>
                                                                 </div>
-                                                                <p className="text-sm text-slate-300 mb-3 leading-relaxed">
+                                                                <p className="text-sm text-theme-secondary mb-3 leading-relaxed">
                                                                     {script.caption_full}
                                                                 </p>
                                                                 <div className="flex flex-wrap gap-2">
                                                                     {script.hashtags_all?.split(/[\s,]+/).filter(Boolean).map((tag: string, i: number) => (
-                                                                        <span key={i} className="text-[10px] font-medium text-blue-300 bg-blue-500/20 px-2 py-1 rounded-md">
+                                                                        <span key={i} className="text-[10px] font-medium text-blue-600 dark:text-blue-400 bg-blue-500/20 dark:bg-blue-500/20 px-2 py-1 rounded-md">
                                                                             #{tag.replace(/^#/, '')}
                                                                         </span>
                                                                     ))}
@@ -340,13 +335,13 @@ export default function ScriptIdeasClient() {
 
                                                         {/* Sidebar Details (Breakdown) */}
                                                         <div className="space-y-6">
-                                                            <div className="bg-[#1A1D2D] p-5 rounded-xl border border-white/5 shadow-sm">
-                                                                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                                            <div className="bg-white/5 dark:bg-white/5 p-5 rounded-xl border border-white/10 dark:border-white/10 shadow-sm">
+                                                                <h3 className="text-xs font-bold text-theme-secondary uppercase tracking-widest mb-4 flex items-center gap-2">
                                                                     <Target size={14} /> Structural Breakdown
                                                                 </h3>
                                                                 <div className="space-y-4 relative">
                                                                     {/* Timeline line */}
-                                                                    <div className="absolute left-1.5 top-2 bottom-2 w-0.5 bg-slate-800" />
+                                                                    <div className="absolute left-1.5 top-2 bottom-2 w-0.5 bg-white/10 dark:bg-white/10" />
 
                                                                     {[
                                                                         { label: "Hook", text: script.script_hook },
@@ -355,9 +350,9 @@ export default function ScriptIdeasClient() {
                                                                         { label: "CTA", text: script.script_cta }
                                                                     ].map((item, i) => (
                                                                         <div key={i} className="relative pl-6">
-                                                                            <div className="absolute left-0 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-[#1A1D2D] bg-purple-500 shadow-sm z-10" />
-                                                                            <span className="text-[10px] font-bold text-slate-500 uppercase block mb-0.5">{item.label}</span>
-                                                                            <p className="text-xs text-slate-300 font-medium leading-relaxed">{item.text}</p>
+                                                                            <div className="absolute left-0 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-white/20 dark:border-white/20 bg-purple-500 shadow-sm z-10" />
+                                                                            <span className="text-[10px] font-bold text-theme-secondary uppercase block mb-0.5">{item.label}</span>
+                                                                            <p className="text-xs text-theme-secondary font-medium leading-relaxed">{item.text}</p>
                                                                         </div>
                                                                     ))}
                                                                 </div>
@@ -365,29 +360,29 @@ export default function ScriptIdeasClient() {
 
                                                             {/* Visual Storyboard Section (NEW) */}
                                                             {script.visual_storyboard && (
-                                                                <div className="bg-amber-500/5 p-5 rounded-xl border border-amber-500/10">
-                                                                    <h3 className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                                                <div className="bg-amber-500/10 dark:bg-amber-500/10 p-5 rounded-xl border border-amber-500/30 dark:border-amber-500/30">
+                                                                    <h3 className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-widest mb-3 flex items-center gap-2">
                                                                         <Sparkles size={14} /> Visual Storyboard
                                                                     </h3>
                                                                     <div className="space-y-3">
                                                                         <div>
-                                                                            <span className="text-[10px] font-bold text-amber-600/80 uppercase block mb-1">Opening Frame</span>
-                                                                            <p className="text-xs text-amber-200/80 leading-relaxed font-medium">
+                                                                            <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase block mb-1">Opening Frame</span>
+                                                                            <p className="text-xs text-amber-800 dark:text-amber-200 leading-relaxed font-medium">
                                                                                 {script.visual_storyboard.opening_frame}
                                                                             </p>
                                                                         </div>
                                                                         <div>
-                                                                            <span className="text-[10px] font-bold text-amber-600/80 uppercase block mb-1">Visual Style</span>
-                                                                            <p className="text-xs text-amber-200/80 leading-relaxed">
+                                                                            <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase block mb-1">Visual Style</span>
+                                                                            <p className="text-xs text-amber-800 dark:text-amber-200 leading-relaxed">
                                                                                 {script.visual_storyboard.main_visual_style}
                                                                             </p>
                                                                         </div>
                                                                         {script.visual_storyboard.b_roll_suggestions?.length > 0 && (
                                                                             <div>
-                                                                                <span className="text-[10px] font-bold text-amber-600/80 uppercase block mb-1">B-Roll Ideas</span>
+                                                                                <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase block mb-1">B-Roll Ideas</span>
                                                                                 <ul className="list-disc pl-3 space-y-1">
                                                                                     {script.visual_storyboard.b_roll_suggestions.map((broll: string, i: number) => (
-                                                                                        <li key={i} className="text-[10px] text-amber-200/80 leading-tight">{broll}</li>
+                                                                                        <li key={i} className="text-[10px] text-amber-800 dark:text-amber-200 leading-tight">{broll}</li>
                                                                                     ))}
                                                                                 </ul>
                                                                             </div>
@@ -396,12 +391,12 @@ export default function ScriptIdeasClient() {
                                                                 </div>
                                                             )}
 
-                                                            <div className="bg-purple-500/5 p-5 rounded-xl border border-purple-500/10">
+                                                            <div className="bg-purple-500/10 dark:bg-purple-500/10 p-5 rounded-xl border border-purple-500/30 dark:border-purple-500/30">
                                                                 <div className="flex items-start gap-3">
-                                                                    <Lightbulb size={18} className="text-purple-400 mt-0.5" />
+                                                                    <Lightbulb size={18} className="text-purple-500 mt-0.5" />
                                                                     <div>
-                                                                        <h4 className="text-sm font-bold text-purple-300 mb-1">Director's Note</h4>
-                                                                        <p className="text-xs text-purple-200/80 leading-relaxed">
+                                                                        <h4 className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-1">Director's Note</h4>
+                                                                        <p className="text-xs text-purple-700 dark:text-purple-200 leading-relaxed">
                                                                             {script.why_this_works}
                                                                         </p>
                                                                     </div>

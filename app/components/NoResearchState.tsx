@@ -1,13 +1,16 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
 
-interface NoResearchStateProps {
-    onAnalyse: () => void;
-}
+export default function NoResearchState() {
+    const router = useRouter();
 
-export default function NoResearchState({ onAnalyse }: NoResearchStateProps) {
+    const handleAnalyse = () => {
+        router.push("/onboarding");
+    };
+
     return (
         <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center max-w-md px-4">
@@ -21,7 +24,7 @@ export default function NoResearchState({ onAnalyse }: NoResearchStateProps) {
                     Run your first analysis to unlock personalized insights, competitor research, and viral script ideas tailored to your content.
                 </p>
                 <button
-                    onClick={onAnalyse}
+                    onClick={handleAnalyse}
                     className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30 flex items-center gap-2 mx-auto"
                 >
                     <Sparkles className="w-5 h-5" />

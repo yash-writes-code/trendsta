@@ -88,7 +88,7 @@ function ScoreBadge({ score }: { score: number }) {
 function TrendingItem({ topic, index }: { topic: { rank: number; topic: string; tweets: string; direction: string }; index: number }) {
     return (
         <div
-            className="flex items-center gap-4 p-4 hover:bg-slate-50/5 rounded-xl transition-all duration-200 cursor-pointer group"
+            className="flex items-center gap-4 p-4 hover:bg-white/5 dark:hover:bg-white/5 rounded-xl transition-all duration-200 cursor-pointer group"
             style={{ animationDelay: `${index * 0.05}s` }}
         >
             <span className="text-2xl font-bold text-theme-muted w-8 group-hover:text-blue-500 transition-colors">
@@ -124,7 +124,7 @@ function TweetCard({ tweet, index }: { tweet: TweetData; index: number }) {
 
     return (
         <div
-            className="bg-[#1A1D2D] border border-white/5 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow hover:border-blue-500/20"
+            className="bg-white dark:bg-white/5 border border-white/10 dark:border-white/10 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
             style={{ animationDelay: `${index * 0.05}s` }}
         >
             {/* Author Header */}
@@ -133,7 +133,7 @@ function TweetCard({ tweet, index }: { tweet: TweetData; index: number }) {
                     <img
                         src={tweet.authorProfilePic || "https://ui-avatars.com/api/?name=" + tweet.authorName}
                         alt={tweet.authorName}
-                        className="w-12 h-12 rounded-full object-cover bg-slate-800"
+                        className="w-12 h-12 rounded-full object-cover bg-gray-200 dark:bg-gray-700"
                     />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -180,8 +180,8 @@ function TweetCard({ tweet, index }: { tweet: TweetData; index: number }) {
             </div>
 
             {/* Engagement Stats */}
-            <div className="flex items-center gap-6 pt-3 border-t border-white/5 text-slate-400">
-                <button className="engagement-item hover:text-blue-400">
+            <div className="flex items-center gap-6 pt-3 border-t border-white/10 dark:border-white/10">
+                <button className="engagement-item">
                     <MessageCircle size={16} />
                     <span>{tweet.replies}</span>
                 </button>
@@ -213,14 +213,14 @@ function LatestTweetItem({ tweet, index }: { tweet: TweetData; index: number }) 
 
     return (
         <div
-            className="p-4 hover:bg-slate-50/5 rounded-xl transition-all duration-200 border-b border-white/5 last:border-b-0"
+            className="p-4 hover:bg-white/5 dark:hover:bg-white/5 rounded-xl transition-all duration-200 border-b border-white/5 last:border-b-0"
             style={{ animationDelay: `${index * 0.03}s` }}
         >
             <div className="flex items-start gap-3">
                 <img
                     src={tweet.authorProfilePic || "https://ui-avatars.com/api/?name=" + tweet.authorName}
                     alt={tweet.authorName}
-                    className="w-10 h-10 rounded-full bg-slate-800 object-cover"
+                    className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 object-cover"
                 />
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">

@@ -26,8 +26,8 @@ export default function KeyMetricsRow({ data }: KeyMetricsRowProps) {
                 <div className="relative z-10">
                     <h3 className="text-[10px] font-bold text-emerald-300/80 uppercase tracking-widest mb-2 truncate">Best Time to Post</h3>
                     <div className="flex flex-wrap items-baseline gap-2 mb-2">
-                        <span className="text-2xl md:text-3xl font-black text-slate-900">{data.best_time}</span>
-                        <span className="text-xs text-slate-500 font-medium">(2 PM)</span>
+                        <span className="text-2xl md:text-3xl font-black text-theme-primary">{data.best_time}</span>
+                        <span className="text-xs text-theme-secondary font-medium">(2 PM)</span>
                     </div>
                     <div className="flex items-center gap-2 text-emerald-400">
                         <Clock size={12} className="text-emerald-400 shrink-0" />
@@ -46,8 +46,8 @@ export default function KeyMetricsRow({ data }: KeyMetricsRowProps) {
                 <div className="relative z-10">
                     <h3 className="text-[10px] font-bold text-purple-300/80 uppercase tracking-widest mb-2 truncate">Target Pace</h3>
                     <div className="flex flex-wrap items-baseline gap-2 mb-2">
-                        <span className="text-2xl md:text-3xl font-black text-slate-900">{data.target_pace}</span>
-                        <span className="text-xs text-slate-500 font-medium">WPM</span>
+                        <span className="text-2xl md:text-3xl font-black text-theme-primary">{data.target_pace}</span>
+                        <span className="text-xs text-theme-secondary font-medium">WPM</span>
                     </div>
                     <div className="flex items-center gap-2 text-purple-400">
                         <Zap size={12} className="text-purple-400 shrink-0" />
@@ -66,7 +66,7 @@ export default function KeyMetricsRow({ data }: KeyMetricsRowProps) {
                 <div className="relative z-10">
                     <h3 className="text-[10px] font-bold text-rose-300/80 uppercase tracking-widest mb-2 truncate">Top Viral Trigger</h3>
                     <div className="mb-2">
-                        <span className="text-lg md:text-xl font-black text-slate-900 leading-tight block break-words">{data.viral_trigger}</span>
+                        <span className="text-lg md:text-xl font-black text-theme-primary leading-tight block break-words">{data.viral_trigger}</span>
                     </div>
                     <div className="flex items-center gap-2 text-rose-400">
                         <AlertTriangle size={12} className="text-rose-400 shrink-0" />
@@ -85,7 +85,7 @@ export default function KeyMetricsRow({ data }: KeyMetricsRowProps) {
                 <div className="relative z-10">
                     <h3 className="text-[10px] font-bold text-blue-300/80 uppercase tracking-widest mb-2 truncate">Content Gap</h3>
                     <div className="mb-2">
-                        <span className="text-lg md:text-xl font-black text-slate-900 leading-tight block break-words">{data.content_gap}</span>
+                        <span className="text-lg md:text-xl font-black text-theme-primary leading-tight block break-words">{data.content_gap}</span>
                     </div>
                     <div className="flex items-center gap-2 text-blue-400">
                         <Car size={12} className="text-blue-400 shrink-0" />

@@ -1,17 +1,13 @@
+"use client";
 
 import React from 'react';
 import DashboardClient from './DashboardClient';
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { OnboardingGuard } from '../components/OnboardingGuard';
 
-export default async function DashboardPage() {
-
-    // Check session for guest mode injection
-    const session = await auth.api.getSession({
-        headers: await headers()
-    });
-
-    const isGuest = !session?.user;
-
-    return <DashboardClient isGuest={isGuest} />;
+export default function DashboardPage() {
+    return (
+        <OnboardingGuard>
+            <DashboardClient />
+        </OnboardingGuard>
+    );
 }
