@@ -83,14 +83,19 @@ export default function DashboardClient() {
                 best_days: [],
                 frequency: '',
                 evidence: ''
-            }
+            },
+
+            // Execution plan
+            execution_plan: strategyData?.execution_plan,
         };
 
-        scriptIdeas = scriptSuggestions || [];
-        // Note: dashboard_graphs and hooks are not available in RawOverallStrategy
-        // These would need to be added to the API response or fetched separately
-        graphs = undefined;
-        hooks = [];
+        scriptIdeas = scriptSuggestions?.scripts || [];
+
+        // Map dashboard graphs
+        graphs = strategyData?.dashboard_graphs;
+
+        // Map top hooks
+        hooks = strategyData?.top_performing_hooks || [];
     }
 
     // Prepare Metrics Data

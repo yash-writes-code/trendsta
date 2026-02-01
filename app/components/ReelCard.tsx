@@ -62,10 +62,10 @@ export default function ReelCard({ reel, index, onViewDetails }: ReelCardProps) 
                 className="block aspect-[9/16] relative overflow-hidden cursor-pointer"
             >
                 <img
-                    src={reel.thumbnail}
+                    src={reel.thumbnail.toString()}
                     alt={displayTitle}
-                    referrerPolicy="no-referrer"
                     crossOrigin="anonymous"
+                    referrerPolicy="no-referrer"
                     className={`w-full h-full object-cover transition-all duration-500 ${isHovered ? "scale-110 brightness-90" : "scale-100 brightness-100"}`}
                     onError={(e) => {
                         (e.target as HTMLImageElement).src = "https://via.placeholder.com/270x480/1e293b/94a3b8?text=Reel";

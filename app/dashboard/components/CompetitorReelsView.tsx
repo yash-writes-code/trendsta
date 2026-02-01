@@ -148,7 +148,7 @@ const ReelCard = ({ reel, index }: { reel: CompetitorReel; index: number }) => {
             <div className="relative aspect-[9/16] max-h-[280px] overflow-hidden bg-slate-900">
                 <a href={reel.url} target="_blank" rel="noopener noreferrer">
                     <img
-                        src={reel.thumbnail}
+                        src={reel.thumbnail.toString()}
                         alt={`Reel by ${reel.creatorName}`}
                         crossOrigin="anonymous"
                         referrerPolicy="no-referrer"

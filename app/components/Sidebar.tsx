@@ -210,8 +210,7 @@ export default function Sidebar() {
                         </div>
                         {!isCollapsed && (
                             <div className="flex-1 overflow-hidden">
-                                <p className="text-sm font-bold text-theme-primary truncate">{name}</p>
-                                <p className="text-xs text-theme-secondary truncate">Free Plan</p>
+                                <p className="text-sm font-bold text-slate-700 truncate">{name}</p>
                             </div>
                         )}
                     </div>
