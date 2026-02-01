@@ -157,7 +157,7 @@ export default function Sidebar() {
                     }}
                     disabled={isAnalyzing}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative 
-                        ${isAnalyzing ? "bg-slate-50 text-slate-400 cursor-not-allowed border border-slate-100" : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 hover:scale-[1.02]"}
+                        ${isAnalyzing ? "bg-slate-50 text-slate-400 cursor-not-allowed border border-slate-100" : "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/40 hover:scale-[1.02]"}
                         ${isCollapsed ? "justify-center" : ""}
                     `}
                     title={isCollapsed ? (isAnalyzing ? "Analysis in Progress" : "New Analysis") : undefined}

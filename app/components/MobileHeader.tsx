@@ -61,7 +61,7 @@ export default function MobileHeader(): React.JSX.Element {
     };
 
     return (
-        <div className="md:hidden flex items-center justify-between p-4 neu-convex sticky top-0 z-40 mb-4 rounded-b-2xl border-b border-white/20">
+        <div className="md:hidden flex items-center justify-between p-4 bg-white/95 dark:bg-[#0B0F19]/90 backdrop-blur-xl sticky top-0 z-40 mb-4 rounded-b-2xl border-b border-slate-200 dark:border-white/10 shadow-sm transition-all duration-300">
             <Link href="/" className="flex items-center gap-2">
                 <Image
                     src="/T_logo.png"
@@ -70,7 +70,7 @@ export default function MobileHeader(): React.JSX.Element {
                     alt="logo"
                     className="drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
                 />
-                <span className="text-xl font-black text-theme-primary tracking-tighter">Trendsta</span>
+                <span className="text-xl font-black text-slate-800 dark:text-white tracking-tighter">Trendsta</span>
             </Link>
             <div className="relative flex items-center gap-2" ref={menuRef}>
                 <ThemeToggle />
@@ -82,7 +82,7 @@ export default function MobileHeader(): React.JSX.Element {
                 </button>
 
                 {showMenu && (
-                    <div className="absolute right-0 top-12 mt-2 w-64 neu-convex z-50 animate-fadeInUp p-4">
+                    <div className="absolute right-0 top-14 mt-2 w-72 bg-white/95 dark:bg-[#0B0F19]/95 backdrop-blur-2xl border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl z-50 animate-fadeInUp p-4 origin-top-right">
                         {/* Navigation Links */}
                         <div className="space-y-2 mb-4">
                             {navItems.map((item) => {
@@ -105,7 +105,7 @@ export default function MobileHeader(): React.JSX.Element {
                             })}
                         </div>
 
-                        <div className="p-4 border-t border-slate-200/50 mt-2">
+                        <div className="p-4 border-t border-slate-200 dark:border-white/10 mt-2">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-10 h-10 rounded-full neu-pressed flex items-center justify-center text-slate-600">
                                     <User size={20} />
