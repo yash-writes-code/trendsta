@@ -93,7 +93,7 @@ function Navbar() {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden fixed inset-x-0 top-20 bg-[#0B0F19]/95 backdrop-blur-xl z-40 border-b border-white/10 overflow-hidden"
           >
-            <div className="px-4 py-8 space-y-6">
+            <div className="px-4 py-6 space-y-4">
               {[
                 { label: "Features", href: "#features" },
                 { label: "Pricing", href: "/pricing" },
@@ -104,16 +104,22 @@ function Navbar() {
                   key={item.label}
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-lg font-medium text-slate-300 hover:text-white"
+                  className="block text-sm font-semibold text-slate-300 hover:text-white"
                 >
                   {item.label}
                 </a>
               ))}
               <a
                 href="/onboarding"
-                className="block w-full text-center px-6 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold rounded-xl"
+                className="block w-full text-center px-6 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold rounded-xl"
               >
                 Get Started
+              </a>
+              <a
+                href="/dashboard"
+                className="block w-full text-center px-6 py-3 bg-white/5 border border-white/10 text-white text-sm font-semibold rounded-xl"
+              >
+                View Demo
               </a>
             </div>
           </motion.div>
@@ -167,9 +173,9 @@ function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto mb-16"
+          className="max-w-4xl mx-auto mb-10 md:mb-16"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-violet-300 text-sm font-medium mb-8 hover:bg-white/10 transition-colors cursor-pointer">
+          <div className="inline-flex items-center gap-2 px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/5 border border-white/10 text-violet-300 text-xs md:text-sm font-medium mb-6 md:mb-8 hover:bg-white/10 transition-colors cursor-pointer">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
@@ -177,7 +183,7 @@ function Hero() {
             New: 24/7 Content Intelligence Engine
           </div>
 
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight mb-6 leading-[1.1]">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight mb-4 md:mb-6 leading-[1.15] md:leading-[1.1]">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-400">
               Your Personal AI Consultant
             </span>
@@ -187,20 +193,20 @@ function Hero() {
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-base md:text-xl text-slate-400 max-w-2xl mx-auto mb-8 md:mb-10 leading-relaxed">
             Stop guessing. Leverage real-time trend data and AI analysis to script high-performing content that resonates with your audience.
           </p>
 
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4 sm:px-0">
             <a
               href="/onboarding"
-              className="px-8 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold rounded-full hover:shadow-[0_0_40px_rgba(124,58,237,0.4)] transition-all hover:scale-105 active:scale-95 text-lg"
+              className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold rounded-full hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] transition-all hover:scale-105 active:scale-95 text-base md:text-lg flex justify-center"
             >
               Get Started
             </a>
             <a
               href="/dashboard"
-              className="px-8 py-4 bg-white/5 text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+              className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-white/5 text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-base md:text-lg"
             >
               View Demo <ChevronRight size={18} />
             </a>
@@ -230,20 +236,20 @@ function Hero() {
             <div className="relative aspect-video bg-[#0B0F19] p-6 flex flex-col gap-6 font-sans text-left">
               {/* Header */}
               <div>
-                <h2 className="text-2xl font-bold text-white mb-1">Analytics Dashboard</h2>
-                <p className="text-xs text-slate-500">Analysis based on research from Saturday, Jan 31, 2026</p>
+                <h2 className="text-xl md:text-2xl font-bold text-white mb-1">Analytics Dashboard</h2>
+                <p className="text-[10px] md:text-xs text-slate-500">Analysis based on research from Saturday, Jan 31, 2026</p>
               </div>
 
               {/* Top Stats Row */}
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                 {/* Card 1 */}
                 <div className="bg-[#131625] rounded-xl p-4 border border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.1)] relative overflow-hidden group">
                   <div className="absolute top-0 left-0 w-1 h-full bg-green-500" />
                   <div className="absolute -right-4 -top-4 w-24 h-24 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-colors" />
                   <p className="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-2">Best Time to Post</p>
                   <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-2xl font-bold text-white">10:00 AM</span>
-                    <span className="text-xs text-slate-500">(2 PM)</span>
+                    <span className="text-xl md:text-2xl font-bold text-white">10:00 AM</span>
+                    <span className="text-[10px] md:text-xs text-slate-500">(2 PM)</span>
                   </div>
                   <div className="flex items-center gap-1 text-[10px] text-green-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
@@ -257,8 +263,8 @@ function Hero() {
                   <div className="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-colors" />
                   <p className="text-[10px] font-bold text-purple-500 uppercase tracking-wider mb-2">Target Pace</p>
                   <div className="flex items-baseline gap-1 mb-2">
-                    <span className="text-2xl font-bold text-white">190-200</span>
-                    <span className="text-xs text-slate-500">WPM</span>
+                    <span className="text-xl md:text-2xl font-bold text-white">190-200</span>
+                    <span className="text-[10px] md:text-xs text-slate-500">WPM</span>
                   </div>
                   <div className="flex items-center gap-1 text-[10px] text-purple-400">
                     <Zap size={10} fill="currentColor" />
@@ -292,7 +298,7 @@ function Hero() {
               </div>
 
               {/* Bottom Charts Row */}
-              <div className="grid grid-cols-12 gap-4 flex-1 min-h-0">
+              <div className="flex flex-col md:grid md:grid-cols-12 gap-4 flex-1 min-h-0">
                 {/* Viral Sweet Spot Chart */}
                 <div className="col-span-8 bg-[#131625] rounded-xl p-4 border border-white/5 flex flex-col">
                   <div className="mb-4">
@@ -568,16 +574,16 @@ function TrustStrip() {
   ];
 
   return (
-    <section className="py-10">
+    <section className="py-6 md:py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-center text-xs font-semibold tracking-widest text-slate-500 uppercase mb-8">
+        <p className="text-center text-xs font-semibold tracking-widest text-slate-500 uppercase mb-4 md:mb-8">
           Optimized for Growth on
         </p>
-        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-20 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
           {logos.map((logo, i) => (
             <div key={i} className="flex items-center gap-2 group cursor-pointer hover:opacity-100 transition-opacity">
-              <logo.Icon className="text-white group-hover:text-white transition-colors" size={24} />
-              <span className="font-semibold text-lg text-slate-300 group-hover:text-white transition-colors">{logo.name}</span>
+              <logo.Icon className="text-white group-hover:text-white transition-colors" size={20} />
+              <span className="font-semibold text-base md:text-lg text-slate-300 group-hover:text-white transition-colors">{logo.name}</span>
             </div>
           ))}
         </div>
@@ -643,94 +649,144 @@ function UseCaseTabs() {
   } as any;
 
   return (
-    <section id="features" ref={containerRef} className="h-[300vh] relative bg-[#0B0F19]">
-      <div className="sticky top-0 h-screen overflow-hidden flex items-center">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[128px] pointer-events-none" />
+    <section id="features" className="relative bg-[#0B0F19]">
+      {/* Desktop Scroll View */}
+      <div ref={containerRef} className="hidden md:block h-[300vh] relative">
+        <div className="sticky top-0 h-screen overflow-hidden flex items-center">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[128px] pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-              Use Trendsta for <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-400">{activeTab}</span>
-            </h2>
-            <div className="flex flex-wrap justify-center gap-4 relative">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 border ${activeTab === tab.id
-                    ? "text-black border-white"
-                    : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white"
-                    }`}
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+                Use Trendsta for <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-pink-400">{activeTab}</span>
+              </h2>
+              <div className="flex flex-wrap justify-center gap-4 relative">
+                {tabs.map(tab => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`relative px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 border ${activeTab === tab.id
+                      ? "text-black border-white"
+                      : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10 hover:text-white"
+                      }`}
+                  >
+                    {activeTab === tab.id && (
+                      <motion.div
+                        layoutId="activeTabIndicator"
+                        className="absolute inset-0 bg-white rounded-full -z-10"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    <tab.icon size={16} />
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[450px]">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  {activeTab === tab.id && (
-                    <motion.div
-                      layoutId="activeTabIndicator"
-                      className="absolute inset-0 bg-white rounded-full -z-10"
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  <h3 className="text-3xl font-bold text-white mb-6">{content[activeTab].title}</h3>
+                  <p className="text-lg text-slate-400 mb-8 leading-relaxed">
+                    {content[activeTab].desc}
+                  </p>
+                  <ul className="space-y-4 mb-8">
+                    {content[activeTab].features.map((feature: string, i: number) => (
+                      <li key={i} className="flex items-center gap-3 text-slate-300">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-gradient-to-br ${tabs.find(t => t.id === activeTab)?.color}`}>
+                          <CheckCircle2 size={14} className="text-white" />
+                        </div>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  <a
+                    href="/dashboard"
+                    className="inline-flex items-center gap-2 text-white font-semibold hover:gap-3 transition-all group"
+                  >
+                    Start creating now <ArrowRight size={18} className="group-hover:text-violet-400 transition-colors" />
+                  </a>
+                </motion.div>
+              </AnimatePresence>
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${activeTab}-img`}
+                  initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-tr from-violet-600/20 to-pink-600/20 rounded-2xl blur-2xl -z-10" />
+                  <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#131625] shadow-2xl">
+                    <Image
+                      src={content[activeTab].image}
+                      alt={activeTab}
+                      width={600}
+                      height={400}
+                      className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
                     />
-                  )}
-                  <tab.icon size={16} />
-                  {tab.label}
-                </button>
-              ))}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
-
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[450px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <h3 className="text-3xl font-bold text-white mb-6">{content[activeTab].title}</h3>
-                <p className="text-lg text-slate-400 mb-8 leading-relaxed">
-                  {content[activeTab].desc}
-                </p>
-                <ul className="space-y-4 mb-8">
-                  {content[activeTab].features.map((feature: string, i: number) => (
-                    <li key={i} className="flex items-center gap-3 text-slate-300">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center bg-gradient-to-br ${tabs.find(t => t.id === activeTab)?.color}`}>
-                        <CheckCircle2 size={14} className="text-white" />
-                      </div>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href="/dashboard"
-                  className="inline-flex items-center gap-2 text-white font-semibold hover:gap-3 transition-all group"
-                >
-                  Start creating now <ArrowRight size={18} className="group-hover:text-violet-400 transition-colors" />
-                </a>
-              </motion.div>
-            </AnimatePresence>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${activeTab}-img`}
-                initial={{ opacity: 0, scale: 0.9, filter: "blur(10px)" }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, scale: 1.1, filter: "blur(10px)" }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-tr from-violet-600/20 to-pink-600/20 rounded-2xl blur-2xl -z-10" />
-                <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#131625] shadow-2xl">
-                  <Image
-                    src={content[activeTab].image}
-                    alt={activeTab}
-                    width={600}
-                    height={400}
-                    className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
-                  />
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
         </div>
+      </div>
+
+      {/* Mobile Stacked View */}
+      <div className="md:hidden py-8 px-4 space-y-12 overflow-hidden">
+        {tabs.map((tab) => (
+          <div key={tab.id} className="space-y-6">
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 text-xs font-medium mb-4">
+                <tab.icon size={12} />
+                {tab.label}
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">{content[tab.id].title}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed max-w-sm mx-auto">
+                {content[tab.id].desc}
+              </p>
+            </div>
+
+            <div className="relative mx-auto max-w-[90%]">
+              <div className={`absolute inset-0 bg-gradient-to-tr ${tab.color} opacity-20 rounded-2xl blur-xl -z-10`} />
+              <div className="rounded-2xl overflow-hidden border border-white/10 bg-[#131625] shadow-2xl relative aspect-[4/3]">
+                <Image
+                  src={content[tab.id].image}
+                  alt={tab.label}
+                  fill
+                  className="object-contain p-2 bg-[#131625]"
+                />
+              </div>
+            </div>
+
+            <ul className="space-y-3">
+              {content[tab.id].features.map((feature: string, i: number) => (
+                <li key={i} className="flex items-center gap-3 text-slate-300 text-sm">
+                  <div className={`w-5 h-5 rounded-full flex items-center justify-center bg-gradient-to-br ${tab.color}`}>
+                    <CheckCircle2 size={12} className="text-white" />
+                  </div>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+            <a
+              href="/dashboard"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 rounded-xl text-white font-semibold hover:bg-white/10 transition-all font-sm"
+            >
+              Try {tab.label} <ArrowRight size={16} />
+            </a>
+          </div>
+        ))}
       </div>
     </section>
   );
@@ -777,28 +833,61 @@ function CommunityGrid() {
   ];
 
   return (
-    <section className="py-24 bg-[#0B0F19] relative overflow-hidden">
+    <section className="py-8 md:py-24 bg-[#0B0F19] relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
           {/* Left Content */}
-          <div className="relative z-10">
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-8">
+          <div className="relative z-20">
+            <h2 className="text-3xl md:text-6xl font-bold text-white mb-6 md:mb-8">
               Join the <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
                 New Wave.
               </span>
             </h2>
-            <p className="text-lg text-slate-400 mb-10 max-w-lg">
+            <p className="text-base md:text-lg text-slate-400 mb-8 md:mb-10 max-w-lg">
               Over 1,000+ creators and marketers are already using Trendsta to dominate their niche. Join the community and start growing faster.
             </p>
 
+            {/* Mobile-First Testimonial Card Placement (Visible on Mobile, Hidden on Desktop to swap position) */}
+            <div className="lg:hidden w-full mb-12">
+              <div className="bg-[#1A1D2D] border border-white/10 p-6 rounded-2xl shadow-xl relative z-20">
+                <div className="text-3xl text-white/20 font-serif mb-3">“</div>
+                <p className="text-base text-slate-200 mb-6 font-medium leading-relaxed min-h-[80px]">
+                  {testimonials[activeTestimonial].quote}
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full overflow-hidden border border-white/20 flex-shrink-0">
+                    <Image
+                      src={testimonials[activeTestimonial].image}
+                      width={40}
+                      height={40}
+                      className="object-cover w-full h-full"
+                      alt={testimonials[activeTestimonial].author}
+                    />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-sm">{testimonials[activeTestimonial].author}</p>
+                    <p className="text-xs text-slate-500">{testimonials[activeTestimonial].role}</p>
+                  </div>
+                </div>
+                {/* Indicators */}
+                <div className="flex gap-1.5 mt-6">
+                  {testimonials.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`h-1 rounded-full transition-all duration-300 ${activeTestimonial === i ? "w-4 bg-indigo-500" : "w-1 bg-white/10"}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Right Grid Visual */}
-          <div className="relative h-[600px] w-full perspective-1000">
-            {/* Floating Quote Card */}
-            <div className="absolute top-1/2 -left-20 -translate-y-1/2 z-20 w-full max-w-md">
+          <div className="relative h-[400px] md:h-[600px] w-full perspective-1000">
+            {/* Desktop-Only Floating Quote Card */}
+            <div className="hidden lg:block absolute top-1/2 -left-20 -translate-y-1/2 z-20 w-full max-w-md">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTestimonial}
@@ -842,7 +931,7 @@ function CommunityGrid() {
             </div>
 
             {/* Auto-Scrolling Image Grid Background */}
-            <div className="absolute inset-0 grid grid-cols-2 gap-4 rotate-3 opacity-60">
+            <div className="absolute inset-0 grid grid-cols-2 gap-4 rotate-3 opacity-30 md:opacity-60 mask-gradient-to-b">
 
               {/* Column 1 - Scrolling Up */}
               <motion.div
@@ -876,8 +965,8 @@ function CommunityGrid() {
               </motion.div>
             </div>
 
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#0B0F19] via-transparent to-[#0B0F19]" />
+            {/* Gradient Overlay for Readability */}
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-[#0B0F19] via-[#0B0F19]/20 to-[#0B0F19]" />
           </div>
         </div>
       </div>
@@ -912,13 +1001,13 @@ function FAQSection() {
   ];
 
   return (
-    <section id="faq" className="py-24 bg-[#0B0F19] relative border-t border-white/5">
+    <section id="faq" className="py-8 md:py-24 bg-[#0B0F19] relative border-t border-white/5">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-2xl md:text-5xl font-bold text-white mb-4 md:mb-6">
             Frequently Asked Questions
           </h2>
-          <p className="text-lg text-slate-400">
+          <p className="text-sm md:text-lg text-slate-400">
             Everything you need to know about growing with Trendsta.
           </p>
         </div>
@@ -934,13 +1023,13 @@ function FAQSection() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full text-left px-6 py-5 flex items-center justify-between gap-4"
+                className="w-full text-left px-5 py-4 md:px-6 md:py-5 flex items-center justify-between gap-4"
               >
-                <span className={`font-semibold text-lg ${openIndex === index ? "text-white" : "text-slate-300"}`}>
+                <span className={`font-semibold text-base md:text-lg ${openIndex === index ? "text-white" : "text-slate-300"}`}>
                   {faq.question}
                 </span>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${openIndex === index ? "bg-indigo-500/20 text-indigo-400" : "bg-white/5 text-slate-400"}`}>
-                  {openIndex === index ? <X size={18} className="rotate-45" /> : <X size={18} className="rotate-0" />}
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors flex-shrink-0 ${openIndex === index ? "bg-indigo-500/20 text-indigo-400" : "bg-white/5 text-slate-400"}`}>
+                  {openIndex === index ? <X size={16} className="rotate-45" /> : <X size={16} className="rotate-0" />}
                   {/* Using X rotate logic or Plus/Minus if imported. Using X since it is imported and Plus/Minus arent */}
                 </div>
               </button>
@@ -954,7 +1043,7 @@ function FAQSection() {
                     transition={{ duration: 0.3, ease: "easeInOut" }}
                     className="overflow-hidden"
                   >
-                    <div className="px-6 pb-6 pt-0 text-slate-400 leading-relaxed border-t border-white/5 mt-2">
+                    <div className="px-5 pb-5 pt-0 md:px-6 md:pb-6 md:pt-0 text-slate-400 leading-relaxed border-t border-white/5 mt-2 text-sm md:text-base">
                       <div className="pt-4">
                         {faq.answer}
                       </div>
@@ -1021,41 +1110,41 @@ function AIConsultantSection() {
   ];
 
   return (
-    <section className="py-24 bg-[#0B0F19] relative border-t border-white/5 overflow-hidden">
+    <section className="py-12 md:py-24 bg-[#0B0F19] relative border-t border-white/5 overflow-hidden">
       {/* Creative Background Elements */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-b from-indigo-500/10 to-purple-500/10 rounded-full blur-[120px] pointer-events-none -mr-32 -mt-32" />
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none -ml-20 -mb-20" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 text-indigo-300 text-sm font-medium mb-8 shadow-[0_0_15px_rgba(99,102,241,0.3)]">
-              <Zap size={14} className="animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-medium mb-6 md:mb-8 shadow-[0_0_15px_rgba(99,102,241,0.3)]">
+              <Zap size={12} className="animate-pulse" />
               <span className="tracking-wide">PREMIUM FEATURE</span>
             </div>
 
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-[1.15]">
+            <h2 className="text-2xl md:text-5xl font-bold text-white mb-4 md:mb-6 leading-[1.15]">
               Meet Your New <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 animate-gradient-x">
                 AI Growth Strategist
               </span>
             </h2>
 
-            <p className="text-lg text-slate-400 mb-10 leading-relaxed border-l-2 border-indigo-500/30 pl-6">
+            <p className="text-sm md:text-lg text-slate-400 mb-8 md:mb-10 leading-relaxed border-l-2 border-indigo-500/30 pl-4 md:pl-6">
               Go beyond static dashboards. Have a conversation with your data.
               Our AI Consultant analyzes millions of data points to answer your toughest
               growth questions in plain English.
             </p>
 
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {features.map((feature, i) => (
-                <div key={i} className="group flex gap-5 p-4 rounded-2xl transition-all duration-300 hover:bg-white/[0.03] hover:border-white/10 border border-transparent">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-300">
-                    <feature.icon className="text-indigo-400 group-hover:text-indigo-300" size={24} />
+                <div key={i} className="group flex gap-4 md:gap-5 p-3 md:p-4 rounded-2xl transition-all duration-300 hover:bg-white/[0.03] hover:border-white/10 border border-transparent">
+                  <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all duration-300">
+                    <feature.icon className="text-indigo-400 group-hover:text-indigo-300" size={20} />
                   </div>
                   <div>
-                    <h3 className="text-white font-bold text-lg mb-1 group-hover:text-indigo-300 transition-colors">{feature.title}</h3>
-                    <p className="text-slate-400 leading-relaxed text-sm group-hover:text-slate-300">{feature.desc}</p>
+                    <h3 className="text-white font-bold text-base md:text-lg mb-1 group-hover:text-indigo-300 transition-colors">{feature.title}</h3>
+                    <p className="text-slate-400 leading-relaxed text-xs md:text-sm group-hover:text-slate-300">{feature.desc}</p>
                   </div>
                   <div className="ml-auto flex items-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
                     <ArrowRight size={16} className="text-indigo-400" />
