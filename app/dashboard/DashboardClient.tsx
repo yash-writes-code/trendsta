@@ -89,7 +89,7 @@ export default function DashboardClient() {
             execution_plan: strategyData?.execution_plan,
         };
 
-        scriptIdeas = scriptSuggestions || [];
+        scriptIdeas = scriptSuggestions?.scripts || [];
 
         // Map dashboard graphs
         graphs = strategyData?.dashboard_graphs;

@@ -20,17 +20,17 @@ export default function ScriptIdeasClient() {
     const [expandedScript, setExpandedScript] = useState<number | null>(null);
     const [copiedSection, setCopiedSection] = useState<string | null>(null);
 
-    // Debug logging
-    console.log("ScriptIdeas Debug:", {
-        hasSession: !!session?.user,
-        sessionEmail: session?.user?.email,
-        isNoResearch,
-        hasData: !!rawData,
-        error: error?.message,
-    });
-    console.log("=== COMPONENT RENDER ===");
+ 
+    // console.log("ScriptIdeas Debug:", {
+    //     hasSession: !!session?.user,
+    //     sessionEmail: session?.user?.email,
+    //     isNoResearch,
+    //     hasData: !!rawData,
+    //     error: error?.message,
+    // });
+    // console.log("=== COMPONENT RENDER ===");
 
-    const scripts = Array.isArray(rawData) ? rawData.map(transformScriptSuggestion) : [];
+    const scripts = rawData?.scripts.map(transformScriptSuggestion);
 
     const copyToClipboard = (text: string, section: string) => {
         navigator.clipboard.writeText(text);
@@ -115,7 +115,7 @@ export default function ScriptIdeasClient() {
 
                     {/* Scripts List */}
                     <div className="space-y-6">
-                        {scripts.map((script, index) => {
+                        {scripts?.map((script, index) => {
                             const scriptId = index;
                             const isExpanded = expandedScript === scriptId;
                             const viralScore = script.viral_potential_score || 0;
@@ -411,7 +411,7 @@ export default function ScriptIdeasClient() {
                             );
                         })}
 
-                        {scripts.length === 0 && (
+                        {!scripts || scripts.length === 0 && (
                             <div className="text-center py-20 glass-panel border-dashed border-slate-200">
                                 <FileText size={48} className="mx-auto text-theme-muted mb-4" />
                                 <h3 className="text-lg font-bold text-theme-primary">No scripts generated yet</h3>

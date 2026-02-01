@@ -35,18 +35,20 @@ export interface RawScriptMetadata {
 }
 
 export interface RawScriptSuggestion {
-    rank?: number;
-    topic_title?: string;
-    script_title?: string;
-    viral_potential_score?: number;
-    estimated_duration?: string;
-    full_script?: string;
-    script_breakdown?: RawScriptBreakdown;
-    caption?: RawScriptCaption;
-    visual_storyboard?: RawVisualStoryboard;
-    hashtags?: RawScriptHashtags;
-    audio_vibe?: string;
-    metadata?: RawScriptMetadata;
+    scripts:{
+        rank: number;
+        topic_title: string;
+        script_title: string;
+        viral_potential_score: number;
+        estimated_duration: string;
+        full_script: string;
+        script_breakdown: RawScriptBreakdown;
+        caption: RawScriptCaption;
+        visual_storyboard: RawVisualStoryboard;
+        hashtags: RawScriptHashtags;
+        audio_vibe: string;
+        metadata: RawScriptMetadata;
+    }
 }
 
 // --- Overall Strategy ---
@@ -558,7 +560,7 @@ export interface RawResearchData {
     id: string;
     socialAccountId: string;
     createdAt: string;
-    scriptSuggestions: RawScriptSuggestion[] | null;
+    scriptSuggestions: { scripts: RawScriptSuggestion[] } | null;
     overallStrategy: RawOverallStrategy | null;
     userResearch: RawUserResearch | null;
     competitorResearch: RawCompetitorResearch | null;
