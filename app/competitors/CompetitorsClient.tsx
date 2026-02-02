@@ -124,7 +124,7 @@ export default function CompetitorsClient() {
                 <Sidebar />
                 <MobileHeader />
                 <main className="md:ml-64 p-4 md:p-8">
-                    <NoResearchState/>
+                    <NoResearchState />
                 </main>
             </div>
         );
