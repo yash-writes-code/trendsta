@@ -546,14 +546,14 @@ export interface RawTwitterResearchSection {
     tweets: RawTweet[];
     hashtags: RawTwitterHashtag[];
     keywords: RawTwitterKeyword[];
+    twitterLatest_research_context?: string;
+    twitterTop_research_context?: string;
 }
 
 // Returned by API (split into latest and top)
 export interface RawTwitterResearch {
     latest: RawTwitterResearchSection;
     top: RawTwitterResearchSection;
-    twitterLatest_research_context?: string;
-    twitterTop_research_context?: string;
 }
 
 

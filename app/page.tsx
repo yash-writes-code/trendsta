@@ -110,7 +110,7 @@ function Navbar() {
                 </a>
               ))}
               <a
-                href="/onboarding"
+                href="/signup"
                 className="block w-full text-center px-6 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold rounded-xl"
               >
                 Get Started

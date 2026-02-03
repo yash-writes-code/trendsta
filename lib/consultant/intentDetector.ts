@@ -4,8 +4,7 @@
 // Uses Gemini 2 Flash to decide which contexts to load
 // ============================================================
 
-import { ContextType, IntentDetectionResult, MEMORY_CONFIG } from './types';
-import { CONTEXT_DESCRIPTIONS } from './contexts';
+import { ContextType, IntentDetectionResult, MEMORY_CONFIG, CONTEXT_DESCRIPTIONS } from './types';
 
 const INTENT_SYSTEM_PROMPT = `You are a context router for an AI content consultant. Your job is to decide which research contexts need to be loaded to answer the user's question.
 
