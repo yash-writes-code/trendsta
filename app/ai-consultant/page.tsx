@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Sidebar from "../components/Sidebar";
 import MobileHeader from "../components/MobileHeader";
-import { Send, Sparkles, TrendingUp, Menu, Zap, BrainCircuit, History, ArrowRight, User, Paperclip, Mic, MicOff, Volume2, VolumeX, Target, ScrollText, Copy, Check, Lightbulb, BarChart3, Users, Hash, PenTool, Calendar, HelpCircle, FileText, Instagram } from "lucide-react";
+import { Send, Sparkles, TrendingUp, Menu, Zap, BrainCircuit, History, ArrowRight, User, Paperclip, Mic, MicOff, Volume2, VolumeX, Target, ScrollText, Copy, Check, Lightbulb, BarChart3, Users, Hash, PenTool, Calendar, HelpCircle, FileText, Instagram, Plus } from "lucide-react";
 import { useSidebar } from "../context/SidebarContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
@@ -214,6 +214,7 @@ function ChatMessage({
 // ============================================================
 export default function AIConsultantPage() {
     const { isCollapsed } = useSidebar();
+    const [conversations, setConversations] = useState<any[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
     const [displayedContents, setDisplayedContents] = useState<Record<number, string>>({});
     const [input, setInput] = useState("");
@@ -231,6 +232,80 @@ export default function AIConsultantPage() {
     // Initial Data & Hooks
     const { planTier } = useUsage();
     const { data: researchData } = useResearch();
+
+    // Fetch conversation history
+    const fetchHistory = useCallback(async () => {
+        try {
+            const res = await fetch('/api/consultant/conversations');
+            if (res.ok) {
+                const data = await res.json();
+                setConversations(data.conversations || []);
+            }
+        } catch (error) {
+            console.error('Failed to fetch history:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchHistory();
+    }, [fetchHistory]);
+
+    // Refresh history when chat starts (to show new chat)
+    useEffect(() => {
+        if (hasStartedChat && !chatId) {
+            // We can't fetch immediately as ID isn't known until first message return usually.
+            // But actually, handleSend sets chatId.
+            const timer = setTimeout(fetchHistory, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [hasStartedChat, chatId, fetchHistory]);
+
+    // Load a specific conversation
+    const loadConversation = async (id: string) => {
+        if (id === chatId) return;
+
+        setIsLoading(true);
+        try {
+            const res = await fetch(`/api/consultant/conversations/${id}`);
+            if (res.ok) {
+                const data = await res.json();
+
+                // Transform backend messages to frontend format
+                if (data.messages) {
+                    const loadedMessages: Message[] = data.messages.map((m: any) => ({
+                        id: new Date(m.createdAt).getTime(), // or use m.id if string is ok
+                        role: m.role.toLowerCase(),
+                        content: m.content
+                    }));
+
+                    setMessages(loadedMessages);
+                    setChatId(id);
+                    setHasStartedChat(true);
+
+                    // Pre-fill displayed contents
+                    const contents: Record<number, string> = {};
+                    loadedMessages.forEach(m => {
+                        contents[m.id] = m.content;
+                    });
+                    setDisplayedContents(contents);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load conversation:', error);
+        } finally {
+            setIsLoading(false);
+            if (window.innerWidth < 768) setShowHistory(false); // Close sidebar on mobile
+        }
+    };
+
+    const startNewChat = () => {
+        setMessages([]);
+        setDisplayedContents({});
+        setChatId(null);
+        setHasStartedChat(false);
+        setInput("");
+        if (window.innerWidth < 768) setShowHistory(false);
+    };
 
     // Refs
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -529,15 +604,53 @@ export default function AIConsultantPage() {
             <div className={`fixed right-0 top-0 bottom-0 w-80 bg-[var(--bg-primary)] border-l border-[var(--glass-border)] z-50 transform transition-transform duration-300 shadow-2xl ${showHistory ? 'translate-x-0' : 'translate-x-full'}`}>
                 <div className="p-4 border-b border-[var(--glass-border)] flex items-center justify-between">
                     <h3 className="font-bold text-theme-primary tracking-tight">Chat History</h3>
-                    <button onClick={() => setShowHistory(false)} className="p-1.5 text-theme-muted hover:text-theme-primary hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-all">
-                        <ArrowRight size={20} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={startNewChat}
+                            className="p-1.5 text-blue-500 hover:bg-blue-500/10 rounded-lg transition-all"
+                            title="New Chat"
+                        >
+                            <Plus size={20} />
+                        </button>
+                        <button onClick={() => setShowHistory(false)} className="p-1.5 text-theme-muted hover:text-theme-primary hover:bg-black/5 dark:hover:bg-white/5 rounded-lg transition-all">
+                            <ArrowRight size={20} />
+                        </button>
+                    </div>
                 </div>
                 <div className="p-4 space-y-3 overflow-y-auto h-[calc(100vh-65px)]">
-                    <div className="p-3 bg-[var(--glass-surface)] hover:bg-[var(--glass-surface-hover)] rounded-xl cursor-pointer transition-all border border-[var(--glass-border)] group">
-                        <p className="text-sm font-semibold text-theme-primary truncate group-hover:text-blue-600 dark:group-hover:text-blue-400">Current Session</p>
-                        <p className="text-[10px] uppercase font-bold text-theme-muted tracking-wider mt-1">Just now</p>
-                    </div>
+                    <button
+                        onClick={startNewChat}
+                        className="w-full p-3 flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:shadow-lg rounded-xl transition-all text-white group mb-4"
+                    >
+                        <Plus size={18} />
+                        <span className="font-medium text-sm">New Chat</span>
+                    </button>
+
+                    {conversations.length === 0 ? (
+                        <div className="text-center py-8 opacity-50">
+                            <History size={32} className="mx-auto mb-2" />
+                            <p className="text-sm">No history yet</p>
+                        </div>
+                    ) : (
+                        conversations.map((conv) => (
+                            <div
+                                key={conv.id}
+                                onClick={() => loadConversation(conv.id)}
+                                className={`p-3 rounded-xl cursor-pointer transition-all border group text-left ${chatId === conv.id
+                                        ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800'
+                                        : 'bg-[var(--glass-surface)] hover:bg-[var(--glass-surface-hover)] border-[var(--glass-border)]'
+                                    }`}
+                            >
+                                <p className={`text-sm font-semibold truncate ${chatId === conv.id ? 'text-blue-700 dark:text-blue-300' : 'text-theme-primary group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                                    }`}>
+                                    {conv.title || "Untitled Conversation"}
+                                </p>
+                                <p className="text-[10px] uppercase font-bold text-theme-muted tracking-wider mt-1">
+                                    {new Date(conv.updatedAt).toLocaleDateString()}
+                                </p>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
 

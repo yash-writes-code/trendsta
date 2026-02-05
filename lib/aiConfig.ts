@@ -10,8 +10,8 @@ export const MODEL_MODES = {
     fast: {
         name: 'Fast',
         description: 'Quick responses, simple queries',
-        // model: 'google/gemini-2.0-flash-001',
-        model: "tngtech/deepseek-r1t2-chimera:free",
+        model: 'google/gemini-2.0-flash-001',
+        //model: "tngtech/deepseek-r1t2-chimera:free",
         icon: '⚡',
     },
     pro:{

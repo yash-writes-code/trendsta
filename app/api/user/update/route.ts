@@ -24,6 +24,7 @@ export async function POST(request: Request) {
             niche,
             subNiche,
             instagramUsername,
+            automationSettings,
         } = body;
 
         // Build user update data
@@ -77,6 +78,37 @@ export async function POST(request: Request) {
             }
         }
 
+        // Handle Automation Settings update
+        if (automationSettings) {
+            const user = await prisma.user.findUnique({
+                where: { id: userId },
+                include: { subscriptions: { include: { plan: true } } }
+            });
+
+            const isPlatinum = user?.subscriptions?.some(
+                sub => sub.status === 'ACTIVE' && sub.plan.name.toLowerCase().includes('platinum')
+            );
+
+            if (isPlatinum) {
+                await prisma.automationSettings.upsert({
+                    where: { userId },
+                    create: {
+                        userId,
+                        competitors: automationSettings.competitors || [],
+                        writingStyle: automationSettings.writingStyle || "let ai decide",
+                        scriptLanguage: automationSettings.scriptLanguage || "English",
+                        captionLanguage: automationSettings.captionLanguage || "English",
+                    },
+                    update: {
+                        competitors: automationSettings.competitors,
+                        writingStyle: automationSettings.writingStyle,
+                        scriptLanguage: automationSettings.scriptLanguage,
+                        captionLanguage: automationSettings.captionLanguage,
+                    },
+                });
+            }
+        }
+
         // Fetch updated user data to return
         const updatedUser = await prisma.user.findUnique({
             where: { id: userId },
@@ -95,6 +127,7 @@ export async function POST(request: Request) {
                     },
                     take: 1,
                 },
+                automationSettings: true,
             },
         });
 

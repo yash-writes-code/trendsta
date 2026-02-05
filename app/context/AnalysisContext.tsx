@@ -11,7 +11,7 @@ interface AnalysisContextType {
     jobId: string | null;
     jobStatus: JobStatus;
     error: string | null;
-    startAnalysis: (socialAccountId: string, competitorIds?: string[]) => Promise<void>;
+    startAnalysis: (options: { socialAccountId: string, competitorUsernames?: string[], reelCountTier?: 'LOW' | 'MEDIUM' | 'HIGH', writingStyle?: string, scriptLanguage?: string, captionLanguage?: string }) => Promise<void>;
     clearJob: () => void;
 }
 
@@ -29,7 +29,7 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }) {
     // Poll for job status
     const pollJobStatus = useCallback(async (id: string) => {
         try {
-            const res = await fetch(`/api/analysis/${id}/status`);
+            const res = await fetch(`/api/analysis/${id}/status`, { cache: "no-store" });
             const data = await res.json();
 
             setJobStatus(data.status);
@@ -54,13 +54,13 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }) {
     }, [queryClient]);
 
     // Start analysis
-    const startAnalysis = useCallback(async (socialAccountId: string, competitorIds: string[] = []) => {
+    const startAnalysis = useCallback(async (options: { socialAccountId: string, competitorUsernames?: string[], reelCountTier?: 'LOW' | 'MEDIUM' | 'HIGH', writingStyle?: string, scriptLanguage?: string, captionLanguage?: string }) => {
         setError(null);
         try {
             const res = await fetch("/api/analysis/start", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ socialAccountId, competitorIds }),
+                body: JSON.stringify(options),
             });
 
             const data = await res.json();
@@ -86,6 +86,7 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }) {
         }
     }, [pollJobStatus]);
 
+
     const clearJob = useCallback(() => {
         if (pollIntervalRef.current) {
             clearInterval(pollIntervalRef.current);
@@ -104,6 +105,32 @@ export function AnalysisProvider({ children }: { children: React.ReactNode }) {
             }
         };
     }, []);
+
+    // [NEW] Session Recovery: Check for valid session on mount
+    useEffect(() => {
+        const checkActiveSession = async () => {
+            try {
+                const res = await fetch("/api/analysis/active");
+                const data = await res.json();
+
+                if (data.isAnalyzing && data.job) {
+                    setJobId(data.job.id);
+                    setJobStatus(data.job.status);
+
+                    // Start polling immediately
+                    pollJobStatus(data.job.id);
+                    pollIntervalRef.current = setInterval(() => {
+                        pollJobStatus(data.job.id);
+                    }, 10000);
+                }
+            } catch (err) {
+                console.error("Failed to recover session:", err);
+            }
+        };
+
+        checkActiveSession();
+    }, [pollJobStatus]);
+
 
     return (
         <AnalysisContext.Provider value={{ isAnalysing, jobId, jobStatus, error, startAnalysis, clearJob }}>

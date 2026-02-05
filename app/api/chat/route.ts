@@ -8,7 +8,7 @@ import {
     addMessage,
     autoGenerateTitle,
     ContextType,
-    getAllContexts,
+
     detectIntent,
     detectIntentFallback,
     prepareMessagesForAPI,
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
         const researchResult = await getLatestResearch(userId);
         console.log("research data --------", researchResult);
 
-        const allContexts = getAllContexts(); // Get static defaults first
+        const allContexts = { user: '', competitor: '', niche: '', twitter: '' };
 
         // Overwrite with dynamic data if available
         if (researchResult.success) {
@@ -174,8 +174,8 @@ export async function POST(request: NextRequest) {
 
             // Twitter Context
             if (r.twitterResearch) {
-                const latestCtx = r.twitterResearch.twitterLatest_research_context;
-                const topCtx = r.twitterResearch.twitterTop_research_context;
+                const latestCtx = r.twitterResearch.latest?.twitterLatest_research_context;
+                const topCtx = r.twitterResearch.top?.twitterTop_research_context;
 
                 if (latestCtx || topCtx) {
                     allContexts.twitter = [latestCtx, topCtx].filter(Boolean).join('\n\n');

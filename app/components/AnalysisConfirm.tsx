@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Sparkles, Loader2, Plus, Trash2 } from 'lucide-react';
+import { X, Sparkles, Loader2, Plus, Trash2, Languages, PenTool } from 'lucide-react';
 import { useUsage } from '@/hooks/useUsage';
 import { useCompetitorResearch } from '@/hooks/useResearch';
 import { ANALYSIS_CONFIG, calculateAnalysisCost, AnalysisTier } from '@/lib/analysis/config';
@@ -7,7 +7,7 @@ import { ANALYSIS_CONFIG, calculateAnalysisCost, AnalysisTier } from '@/lib/anal
 interface AnalysisConfirmProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (data: { reelCountTier: AnalysisTier; competitorUsernames: string[] }) => void;
+    onConfirm: (data: { reelCountTier: AnalysisTier; competitorUsernames: string[]; writingStyle: string; scriptLanguage: string; captionLanguage: string }) => void;
     isLoading: boolean;
     error?: string | null;
 }
@@ -19,6 +19,9 @@ export default function AnalysisConfirm({ isOpen, onClose, onConfirm, isLoading,
     const [tier, setTier] = useState<AnalysisTier>('MEDIUM');
     const [competitors, setCompetitors] = useState<string[]>([]);
     const [newCompetitor, setNewCompetitor] = useState('');
+    const [writingStyle, setWritingStyle] = useState('let ai decide');
+    const [scriptLanguage, setScriptLanguage] = useState('English');
+    const [captionLanguage, setCaptionLanguage] = useState('English');
 
     // Load default competitors from previous research once loaded
     useEffect(() => {
@@ -45,7 +48,13 @@ export default function AnalysisConfirm({ isOpen, onClose, onConfirm, isLoading,
     };
 
     const handleConfirm = () => {
-        onConfirm({ reelCountTier: tier, competitorUsernames: competitors });
+        onConfirm({
+            reelCountTier: tier,
+            competitorUsernames: competitors,
+            writingStyle: writingStyle.trim() || 'let ai decide',
+            scriptLanguage,
+            captionLanguage
+        });
     };
 
     if (!isOpen) return null;
@@ -130,6 +139,73 @@ export default function AnalysisConfirm({ isOpen, onClose, onConfirm, isLoading,
                                 )}
                             </div>
                         )}
+                    </div>
+
+                    {/* Writing Style & Language */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                                <PenTool size={14} className="text-slate-400" />
+                                Writing Style
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="let ai decide"
+                                value={writingStyle}
+                                onChange={(e) => setWritingStyle(e.target.value)}
+                                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-slate-400"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                                <Languages size={14} className="text-slate-400" />
+                                Script Language
+                            </label>
+                            <select
+                                value={scriptLanguage}
+                                onChange={(e) => setScriptLanguage(e.target.value)}
+                                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                            >
+                                <option value="English">English</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="Hinglish">Hinglish</option>
+                                <option value="Spanish">Spanish</option>
+                                <option value="French">French</option>
+                                <option value="German">German</option>
+                                <option value="Italian">Italian</option>
+                                <option value="Portuguese">Portuguese</option>
+                                <option value="Japanese">Japanese</option>
+                                <option value="Korean">Korean</option>
+                                <option value="Chinese">Chinese</option>
+                                <option value="Russian">Russian</option>
+                                <option value="Arabic">Arabic</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                                <Languages size={14} className="text-slate-400" />
+                                Caption Language
+                            </label>
+                            <select
+                                value={captionLanguage}
+                                onChange={(e) => setCaptionLanguage(e.target.value)}
+                                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                            >
+                                <option value="English">English</option>
+                                <option value="Hindi">Hindi</option>
+                                <option value="Hinglish">Hinglish</option>
+                                <option value="Spanish">Spanish</option>
+                                <option value="French">French</option>
+                                <option value="German">German</option>
+                                <option value="Italian">Italian</option>
+                                <option value="Portuguese">Portuguese</option>
+                                <option value="Japanese">Japanese</option>
+                                <option value="Korean">Korean</option>
+                                <option value="Chinese">Chinese</option>
+                                <option value="Russian">Russian</option>
+                                <option value="Arabic">Arabic</option>
+                            </select>
+                        </div>
                     </div>
 
                     {/* Cost Summary */}

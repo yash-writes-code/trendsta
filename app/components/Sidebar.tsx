@@ -9,7 +9,7 @@ import { useSidebar } from "../context/SidebarContext";
 import ThemeToggle from "./ThemeToggle";
 import { useSession, authClient } from "@/lib/auth-client";
 import { useUsage } from "@/hooks/useUsage";
-import { useAnalysisStatus } from "@/hooks/useAnalysisStatus";
+import { useAnalysis } from "../context/AnalysisContext";
 import AnalysisConfirm from "./AnalysisConfirm";
 import { Loader2 } from "lucide-react";
 
@@ -34,7 +34,7 @@ export default function Sidebar() {
     const { planTier, allowance, isLoading: usageLoading } = useUsage();
 
     const { data: session } = useSession();
-    const { isAnalyzing, mutate } = useAnalysisStatus();
+    const { isAnalysing, startAnalysis } = useAnalysis();
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [isStarting, setIsStarting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -43,16 +43,7 @@ export default function Sidebar() {
         setIsStarting(true);
         setError(null);
         try {
-            const res = await fetch("/api/analysis/start", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const resData = await res.json();
-
-            if (!res.ok) throw new Error(resData.error || "Failed to start analysis");
-
-            mutate(); // Refresh status immediately
+            await startAnalysis(data);
             setIsConfirmOpen(false);
         } catch (error) {
             console.error(error);
@@ -158,17 +149,17 @@ export default function Sidebar() {
             <div className="px-3 pb-3">
                 <button
                     onClick={() => {
-                        if (isAnalyzing) return;
+                        if (isAnalysing) return;
                         setIsConfirmOpen(true);
                     }}
-                    disabled={isAnalyzing}
+                    disabled={isAnalysing}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative 
-                        ${isAnalyzing ? "bg-slate-50 text-slate-400 cursor-not-allowed border border-slate-100" : "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/40 hover:scale-[1.02]"}
+                        ${isAnalysing ? "bg-slate-50 text-slate-400 cursor-not-allowed border border-slate-100" : "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/40 hover:scale-[1.02]"}
                         ${isCollapsed ? "justify-center" : ""}
                     `}
-                    title={isCollapsed ? (isAnalyzing ? "Analysis in Progress" : "New Analysis") : undefined}
+                    title={isCollapsed ? (isAnalysing ? "Analysis in Progress" : "New Analysis") : undefined}
                 >
-                    {isAnalyzing ? (
+                    {isAnalysing ? (
                         <Loader2 size={20} className="animate-spin shrink-0" />
                     ) : (
                         <Sparkles size={20} className="shrink-0" />
@@ -176,13 +167,13 @@ export default function Sidebar() {
 
                     {!isCollapsed && (
                         <span className="font-bold text-sm whitespace-nowrap">
-                            {isAnalyzing ? "Analyzing..." : "New Analysis"}
+                            {isAnalysing ? "Analyzing..." : "New Analysis"}
                         </span>
                     )}
 
                     {isCollapsed && (
                         <div className="absolute left-full ml-4 px-3 py-1 bg-slate-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 whitespace-nowrap">
-                            {isAnalyzing ? "Analysis in Progress" : "New Analysis"}
+                            {isAnalysing ? "Analysis in Progress" : "New Analysis"}
                         </div>
                     )}
                 </button>

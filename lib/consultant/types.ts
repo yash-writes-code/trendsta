@@ -67,3 +67,11 @@ export const MEMORY_CONFIG = {
     // Rough token estimation (chars / 4)
     CHARS_PER_TOKEN: 4,
 };
+
+// Descriptions for intent detection
+export const CONTEXT_DESCRIPTIONS = {
+    user: "User's past performance, viral hits, and content gaps",
+    competitor: "Competitor strategies, winning formats, and gaps",
+    niche: "Trending topics, viral hooks, and what's working now in the niche (FYP)",
+    twitter: "Trending discussions and viral threads from Twitter/X",
+};

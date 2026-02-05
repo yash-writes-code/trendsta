@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { useSidebar } from "../context/SidebarContext";
 import { useSession } from "@/lib/auth-client";
-import { Camera, Trash2, ChevronDown, Check, Save, Zap, Instagram } from "lucide-react";
+import { ChevronDown, Check, Save, Zap, Lock, Plus, X, Languages, PenTool } from "lucide-react";
 
 import {
     NICHE_OPTIONS,
@@ -89,6 +89,14 @@ export default function AccountPage() {
                     if (data.niche) setNiche(data.niche);
                     if (data.subNiche) setSubNiche(data.subNiche);
                     if (data.instagramUsername) setInstagramUsername(data.instagramUsername);
+
+                    // Set automation settings if available
+                    if (data.automationSettings) {
+                        setAutoCompetitors(data.automationSettings.competitors || []);
+                        setAutoWritingStyle(data.automationSettings.writingStyle || "let ai decide");
+                        setAutoScriptLanguage(data.automationSettings.scriptLanguage || "English");
+                        setAutoCaptionLanguage(data.automationSettings.captionLanguage || "English");
+                    }
                 })
                 .catch(err => console.error('Failed to fetch profile:', err));
         }
@@ -100,6 +108,13 @@ export default function AccountPage() {
     const [instagramUsername, setInstagramUsername] = useState("");
     const [niche, setNiche] = useState("");
     const [subNiche, setSubNiche] = useState("");
+
+    // Automation Settings
+    const [autoCompetitors, setAutoCompetitors] = useState<string[]>([]);
+    const [autoNewCompetitor, setAutoNewCompetitor] = useState("");
+    const [autoWritingStyle, setAutoWritingStyle] = useState("let ai decide");
+    const [autoScriptLanguage, setAutoScriptLanguage] = useState("English");
+    const [autoCaptionLanguage, setAutoCaptionLanguage] = useState("English");
 
     // Dropdown states
     const [showPhoneCodeDropdown, setShowPhoneCodeDropdown] = useState(false);
@@ -169,7 +184,7 @@ export default function AccountPage() {
             }
         };
 
-        if (activeTab === 'plan') {
+        if (true) {
             fetchData();
         }
     }, [activeTab]);
@@ -318,6 +333,12 @@ export default function AccountPage() {
                     niche,
                     subNiche,
                     instagramUsername,
+                    automationSettings: {
+                        competitors: autoCompetitors,
+                        writingStyle: autoWritingStyle,
+                        scriptLanguage: autoScriptLanguage,
+                        captionLanguage: autoCaptionLanguage,
+                    },
                 }),
             });
 
@@ -492,7 +513,7 @@ export default function AccountPage() {
                                 <div className="p-6 border-b border-white/10">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundImage: 'linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)' }}>
-                                            <Instagram className="w-5 h-5 text-pink-500" />
+                                            <Zap className="w-5 h-5 text-pink-500" />
                                         </div>
                                         <div>
                                             <h2 className="text-lg font-semibold text-theme-primary">Instagram & Content</h2>
@@ -529,7 +550,10 @@ export default function AccountPage() {
                                             </label>
                                             <select
                                                 value={niche}
-                                                onChange={(e) => handleNicheChange(e.target.value)}
+                                                onChange={(e) => {
+                                                    setNiche(e.target.value);
+                                                    setSubNiche(""); // Reset sub-niche when niche changes
+                                                }}
                                                 className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2"
                                                 style={{
                                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
@@ -576,8 +600,174 @@ export default function AccountPage() {
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
+                            <div className="rounded-2xl overflow-hidden relative" style={{ backgroundColor: 'var(--glass-surface)', border: '1px solid var(--glass-border)' }}>
+                                {(!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')) && (
+                                    <div className="absolute inset-0 z-20 backdrop-blur-sm bg-white/50 flex flex-col items-center justify-center text-center p-6">
+                                        <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mb-3 shadow-xl">
+                                            <Lock className="w-6 h-6 text-white" />
+                                        </div>
+                                        <h3 className="text-lg font-bold text-slate-900 mb-1">Platinum Feature</h3>
+                                        <p className="text-sm text-slate-600 max-w-xs mb-4">
+                                            Upgrade to Platinum to unlock automated analysis defaults and save time.
+                                        </p>
+                                        <button
+                                            onClick={() => setActiveTab('plan')}
+                                            className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
+                                        >
+                                            Upgrade Now
+                                        </button>
+                                    </div>
+                                )}
 
+                                <div className="p-6" style={{ borderBottomColor: 'var(--glass-border)', borderBottomWidth: '1px' }}>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundImage: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)' }}>
+                                            <Zap className="w-5 h-5 text-blue-600" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-lg font-semibold text-theme-primary">Automation Settings</h2>
+                                            <p className="text-sm text-theme-primary">Configure defaults for automated analysis</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="p-6 space-y-6">
+                                    {/* Competitors List */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-theme-primary mb-2">
+                                            Default Competitor List
+                                        </label>
+                                        <div className="flex gap-2 mb-3">
+                                            <input
+                                                type="text"
+                                                placeholder="Enter username (e.g. 100xengineers)"
+                                                value={autoNewCompetitor}
+                                                onChange={(e) => setAutoNewCompetitor(e.target.value)}
+                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                                className="flex-1 px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none focus:ring-2 disabled:opacity-50"
+                                                style={{
+                                                    backgroundColor: 'var(--glass-inset-bg)',
+                                                    color: 'var(--text-primary)',
+                                                    borderColor: 'var(--glass-border)',
+                                                } as any}
+                                            />
+                                            <button
+                                                onClick={() => {
+                                                    if (autoNewCompetitor.trim() && !autoCompetitors.includes(autoNewCompetitor.trim())) {
+                                                        setAutoCompetitors([...autoCompetitors, autoNewCompetitor.trim()]);
+                                                        setAutoNewCompetitor("");
+                                                    }
+                                                }}
+                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                                className="px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+                                            >
+                                                <Plus size={20} />
+                                            </button>
+                                        </div>
+
+                                        {autoCompetitors.length > 0 ? (
+                                            <div className="flex flex-wrap gap-2">
+                                                {autoCompetitors.map((comp) => (
+                                                    <span key={comp} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 text-sm font-medium rounded-lg border border-blue-100">
+                                                        @{comp}
+                                                        <button
+                                                            onClick={() => setAutoCompetitors(autoCompetitors.filter(c => c !== comp))}
+                                                            disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                                            className="hover:text-blue-900"
+                                                        >
+                                                            <X size={14} />
+                                                        </button>
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-sm text-theme-muted italic">No default competitors added.</p>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        {/* Writing Style */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-theme-primary mb-2 flex items-center gap-2">
+                                                <PenTool size={14} className="text-theme-secondary" />
+                                                Writing Style
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={autoWritingStyle}
+                                                onChange={(e) => setAutoWritingStyle(e.target.value)}
+                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                                placeholder="let ai decide"
+                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none focus:ring-2 disabled:opacity-50"
+                                                style={{
+                                                    backgroundColor: 'var(--glass-inset-bg)',
+                                                    color: 'var(--text-primary)',
+                                                    borderColor: 'var(--glass-border)',
+                                                } as any}
+                                            />
+                                        </div>
+
+                                        {/* Script Language */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-theme-primary mb-2 flex items-center gap-2">
+                                                <Languages size={14} className="text-theme-secondary" />
+                                                Script Language
+                                            </label>
+                                            <select
+                                                value={autoScriptLanguage}
+                                                onChange={(e) => setAutoScriptLanguage(e.target.value)}
+                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 disabled:opacity-50"
+                                                style={{
+                                                    backgroundColor: 'var(--glass-inset-bg)',
+                                                    color: 'var(--text-primary)',
+                                                    borderColor: 'var(--glass-border)',
+                                                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                                    backgroundRepeat: 'no-repeat',
+                                                    backgroundPosition: 'right 1rem center',
+                                                    backgroundSize: '1.25rem',
+                                                } as any}
+                                            >
+                                                <option value="English">English</option>
+                                                <option value="Hindi">Hindi</option>
+                                                <option value="Spanish">Spanish</option>
+                                                <option value="French">French</option>
+                                                <option value="German">German</option>
+                                            </select>
+                                        </div>
+
+                                        {/* Caption Language */}
+                                        <div>
+                                            <label className="block text-sm font-medium text-theme-primary mb-2 flex items-center gap-2">
+                                                <Languages size={14} className="text-theme-secondary" />
+                                                Caption Language
+                                            </label>
+                                            <select
+                                                value={autoCaptionLanguage}
+                                                onChange={(e) => setAutoCaptionLanguage(e.target.value)}
+                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 disabled:opacity-50"
+                                                style={{
+                                                    backgroundColor: 'var(--glass-inset-bg)',
+                                                    color: 'var(--text-primary)',
+                                                    borderColor: 'var(--glass-border)',
+                                                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                                    backgroundRepeat: 'no-repeat',
+                                                    backgroundPosition: 'right 1rem center',
+                                                    backgroundSize: '1.25rem',
+                                                } as any}
+                                            >
+                                                <option value="English">English</option>
+                                                <option value="Hindi">Hindi</option>
+                                                <option value="Spanish">Spanish</option>
+                                                <option value="French">French</option>
+                                                <option value="German">German</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -923,9 +1113,10 @@ export default function AccountPage() {
                             </div>
 
                         </div>
-                    )}
-                </div>
-            </main>
-        </div>
+                    )
+                    }
+                </div >
+            </main >
+        </div >
     );
 }

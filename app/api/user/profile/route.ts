@@ -31,6 +31,7 @@ export async function GET() {
                     },
                     take: 1, // Get the first (and likely only) social account
                 },
+                automationSettings: true,
             },
         });
 
@@ -49,6 +50,7 @@ export async function GET() {
             subNiche: user.subNiche,
             phoneNumber: user.phoneNumber,
             instagramUsername,
+            automationSettings: user.automationSettings,
         };
 
         console.log('[Profile API] Returning profile for user:', session.user.id, profileData);

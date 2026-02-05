@@ -26,6 +26,7 @@ model User {
   language       String          @default("en")
   timezone       String          @default("UTC+00:00")
 
+  location       String?         @default("India")
   // Onboarding fields
   niche          String?
   subNiche       String?
@@ -40,6 +41,7 @@ model User {
   
   // AI Consultant
   conversations      Conversation[]
+  automationSettings AutomationSettings?
   
   @@map("user")
 }
@@ -272,6 +274,27 @@ model AnalysisJob {
   @@index([userId])
   @@index([userId, status])
   @@map("analysis_job")
+ 
+}
+
+// ============================================
+// AUTOMATION SETTINGS
+// ============================================
+
+model AutomationSettings {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String   @unique @db.Uuid
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  competitors     String[] @default([])
+  writingStyle    String   @default("let ai decide")
+  scriptLanguage  String   @default("English")
+  captionLanguage String   @default("English")
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("automation_settings")
 }
 
 // ============================================

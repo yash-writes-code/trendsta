@@ -23,9 +23,23 @@ async function loadSessionFromDB(
 
     const messages = await db.getMessages(conversationId);
 
+    // Re-hydrate loaded contexts from message history
+    const restoredContexts = new Set<ContextType>();
+
+    console.log("messages",messages);
+    
+    // Check all messages for contexts used
+    messages.forEach(m => {
+        if (m.contextsUsed && Array.isArray(m.contextsUsed)) {
+            m.contextsUsed.forEach((ctx: string) => {
+                restoredContexts.add(ctx as ContextType);
+            });
+        }
+    });
+
     const session: ChatSession = {
         chatId: conversation.id,
-        loadedContexts: new Set<ContextType>(),
+        loadedContexts: restoredContexts,
         messages: messages.map(m => ({
             role: m.role.toLowerCase() as 'user' | 'assistant',
             content: m.content,
