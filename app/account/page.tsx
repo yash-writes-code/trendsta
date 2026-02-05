@@ -360,7 +360,7 @@ export default function AccountPage() {
     const selectedPhoneCode = countryCodes.find((c) => c.code === phoneCode);
 
     return (
-        <div style={{ backgroundColor: 'var(--bg-primary)' }} className="min-h-screen transition-colors duration-300">
+        <div className="min-h-screen relative selection:bg-blue-200">
             <Sidebar />
 
             <main
@@ -381,24 +381,22 @@ export default function AccountPage() {
                     </div>
 
                     {/* Tabs */}
-                    <div className="flex items-center gap-1 mb-6" style={{ borderBottomColor: 'var(--glass-border)' }}>
+                    <div className="flex items-center gap-1 mb-6 border-b border-white/10">
                         <button
                             onClick={() => setActiveTab('profile')}
                             className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors border-b-2 ${activeTab === 'profile'
-                                ? 'border-blue-600 text-blue-600'
+                                ? 'border-blue-600 text-blue-600 bg-blue-500/10'
                                 : 'border-transparent text-theme-secondary hover:text-theme-primary'
                                 }`}
-                            style={activeTab === 'profile' ? { backgroundColor: 'rgba(59, 130, 246, 0.1)' } : {}}
                         >
                             My Profile
                         </button>
                         <button
                             onClick={() => setActiveTab('plan')}
                             className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors border-b-2 ${activeTab === 'plan'
-                                ? 'border-blue-600 text-blue-600'
+                                ? 'border-blue-600 text-blue-600 bg-blue-500/10'
                                 : 'border-transparent text-theme-secondary hover:text-theme-primary'
                                 }`}
-                            style={activeTab === 'plan' ? { backgroundColor: 'rgba(59, 130, 246, 0.1)' } : {}}
                         >
                             Subscription Plan
                         </button>
@@ -408,8 +406,8 @@ export default function AccountPage() {
                     {activeTab === 'profile' ? (
                         <div className="space-y-6 animate-fadeIn">
                             {/* Personal Information Card */}
-                            <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--glass-surface)', border: '1px solid var(--glass-border)' }}>
-                                <div className="p-6" style={{ borderBottomColor: 'var(--glass-border)', borderBottomWidth: '1px' }}>
+                            <div className="glass-panel overflow-hidden">
+                                <div className="p-6 border-b border-white/10">
                                     <h2 className="text-lg font-semibold text-theme-primary">Personal Information</h2>
                                     <p className="text-sm text-theme-secondary">Edit your personal information</p>
                                 </div>
@@ -427,13 +425,7 @@ export default function AccountPage() {
                                                 value={firstName}
                                                 onChange={(e) => setFirstName(e.target.value)}
                                                 placeholder="Enter first name"
-                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none focus:ring-2"
-                                                style={{
-                                                    backgroundColor: 'var(--glass-inset-bg)',
-                                                    color: 'var(--text-primary)',
-                                                    borderColor: 'var(--glass-border)',
-                                                    '--tw-ring-color': 'rgba(59, 130, 246, 0.2)'
-                                                } as any}
+                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                                             />
                                         </div>
 
@@ -447,13 +439,7 @@ export default function AccountPage() {
                                                 value={lastName}
                                                 onChange={(e) => setLastName(e.target.value)}
                                                 placeholder="Enter last name"
-                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none focus:ring-2"
-                                                style={{
-                                                    backgroundColor: 'var(--glass-inset-bg)',
-                                                    color: 'var(--text-primary)',
-                                                    borderColor: 'var(--glass-border)',
-                                                    '--tw-ring-color': 'rgba(59, 130, 246, 0.2)'
-                                                } as any}
+                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                                             />
                                         </div>
 
@@ -468,12 +454,7 @@ export default function AccountPage() {
                                                 onChange={(e) => setEmail(e.target.value)}
                                                 placeholder="example@email.com"
                                                 disabled
-                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none cursor-not-allowed"
-                                                style={{
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.03)',
-                                                    color: 'var(--text-secondary)',
-                                                    borderColor: 'var(--glass-border)',
-                                                }}
+                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/5 text-theme-secondary transition-all font-medium focus:outline-none cursor-not-allowed"
                                             />
                                             <p className="text-xs text-theme-muted mt-1">Email cannot be changed</p>
                                         </div>
@@ -489,23 +470,14 @@ export default function AccountPage() {
                                                     <button
                                                         type="button"
                                                         onClick={() => setShowPhoneCodeDropdown(!showPhoneCodeDropdown)}
-                                                        className="flex items-center gap-2 px-3 py-3 rounded-xl border transition-colors"
-                                                        style={{
-                                                            backgroundColor: 'var(--glass-inset-bg)',
-                                                            borderColor: 'var(--glass-border)',
-                                                            minWidth: '90px'
-                                                        }}
+                                                        className="flex items-center gap-2 px-3 py-3 rounded-xl border border-white/10 bg-black/20 transition-colors bg-glass-inset-bg min-w-[90px]"
                                                     >
                                                         <span className="text-lg">{selectedPhoneCode?.flag}</span>
                                                         <span className="text-sm text-theme-secondary font-medium">{phoneCode}</span>
                                                         <ChevronDown size={14} style={{ color: 'var(--text-secondary)' }} />
                                                     </button>
                                                     {showPhoneCodeDropdown && (
-                                                        <div className="absolute top-full left-0 mt-1 w-40 border rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto"
-                                                            style={{
-                                                                backgroundColor: 'var(--glass-surface)',
-                                                                borderColor: 'var(--glass-border)'
-                                                            }}
+                                                        <div className="absolute top-full left-0 mt-1 w-40 border border-white/10 rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto glass-panel"
                                                         >
                                                             {countryCodes.map((country) => (
                                                                 <button
@@ -529,13 +501,7 @@ export default function AccountPage() {
                                                     value={phoneNumber}
                                                     onChange={(e) => setPhoneNumber(e.target.value)}
                                                     placeholder="000 000-000 00"
-                                                    className="flex-1 px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none focus:ring-2"
-                                                    style={{
-                                                        backgroundColor: 'var(--glass-inset-bg)',
-                                                        color: 'var(--text-primary)',
-                                                        borderColor: 'var(--glass-border)',
-                                                        '--tw-ring-color': 'rgba(59, 130, 246, 0.2)'
-                                                    } as any}
+                                                    className="flex-1 px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                                                 />
                                             </div>
                                         </div>
@@ -543,9 +509,8 @@ export default function AccountPage() {
                                 </div>
                             </div>
 
-                            {/* Instagram & Content */}
-                            <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: 'var(--glass-surface)', border: '1px solid var(--glass-border)' }}>
-                                <div className="p-6" style={{ borderBottomColor: 'var(--glass-border)', borderBottomWidth: '1px' }}>
+                            <div className="glass-panel overflow-hidden">
+                                <div className="p-6 border-b border-white/10">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundImage: 'linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)' }}>
                                             <Zap className="w-5 h-5 text-pink-500" />
@@ -572,8 +537,6 @@ export default function AccountPage() {
                                             className="w-full px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none cursor-not-allowed"
                                             style={{
                                                 backgroundColor: 'rgba(0, 0, 0, 0.03)',
-                                                color: 'var(--text-secondary)',
-                                                borderColor: 'var(--glass-border)',
                                             }}
                                         />
                                         <p className="text-xs text-theme-muted mt-1">Username cannot be changed</p>
@@ -593,15 +556,12 @@ export default function AccountPage() {
                                                 }}
                                                 className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2"
                                                 style={{
-                                                    backgroundColor: 'var(--glass-inset-bg)',
-                                                    color: 'var(--text-primary)',
-                                                    borderColor: 'var(--glass-border)',
-                                                    '--tw-ring-color': 'rgba(59, 130, 246, 0.2)',
                                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                                                     backgroundRepeat: 'no-repeat',
                                                     backgroundPosition: 'right 1rem center',
                                                     backgroundSize: '1.25rem',
                                                 } as any}
+                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                                             >
                                                 <option value="">Select your niche</option>
                                                 {NICHE_OPTIONS.map((opt) => (
@@ -621,12 +581,8 @@ export default function AccountPage() {
                                                 value={subNiche}
                                                 onChange={(e) => setSubNiche(e.target.value)}
                                                 disabled={!niche}
-                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 style={{
-                                                    backgroundColor: 'var(--glass-inset-bg)',
-                                                    color: 'var(--text-primary)',
-                                                    borderColor: 'var(--glass-border)',
-                                                    '--tw-ring-color': 'rgba(59, 130, 246, 0.2)',
                                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                                                     backgroundRepeat: 'no-repeat',
                                                     backgroundPosition: 'right 1rem center',
@@ -850,7 +806,7 @@ export default function AccountPage() {
                     ) : (
                         <div className="space-y-6 animate-fadeIn">
                             {/* Stats Overview */}
-                            <div className="rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6" style={{ backgroundColor: 'var(--glass-surface)', border: '1px solid var(--glass-border)' }}>
+                            <div className="glass-panel p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                                 <div>
                                     <div className="flex items-center gap-3 mb-1">
                                         <h2 className="text-lg font-bold text-theme-primary">
@@ -899,7 +855,7 @@ export default function AccountPage() {
                             {/* Preview Modal */}
                             {previewData && (
                                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                                    <div className="rounded-2xl p-8 max-w-md w-full shadow-2xl animate-fadeIn border" style={{ backgroundColor: 'var(--glass-surface)', borderColor: 'var(--glass-border)' }}>
+                                    <div className="rounded-2xl p-8 max-w-md w-full shadow-2xl animate-fadeIn border glass-panel">
                                         <h3 className="text-xl font-bold text-theme-primary mb-2">
                                             Confirm {previewData.changeType === 'upgrade' ? 'Upgrade' : 'Downgrade'}
                                         </h3>
@@ -907,7 +863,7 @@ export default function AccountPage() {
                                             You are about to switch to <span className="font-semibold text-theme-primary">{previewData.targetPlanName}</span>.
                                         </p>
 
-                                        <div className="rounded-xl p-4 mb-6 space-y-3" style={{ backgroundColor: 'rgba(0, 0, 0, 0.03)' }}>
+                                        <div className="rounded-xl p-4 mb-6 space-y-3 bg-black/5">
                                             <div className="flex justify-between items-center text-sm">
                                                 <span className="text-theme-secondary">New Price</span>
                                                 <span className="font-semibold text-theme-primary">{previewData.currency} {(previewData.newPlanDetails.amount / 100).toFixed(2)}/{previewData.newPlanDetails.interval}</span>
@@ -921,7 +877,7 @@ export default function AccountPage() {
                                                 </div>
                                             )}
                                             {previewData.changeType === 'upgrade' && previewData.stellasToGrant > 0 && (
-                                                <div className="pt-3" style={{ borderTopColor: 'var(--glass-border)', borderTopWidth: '1px' }}>
+                                                <div className="pt-3 border-t border-white/10">
                                                     <div className="flex justify-between items-center text-sm">
                                                         <span className="text-purple-600 font-medium">+ Bonus Stellas</span>
                                                         <span className="font-bold text-purple-600">{previewData.stellasToGrant}</span>
@@ -936,11 +892,7 @@ export default function AccountPage() {
                                                     setPreviewData(null);
                                                     setActionError(null);
                                                 }}
-                                                className="flex-1 px-4 py-2.5 rounded-xl border font-semibold transition-colors"
-                                                style={{
-                                                    borderColor: 'var(--glass-border)',
-                                                    color: 'var(--text-secondary)',
-                                                }}
+                                                className="flex-1 px-4 py-2.5 rounded-xl border border-white/10 text-theme-secondary font-semibold transition-colors"
                                             >
                                                 Cancel
                                             </button>

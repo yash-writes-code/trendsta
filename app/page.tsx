@@ -1067,7 +1067,12 @@ function Footer() {
           <Image src="/T_logo.png" width={32} height={32} alt="Trendsta" />
           <span className="text-xl font-bold text-white tracking-tight">Trendsta</span>
         </div>
-        <div>© {new Date().getFullYear()} Trendsta Inc. All rights reserved.</div>
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <a href="mailto:info@trendsta.in" className="hover:text-white transition-colors">
+            info@trendsta.in
+          </a>
+          <div>© {new Date().getFullYear()} Trendsta Inc. All rights reserved.</div>
+        </div>
       </div>
     </footer>
   );

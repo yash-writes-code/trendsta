@@ -61,7 +61,7 @@ export default function MobileHeader(): React.JSX.Element {
     };
 
     return (
-        <div className="md:hidden flex items-center justify-between p-4 bg-white/95 dark:bg-[#0B0F19]/90 backdrop-blur-xl sticky top-0 z-40 mb-4 rounded-b-2xl border-b border-slate-200 dark:border-white/10 shadow-sm transition-all duration-300">
+        <div className="md:hidden flex items-center bg-white justify-between p-4 dark:bg-[#0B0F19]/90 backdrop-blur-xl sticky top-0 z-40 mb-4 rounded-b-2xl border-b border-slate-200 dark:border-white/10 shadow-sm transition-all duration-300">
             <Link href="/" className="flex items-center gap-2">
                 <Image
                     src="/T_logo.png"
@@ -94,8 +94,8 @@ export default function MobileHeader(): React.JSX.Element {
                                         href={item.href}
                                         onClick={() => setShowMenu(false)}
                                         className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium transition-colors ${isActive
-                                            ? "neu-pressed text-blue-600"
-                                            : "text-slate-600 hover:neu-convex"
+                                            ? "neu-pressed text-blue-600 dark:text-blue-400 dark:bg-white/5"
+                                            : "text-slate-600 dark:text-slate-300 hover:neu-convex dark:hover:bg-white/5"
                                             }`}
                                     >
                                         <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
@@ -107,17 +107,17 @@ export default function MobileHeader(): React.JSX.Element {
 
                         <div className="p-4 border-t border-slate-200 dark:border-white/10 mt-2">
                             <div className="flex items-center gap-3 mb-4">
-                                <div className="w-10 h-10 rounded-full neu-pressed flex items-center justify-center text-slate-600">
+                                <div className="w-10 h-10 rounded-full neu-pressed dark:bg-white/5 flex items-center justify-center text-slate-600 dark:text-slate-300">
                                     <User size={20} />
                                 </div>
                                 <div className="flex-1 overflow-hidden">
-                                    <p className="text-sm font-semibold text-slate-700 truncate">{name}</p>
+                                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{name}</p>
 
                                 </div>
                             </div>
                             <button
                                 onClick={handleLogout}
-                                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-slate-500 hover:text-red-500 neu-convex rounded-xl"
+                                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-slate-500 dark:text-slate-400 hover:text-red-500 dark:hover:text-red-400 neu-convex dark:hover:bg-white/5 rounded-xl transition-all"
                             >
                                 <LogOut size={18} />
                                 <span className="text-sm font-medium">Logout</span>

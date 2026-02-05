@@ -77,24 +77,30 @@ export default function Sidebar() {
                 }`}
         >
             {/* Logo */}
-            <div className={`p-6 flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}>
+            <div className={`p-6 flex items-center ${isCollapsed ? "flex-col gap-4 justify-center" : "justify-between"}`}>
                 {isCollapsed ? (
-                    <div className="w-10 h-10 rounded-xl neu-convex flex items-center justify-center shrink-0">
-                        <Image src="/T_logo.png" width={24} height={24} alt="T" />
-                    </div>
+                    <>
+                        <div className="w-10 h-10 rounded-xl neu-convex flex items-center justify-center shrink-0">
+                            <Image src="/T_logo.png" width={24} height={24} alt="T" />
+                        </div>
+                        <ThemeToggle />
+                    </>
                 ) : (
-                    <div className="relative w-full h-12 flex items-center gap-3">
-                        <Link href="/" className="flex items-center gap-3">
-                            <Image
-                                src="/T_logo.png"
-                                width={32}
-                                height={32}
-                                alt="Trendsta"
-                                className="drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
-                            />
-                            <span className="text-2xl font-black text-theme-primary tracking-tighter">Trendsta</span>
-                        </Link>
-                    </div>
+                    <>
+                        <div className="relative h-12 flex items-center gap-3">
+                            <Link href="/" className="flex items-center gap-3">
+                                <Image
+                                    src="/T_logo.png"
+                                    width={32}
+                                    height={32}
+                                    alt="Trendsta"
+                                    className="drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"
+                                />
+                                <span className="text-2xl font-black text-theme-primary tracking-tighter">Trendsta</span>
+                            </Link>
+                        </div>
+                        <ThemeToggle />
+                    </>
                 )}
             </div>
 
@@ -191,9 +197,7 @@ export default function Sidebar() {
 
             {/* User Profile & Theme Toggle */}
             <div className="p-4 space-y-3">
-                <div className={`flex justify-center ${isCollapsed ? "" : "w-full"}`}>
-                    <ThemeToggle />
-                </div>
+
                 <div className={`flex items-center gap-3 ${isCollapsed ? "flex-col" : ""}`}>
                     <div className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-all duration-200 ${isCollapsed ? "w-full justify-center" : "flex-1 neu-convex"}`}>
                         <div className="w-10 h-10 rounded-full neu-icon-btn shrink-0">

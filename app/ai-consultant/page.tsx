@@ -656,14 +656,14 @@ export default function AIConsultantPage() {
 
             <main
                 className={`transition-all duration-300 ease-in-out flex flex-col items-center relative ${isCollapsed ? 'md:ml-20' : 'md:ml-64'}`}
-                style={{ height: '100vh', maxHeight: '100vh' }}
+                style={{ height: '100dvh', maxHeight: '100dvh' }}
             >
                 {showHistory && (
                     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden" onClick={() => setShowHistory(false)} />
                 )}
 
                 {/* Top Bar with Logo */}
-                <div className="w-full max-w-4xl flex items-center justify-between px-6 py-4 z-10">
+                <div className="w-full max-w-4xl flex items-center justify-between px-6 py-4 z-10 shrink-0">
                     {hasStartedChat ? (
                         <div className="flex items-center gap-2">
                             <Image src="/logo3.png" alt="Trendsta" width={100} height={28} className="opacity-80" />
@@ -681,7 +681,7 @@ export default function AIConsultantPage() {
                 </div>
 
                 {/* Main Content Area */}
-                <div className={`flex-1 w-full max-w-4xl flex flex-col overflow-hidden ${hasStartedChat ? 'pb-48' : 'justify-center items-center pb-32'}`}>
+                <div className={`flex-1 w-full max-w-4xl flex flex-col overflow-hidden ${hasStartedChat ? 'pb-0' : 'justify-center items-center pb-32'}`}>
 
                     {/* Landing State */}
                     <AnimatePresence>
@@ -690,16 +690,16 @@ export default function AIConsultantPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                                className="text-center px-4"
+                                className="text-center px-4 w-full"
                             >
                                 {/* Logo */}
-                                <div className="relative w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+                                <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center">
                                     <Image
                                         src="/T_logo.png"
-                                        width={80}
-                                        height={80}
+                                        layout="fill"
+                                        objectFit="contain"
                                         alt="Trendsta Logo"
-                                        className="object-contain"
+                                        className="drop-shadow-xl"
                                     />
                                 </div>
 
@@ -744,9 +744,9 @@ export default function AIConsultantPage() {
                         <div
                             ref={chatContainerRef}
                             onScroll={handleScroll}
-                            className="flex-1 w-full overflow-y-auto px-4 md:px-6 py-4 space-y-2"
+                            className="flex-1 w-full overflow-y-auto px-4 md:px-6 py-4 space-y-4 pb-32"
                         >
-                            <div className="h-4" />
+                            <div className="h-2" />
                             {messages.map((message) => (
                                 <ChatMessage
                                     key={message.id}
@@ -790,10 +790,10 @@ export default function AIConsultantPage() {
                 </div>
 
                 {/* Input Area */}
-                <div className={`w-full max-w-4xl z-20 px-4 md:px-6 ${hasStartedChat ? 'fixed bottom-0 pb-6 pt-4' : 'relative'}`}>
+                <div className={`w-full max-w-4xl z-20 px-4 md:px-6 shrink-0 ${hasStartedChat ? 'pb-4 pt-2' : 'relative pb-6'}`}>
                     <div className="relative">
                         {/* Main Input */}
-                        <div className="bg-white/40 dark:bg-white/5 backdrop-blur-2xl border border-white/40 dark:border-white/10 p-2 rounded-2xl shadow-xl flex items-center gap-2 transition-all duration-300 focus-within:bg-white/60 dark:focus-within:bg-white/10 focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500/40">
+                        <div className="bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 p-2 rounded-2xl shadow-xl flex items-center gap-2 transition-all duration-300 focus-within:bg-white/60 dark:focus-within:bg-white/10 focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500/40">
                             <textarea
                                 ref={inputRef}
                                 value={input}
@@ -825,10 +825,10 @@ export default function AIConsultantPage() {
                     </div>
 
                     {/* Mode Toggle */}
-                    <div className="flex justify-center mt-3 gap-2">
+                    <div className="flex justify-center mt-2 gap-2">
                         <button
                             onClick={() => setThinkingMode('flash')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${thinkingMode === 'flash' ? 'bg-amber-50 border border-amber-200 text-amber-700 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${thinkingMode === 'flash' ? 'bg-amber-50 border border-amber-200 text-amber-700 shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}
                         >
                             <Zap size={14} className={thinkingMode === 'flash' ? 'text-amber-500' : ''} />
                             Fast Mode
@@ -841,7 +841,7 @@ export default function AIConsultantPage() {
                                     if (planTier >= 3) setThinkingMode('deep');
                                 }}
                                 disabled={planTier < 3}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all ${planTier < 3
+                                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all ${planTier < 3
                                     ? 'opacity-50 cursor-not-allowed bg-slate-100/5 text-slate-400'
                                     : thinkingMode === 'deep'
                                         ? 'bg-purple-50 border border-purple-200 text-purple-700 shadow-sm'
@@ -864,3 +864,4 @@ export default function AIConsultantPage() {
         </div>
     );
 }
+
