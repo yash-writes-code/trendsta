@@ -66,7 +66,7 @@ export default function PricingPage() {
                 <div className="flex-1 flex justify-center">
                     <Link href="/" className="flex items-center gap-3">
                         <Image src="/T_logo.png" width={40} height={40} className="h-10 w-auto" alt="Trendsta" />
-                        <span className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">TRENDSTA AI</span>
+                        <span className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">TRENDSTA</span>
                     </Link>
                 </div>
 
@@ -385,7 +385,7 @@ export default function PricingPage() {
 
                 {/* FAQ or Trust */}
                 <div className="mt-24 text-center border-t border-slate-200 dark:border-white/10 pt-12">
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Need a custom enterprise plan? <a href="mailto:info@trendsta.in" className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-4 hover:text-blue-700 dark:hover:text-blue-300 transition-all">Contact Sales</a></p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">Need a custom enterprise plan? <a href="mailto:info@trendsta.in" className="text-blue-600 dark:text-blue-400 font-medium underline underline-offset-4 hover:text-blue-700 dark:hover:text-blue-300 transition-all">info@trendsta.in</a></p>
                 </div>
 
             </main>

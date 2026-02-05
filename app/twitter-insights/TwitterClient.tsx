@@ -87,35 +87,7 @@ function ScoreBadge({ score }: { score: number }) {
     );
 }
 
-// Trending Topic Item
-function TrendingItem({ topic, index }: { topic: { rank: number; topic: string; tweets: string; direction: string }; index: number }) {
-    return (
-        <div
-            className="flex items-center gap-4 p-4 hover:bg-white/5 dark:hover:bg-white/5 rounded-xl transition-all duration-200 cursor-pointer group"
-            style={{ animationDelay: `${index * 0.05}s` }}
-        >
-            <span className="text-2xl font-bold text-theme-muted w-8 group-hover:text-blue-500 transition-colors">
-                #{topic.rank}
-            </span>
-            <div className="flex-1">
-                <div className="flex items-center gap-2">
-                    <span className="font-semibold text-theme-primary group-hover:text-blue-600 transition-colors">
-                        {topic.topic}
-                    </span>
-                    {topic.direction === "Rising" ? (
-                        <ArrowUp size={14} className="text-emerald-500" />
-                    ) : (
-                        <Minus size={14} className="text-slate-400" />
-                    )}
-                </div>
-                <p className="text-sm text-theme-secondary">{topic.tweets}</p>
-            </div>
-            <span className={`score-badge ${topic.direction === "Rising" ? "score-high" : "score-low"}`}>
-                {topic.direction}
-            </span>
-        </div>
-    );
-}
+
 
 // Tweet Card Component
 function TweetCard({ tweet, index }: { tweet: TweetData; index: number }) {
@@ -279,24 +251,7 @@ export default function TwitterClient() {
             .join("\n");
     }, [overallStrategy]);
 
-    // Derive Trending Topics from hashtags
-    const hashtags = useMemo(() => {
-        const counts: Record<string, number> = {};
-        topTweets.forEach(t => {
-            if (t.hashtags && t.hashtags.length > 0) {
-                t.hashtags.forEach(tag => counts[tag] = (counts[tag] || 0) + 1);
-            }
-        });
-        return Object.entries(counts)
-            .sort((a, b) => b[1] - a[1])
-            .slice(0, 5)
-            .map(([topic, count], i) => ({
-                rank: i + 1,
-                topic: topic.startsWith('#') ? topic : `#${topic}`,
-                tweets: `${count * 10}+ tweets`, // Fake multiplier for "scale"
-                direction: Math.random() > 0.3 ? "Rising" : "Stable"
-            }));
-    }, [topTweets]);
+
 
     // Stats
     const maxViews = Math.max(0, ...topTweets.map(t => t.views || 0));
@@ -430,77 +385,55 @@ export default function TwitterClient() {
                         />
                     ) : (
                         <div className="space-y-8 animate-fadeIn">
-                            {/* Two Panel Layout */}
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                {/* Left Panel - Trending Topics */}
-                                <div className="lg:col-span-1">
-                                    <div className="glass-panel overflow-hidden sticky top-8">
-                                        <div className="p-5 border-b border-white/5 flex items-center gap-2">
-                                            <TrendingUp size={20} className="text-blue-500" />
-                                            <h2 className="font-semibold text-theme-primary">Trending Topics</h2>
-                                            <div className="live-indicator ml-2" />
-                                        </div>
-                                        <div className="divide-y divide-white/5">
-                                            {hashtags.map((topic, index) => (
-                                                <TrendingItem key={topic.rank} topic={topic} index={index} />
-                                            ))}
-                                            {hashtags.length === 0 && (
-                                                <div className="p-4 text-center text-theme-muted text-sm">No trending topics found</div>
-                                            )}
-                                        </div>
-                                    </div>
+                            {/* Tweet Feed */}
+                            <div className="max-w-4xl mx-auto space-y-4">
+                                {/* Tab Switcher */}
+                                <div className="flex items-center gap-2 p-1 glass-panel rounded-xl w-fit">
+                                    <button
+                                        onClick={() => setActiveTab("top")}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "top"
+                                            ? "bg-white/10 text-blue-500 shadow-sm"
+                                            : "text-theme-muted hover:text-theme-primary hover:bg-white/5"
+                                            }`}
+                                    >
+                                        <Zap size={14} className="inline mr-1.5" />
+                                        Top Tweets
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab("latest")}
+                                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "latest"
+                                            ? "bg-white/10 text-blue-500 shadow-sm"
+                                            : "text-theme-muted hover:text-theme-primary hover:bg-white/5"
+                                            }`}
+                                    >
+                                        <Clock size={14} className="inline mr-1.5" />
+                                        Latest
+                                    </button>
                                 </div>
 
-                                {/* Right Panel - Tweet Feed */}
-                                <div className="lg:col-span-2 space-y-4">
-                                    {/* Tab Switcher */}
-                                    <div className="flex items-center gap-2 p-1 glass-panel rounded-xl w-fit">
-                                        <button
-                                            onClick={() => setActiveTab("top")}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "top"
-                                                ? "bg-white/10 text-blue-500 shadow-sm"
-                                                : "text-theme-muted hover:text-theme-primary hover:bg-white/5"
-                                                }`}
-                                        >
-                                            <Zap size={14} className="inline mr-1.5" />
-                                            Top Tweets
-                                        </button>
-                                        <button
-                                            onClick={() => setActiveTab("latest")}
-                                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "latest"
-                                                ? "bg-white/10 text-blue-500 shadow-sm"
-                                                : "text-theme-muted hover:text-theme-primary hover:bg-white/5"
-                                                }`}
-                                        >
-                                            <Clock size={14} className="inline mr-1.5" />
-                                            Latest
-                                        </button>
+                                {activeTab === "top" ? (
+                                    <div className="space-y-4">
+                                        {sortedTopTweets.map((tweet, index) => (
+                                            <div key={tweet.id} className="glass-card p-5">
+                                                {/* Tweet Card Logic Copied Inline for simplicity in replace */}
+                                                <TweetCard tweet={tweet} index={index} />
+                                            </div>
+                                        ))}
                                     </div>
-
-                                    {activeTab === "top" ? (
-                                        <div className="space-y-4">
-                                            {sortedTopTweets.map((tweet, index) => (
-                                                <div key={tweet.id} className="glass-card p-5">
-                                                    {/* Tweet Card Logic Copied Inline for simplicity in replace */}
-                                                    <TweetCard tweet={tweet} index={index} />
-                                                </div>
+                                ) : (
+                                    <div className="glass-panel overflow-hidden">
+                                        <div className="p-4 border-b border-white/5 flex items-center gap-2">
+                                            <div className="live-indicator" />
+                                            <span className="text-sm font-medium text-theme-primary">Live Feed</span>
+                                            <span className="text-xs text-theme-muted">• Updates in real-time</span>
+                                        </div>
+                                        <div>
+                                            {latestTweets.map((tweet, index) => (
+                                                <LatestTweetItem key={tweet.id} tweet={tweet} index={index} />
                                             ))}
                                         </div>
-                                    ) : (
-                                        <div className="glass-panel overflow-hidden">
-                                            <div className="p-4 border-b border-white/5 flex items-center gap-2">
-                                                <div className="live-indicator" />
-                                                <span className="text-sm font-medium text-theme-primary">Live Feed</span>
-                                                <span className="text-xs text-theme-muted">• Updates in real-time</span>
-                                            </div>
-                                            <div>
-                                                {latestTweets.map((tweet, index) => (
-                                                    <LatestTweetItem key={tweet.id} tweet={tweet} index={index} />
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

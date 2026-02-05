@@ -20,7 +20,7 @@ export default function ScriptIdeasClient() {
     const [expandedScript, setExpandedScript] = useState<number | null>(null);
     const [copiedSection, setCopiedSection] = useState<string | null>(null);
 
- 
+
     // console.log("ScriptIdeas Debug:", {
     //     hasSession: !!session?.user,
     //     sessionEmail: session?.user?.email,
@@ -30,7 +30,9 @@ export default function ScriptIdeasClient() {
     // });
     // console.log("=== COMPONENT RENDER ===");
 
-    const scripts = rawData?.scripts.map(transformScriptSuggestion);
+    // Handle potential data structure difference (direct array vs object wrapper)
+    const rawScripts = (Array.isArray(rawData) ? rawData : rawData?.scripts);
+    const scripts = rawScripts?.map(transformScriptSuggestion);
 
     const copyToClipboard = (text: string, section: string) => {
         navigator.clipboard.writeText(text);
@@ -140,9 +142,9 @@ export default function ScriptIdeasClient() {
                                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
                                             {/* Left Col: Viral Gauge & Info */}
-                                            <div className="lg:col-span-4 flex flex-col items-center justify-center text-center p-6 bg-white/5 dark:bg-white/5 rounded-2xl border border-white/10 dark:border-white/10 relative group/gauge">
+                                            <div className="lg:col-span-4 flex flex-col items-center justify-center text-center p-6 bg-slate-50 dark:bg-white/5 rounded-2xl border border-slate-200 dark:border-white/10 relative group/gauge">
                                                 <div className="absolute top-3 right-3">
-                                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-white/10 dark:bg-white/10 rounded-full border border-white/20 dark:border-white/20 shadow-sm">
+                                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-white dark:bg-white/10 rounded-full border border-slate-200 dark:border-white/20 shadow-sm">
                                                         <Sparkles size={10} className="text-purple-400" />
                                                         <span className="text-[10px] font-bold text-theme-primary uppercase tracking-wide">
                                                             {viralScore >= 90 ? 'Viral' : 'High'}
@@ -172,9 +174,8 @@ export default function ScriptIdeasClient() {
                                                         {script.why_this_works}
                                                     </p>
 
-                                                    {/* Audio Vibe Badge */}
                                                     {script.audio_vibe && (
-                                                        <div className="flex items-start gap-2 text-left bg-white/5 border border-white/10 p-2 rounded-lg">
+                                                        <div className="flex items-start gap-2 text-left bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 p-2 rounded-lg">
                                                             <div className="mt-0.5"><Sparkles size={10} className="text-purple-400" /></div>
                                                             <div>
                                                                 <span className="text-[10px] font-bold text-theme-secondary uppercase block">Audio Vibe</span>
@@ -183,7 +184,7 @@ export default function ScriptIdeasClient() {
                                                         </div>
                                                     )}
 
-                                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 dark:bg-white/10 border border-white/20 dark:border-white/20 rounded-lg shadow-sm w-full justify-center">
+                                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-white/10 border border-slate-200 dark:border-white/20 rounded-lg shadow-sm w-full justify-center">
                                                         <Clock size={12} className="text-theme-secondary" />
                                                         <span className="text-[10px] font-bold text-theme-primary">
                                                             {script.estimated_duration} • {script.script_word_count} words
@@ -197,9 +198,12 @@ export default function ScriptIdeasClient() {
                                                 {/* ... (Keep existing Header & Title ...) */}
                                                 <div className="flex items-start justify-between">
                                                     <h2 className="text-lg font-bold text-theme-primary">{script.script_title}</h2>
-                                                    <button className="text-sm font-semibold text-purple-600 flex items-center gap-1 hover:text-purple-700 transition-colors">
-                                                        {isExpanded ? 'Collapse' : 'View Details'}
-                                                        {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                                    <button
+                                                        className="px-4 py-1.5 rounded-full text-xs font-semibold text-purple-600 dark:text-purple-300 bg-purple-50 dark:bg-purple-500/10 border border-purple-200 dark:border-purple-500/30 hover:bg-purple-100 dark:hover:bg-purple-500/20 transition-all duration-200 shadow-sm flex items-center gap-1.5"
+                                                        onClick={(e) => { e.stopPropagation(); toggleScript(scriptId); }}
+                                                    >
+                                                        {isExpanded ? 'Collapse' : 'Details'}
+                                                        {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                                                     </button>
                                                 </div>
 
@@ -252,7 +256,7 @@ export default function ScriptIdeasClient() {
                                                 exit={{ height: 0, opacity: 0 }}
                                                 transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
                                             >
-                                                <div className="border-t border-white/10 bg-black/20 p-6 md:p-8">
+                                                <div className="border-t border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 p-6 md:p-8">
                                                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                                                         {/* Full Script Text */}
@@ -306,24 +310,25 @@ export default function ScriptIdeasClient() {
                                                             </div>
 
                                                             {/* Caption Preview */}
-                                                            <div className="bg-blue-500/10 dark:bg-blue-500/10 p-5 rounded-xl border border-blue-500/30 dark:border-blue-500/30 mt-6">
+                                                            {/* Caption Preview */}
+                                                            <div className="bg-blue-50 dark:bg-blue-500/10 p-5 rounded-xl border border-blue-200 dark:border-blue-500/30 mt-6">
                                                                 <div className="flex items-center justify-between mb-3">
-                                                                    <h3 className="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider flex items-center gap-2">
+                                                                    <h3 className="text-xs font-bold text-blue-900 dark:text-blue-300 uppercase tracking-wider flex items-center gap-2">
                                                                         <Hash size={14} /> Recommended Caption
                                                                     </h3>
                                                                     <button
                                                                         onClick={() => copyToClipboard(script.caption_full, `caption-${scriptId}`)}
-                                                                        className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+                                                                        className="text-xs text-blue-700 dark:text-blue-400 font-semibold hover:underline"
                                                                     >
                                                                         {copiedSection === `caption-${scriptId}` ? 'Copied' : 'Copy'}
                                                                     </button>
                                                                 </div>
-                                                                <p className="text-sm text-theme-secondary mb-3 leading-relaxed">
+                                                                <p className="text-sm text-slate-700 dark:text-theme-secondary mb-3 leading-relaxed">
                                                                     {script.caption_full}
                                                                 </p>
                                                                 <div className="flex flex-wrap gap-2">
                                                                     {script.hashtags_all?.split(/[\s,]+/).filter(Boolean).map((tag: string, i: number) => (
-                                                                        <span key={i} className="text-[10px] font-medium text-blue-600 dark:text-blue-400 bg-blue-500/20 dark:bg-blue-500/20 px-2 py-1 rounded-md">
+                                                                        <span key={i} className="text-[10px] font-medium text-blue-800 dark:text-blue-400 bg-blue-100 dark:bg-blue-500/20 px-2 py-1 rounded-md">
                                                                             #{tag.replace(/^#/, '')}
                                                                         </span>
                                                                     ))}
@@ -333,13 +338,13 @@ export default function ScriptIdeasClient() {
 
                                                         {/* Sidebar Details (Breakdown) */}
                                                         <div className="space-y-6">
-                                                            <div className="bg-white/5 dark:bg-white/5 p-5 rounded-xl border border-white/10 dark:border-white/10 shadow-sm">
+                                                            <div className="bg-white dark:bg-white/5 p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
                                                                 <h3 className="text-xs font-bold text-theme-secondary uppercase tracking-widest mb-4 flex items-center gap-2">
                                                                     <Target size={14} /> Structural Breakdown
                                                                 </h3>
                                                                 <div className="space-y-4 relative">
                                                                     {/* Timeline line */}
-                                                                    <div className="absolute left-1.5 top-2 bottom-2 w-0.5 bg-white/10 dark:bg-white/10" />
+                                                                    <div className="absolute left-1.5 top-2 bottom-2 w-0.5 bg-slate-200 dark:bg-white/10" />
 
                                                                     {[
                                                                         { label: "Hook", text: script.script_hook },
@@ -348,7 +353,7 @@ export default function ScriptIdeasClient() {
                                                                         { label: "CTA", text: script.script_cta }
                                                                     ].map((item, i) => (
                                                                         <div key={i} className="relative pl-6">
-                                                                            <div className="absolute left-0 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-white/20 dark:border-white/20 bg-purple-500 shadow-sm z-10" />
+                                                                            <div className="absolute left-0 top-1.5 w-3.5 h-3.5 rounded-full border-2 border-slate-200 dark:border-white/20 bg-purple-500 shadow-sm z-10" />
                                                                             <span className="text-[10px] font-bold text-theme-secondary uppercase block mb-0.5">{item.label}</span>
                                                                             <p className="text-xs text-theme-secondary font-medium leading-relaxed">{item.text}</p>
                                                                         </div>
@@ -358,14 +363,14 @@ export default function ScriptIdeasClient() {
 
                                                             {/* Visual Storyboard Section (NEW) */}
                                                             {script.visual_storyboard && (
-                                                                <div className="bg-amber-500/10 dark:bg-amber-500/10 p-5 rounded-xl border border-amber-500/30 dark:border-amber-500/30">
-                                                                    <h3 className="text-xs font-bold text-amber-700 dark:text-amber-300 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                                                <div className="bg-amber-50 dark:bg-amber-500/10 p-5 rounded-xl border border-amber-200 dark:border-amber-500/30">
+                                                                    <h3 className="text-xs font-bold text-amber-900 dark:text-amber-300 uppercase tracking-widest mb-3 flex items-center gap-2">
                                                                         <Sparkles size={14} /> Visual Storyboard
                                                                     </h3>
                                                                     <div className="space-y-3">
                                                                         <div>
-                                                                            <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase block mb-1">Opening Frame</span>
-                                                                            <p className="text-xs text-amber-800 dark:text-amber-200 leading-relaxed font-medium">
+                                                                            <span className="text-[10px] font-bold text-amber-800 dark:text-amber-400 uppercase block mb-1">Opening Frame</span>
+                                                                            <p className="text-xs text-amber-900 dark:text-amber-200 leading-relaxed font-medium">
                                                                                 {script.visual_storyboard.opening_frame}
                                                                             </p>
                                                                         </div>
@@ -389,12 +394,12 @@ export default function ScriptIdeasClient() {
                                                                 </div>
                                                             )}
 
-                                                            <div className="bg-purple-500/10 dark:bg-purple-500/10 p-5 rounded-xl border border-purple-500/30 dark:border-purple-500/30">
+                                                            <div className="bg-purple-50 dark:bg-purple-500/10 p-5 rounded-xl border border-purple-200 dark:border-purple-500/30">
                                                                 <div className="flex items-start gap-3">
-                                                                    <Lightbulb size={18} className="text-purple-500 mt-0.5" />
+                                                                    <Lightbulb size={18} className="text-purple-600 dark:text-purple-500 mt-0.5" />
                                                                     <div>
-                                                                        <h4 className="text-sm font-bold text-purple-700 dark:text-purple-300 mb-1">Director's Note</h4>
-                                                                        <p className="text-xs text-purple-700 dark:text-purple-200 leading-relaxed">
+                                                                        <h4 className="text-sm font-bold text-purple-900 dark:text-purple-300 mb-1">Director's Note</h4>
+                                                                        <p className="text-xs text-purple-900 dark:text-purple-200 leading-relaxed">
                                                                             {script.why_this_works}
                                                                         </p>
                                                                     </div>
@@ -411,7 +416,7 @@ export default function ScriptIdeasClient() {
                             );
                         })}
 
-                        {!scripts || scripts.length === 0 && (
+                        {(!scripts || scripts.length === 0) && (
                             <div className="text-center py-20 glass-panel border-dashed border-slate-200">
                                 <FileText size={48} className="mx-auto text-theme-muted mb-4" />
                                 <h3 className="text-lg font-bold text-theme-primary">No scripts generated yet</h3>

@@ -19,12 +19,12 @@ import { useAnalysis } from "@/app/context/AnalysisContext";
 import { useSession } from "@/lib/auth-client";
 import { transformNicheResearch, transformUserResearch, buildResearchSummary } from "@/lib/transformers";
 
-// Filter Button
+// Filter Button - Compact
 function FilterButton({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
     return (
         <button
             onClick={onClick}
-            className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${active
+            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${active
                 ? "bg-purple-600 dark:bg-purple-500 text-white shadow-md"
                 : "bg-white dark:bg-white/5 text-theme-secondary border border-white/10 dark:border-white/10 hover:border-purple-500/30 dark:hover:border-purple-500/30 hover:text-theme-primary"
                 }`}
@@ -33,6 +33,8 @@ function FilterButton({ active, children, onClick }: { active: boolean; children
         </button>
     );
 }
+
+
 
 export default function TopReelsClient() {
     const [viewMode, setViewMode] = useState<'reels' | 'insights'>('insights');
@@ -170,26 +172,26 @@ export default function TopReelsClient() {
                             </p>
                         </div>
 
-                        {/* View Toggle */}
-                        <div className="glass-panel p-1 rounded-xl inline-flex">
+                        {/* View Toggle - Compact */}
+                        <div className="glass-panel p-1 rounded-lg inline-flex">
                             <button
                                 onClick={() => setViewMode('reels')}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'reels'
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'reels'
                                     ? 'bg-blue-500/20 text-blue-500'
                                     : 'text-slate-500 hover:text-slate-900 hover:bg-white/5'
                                     }`}
                             >
-                                <LayoutGrid size={18} />
+                                <LayoutGrid size={14} />
                                 Top Reels
                             </button>
                             <button
                                 onClick={() => setViewMode('insights')}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'insights'
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all ${viewMode === 'insights'
                                     ? 'bg-purple-500/20 text-purple-500'
                                     : 'text-theme-secondary hover:text-theme-primary hover:bg-white/5'
                                     }`}
                             >
-                                <Sparkles size={18} />
+                                <Sparkles size={14} />
                                 AI Insights
                             </button>
                         </div>
