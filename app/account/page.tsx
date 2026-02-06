@@ -154,31 +154,47 @@ export default function AccountPage() {
             setIsLoadingSubscription(true);
             try {
                 // Fetch plans
-                const plansRes = await fetch("/api/subscription/plans");
-                const plansData = await plansRes.json();
-                if (plansData.plans) setPlans(plansData.plans);
+                let plansData = { plans: [] };
+                try {
+                    const plansRes = await fetch("/api/subscription/plans");
+                    if (!plansRes.ok) throw new Error(`Plans fetch failed: ${plansRes.status}`);
+                    plansData = await plansRes.json();
+                    if (plansData.plans) setPlans(plansData.plans);
+                } catch (e) {
+                    console.error("Error fetching plans:", e);
+                }
 
                 // Fetch current subscription
-                const subRes = await fetch("/api/subscription/current");
-                const subData = await subRes.json();
+                try {
+                    const subRes = await fetch("/api/subscription/current");
+                    if (!subRes.ok) throw new Error(`Subscription fetch failed: ${subRes.status}`);
+                    const subData = await subRes.json();
 
-                if (subData.hasSubscription) {
-                    setCurrentSubscription({
-                        id: subData.subscription.id,
-                        status: subData.subscription.status,
-                        currentPeriodEnd: subData.subscription.currentPeriodEnd,
-                        plan: subData.plan
-                    });
+                    if (subData.hasSubscription) {
+                        setCurrentSubscription({
+                            id: subData.subscription.id,
+                            status: subData.subscription.status,
+                            currentPeriodEnd: subData.subscription.currentPeriodEnd,
+                            plan: subData.plan
+                        });
+                    }
+                } catch (e) {
+                    console.error("Error fetching subscription:", e);
                 }
 
                 // Fetch wallet balance
-                const walletRes = await fetch("/api/wallet");
-                const walletData = await walletRes.json();
-                if (walletData.totalBalance !== undefined) {
-                    setWalletBalance(walletData);
+                try {
+                    const walletRes = await fetch("/api/wallet");
+                    if (!walletRes.ok) throw new Error(`Wallet fetch failed: ${walletRes.status}`);
+                    const walletData = await walletRes.json();
+                    if (walletData.totalBalance !== undefined) {
+                        setWalletBalance(walletData);
+                    }
+                } catch (e) {
+                    console.error("Error fetching wallet:", e);
                 }
             } catch (err) {
-                console.error("Failed to fetch subscription data", err);
+                console.error("Unexpected error in fetchData:", err);
             } finally {
                 setIsLoadingSubscription(false);
             }
@@ -554,7 +570,6 @@ export default function AccountPage() {
                                                     setNiche(e.target.value);
                                                     setSubNiche(""); // Reset sub-niche when niche changes
                                                 }}
-                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2"
                                                 style={{
                                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                                                     backgroundRepeat: 'no-repeat',
