@@ -59,214 +59,235 @@ export default function AnalysisConfirm({ isOpen, onClose, onConfirm, isLoading,
 
     if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
-                <button
-                    onClick={onClose}
-                    disabled={isLoading}
-                    className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors p-1"
-                >
-                    <X size={20} />
-                </button>
+  return (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+    
+    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col">
+      
+      {/* Header */}
+      <div className="p-6 border-b border-slate-200 dark:border-slate-700 relative shrink-0">
+        <button
+          onClick={onClose}
+          disabled={isLoading}
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-1"
+        >
+          <X size={20} />
+        </button>
 
-                <div className="text-center mb-6">
-                    <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <Sparkles className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <h3 className="text-xl font-bold text-slate-900">Configure Analysis</h3>
-                </div>
-
-                <div className="space-y-6">
-                    {/* Reel Count Tier */}
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Analysis Depth (Reels to Scrape)</label>
-                        <div className="grid grid-cols-3 gap-3">
-                            {(['LOW', 'MEDIUM', 'HIGH'] as AnalysisTier[]).map((t) => (
-                                <button
-                                    key={t}
-                                    onClick={() => setTier(t)}
-                                    className={`px-3 py-2 rounded-xl text-sm font-medium border transition-all ${tier === t
-                                        ? 'bg-blue-600 text-white border-blue-600 ring-2 ring-blue-200'
-                                        : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                                        }`}
-                                >
-                                    {t}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Competitors */}
-                    <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2 flex justify-between">
-                            <span>Competitors to Analyze</span>
-                            <span className="text-xs text-slate-500">+{ANALYSIS_CONFIG.PER_COMPETITOR_COST} credits/each</span>
-                        </label>
-
-                        {!competitorAnalysisAccess ? (
-                            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-500 mb-2">
-                                Upgrade to Gold plan to analyze specific competitors.
-                            </div>
-                        ) : (
-                            <div className="space-y-3">
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        placeholder="Enter username (e.g. 100xengineers)"
-                                        value={newCompetitor}
-                                        onChange={(e) => setNewCompetitor(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && addCompetitor()}
-                                        className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    />
-                                    <button
-                                        onClick={addCompetitor}
-                                        className="px-3 py-2 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-200"
-                                    >
-                                        <Plus size={18} />
-                                    </button>
-                                </div>
-
-                                {competitors.length > 0 && (
-                                    <div className="flex flex-wrap gap-2">
-                                        {competitors.map(comp => (
-                                            <span key={comp} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded-lg border border-blue-100">
-                                                @{comp}
-                                                <button onClick={() => removeCompetitor(comp)} className="hover:text-blue-900"><X size={12} /></button>
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Writing Style & Language */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
-                                <PenTool size={14} className="text-slate-400" />
-                                Writing Style
-                            </label>
-                            <input
-                                type="text"
-                                placeholder="let ai decide"
-                                value={writingStyle}
-                                onChange={(e) => setWritingStyle(e.target.value)}
-                                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-slate-400"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
-                                <Languages size={14} className="text-slate-400" />
-                                Script Language
-                            </label>
-                            <select
-                                value={scriptLanguage}
-                                onChange={(e) => setScriptLanguage(e.target.value)}
-                                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                            >
-                                <option value="English">English</option>
-                                <option value="Hindi">Hindi</option>
-                                <option value="Hinglish">Hinglish</option>
-                                <option value="Spanish">Spanish</option>
-                                <option value="French">French</option>
-                                <option value="German">German</option>
-                                <option value="Italian">Italian</option>
-                                <option value="Portuguese">Portuguese</option>
-                                <option value="Japanese">Japanese</option>
-                                <option value="Korean">Korean</option>
-                                <option value="Chinese">Chinese</option>
-                                <option value="Russian">Russian</option>
-                                <option value="Arabic">Arabic</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
-                                <Languages size={14} className="text-slate-400" />
-                                Caption Language
-                            </label>
-                            <select
-                                value={captionLanguage}
-                                onChange={(e) => setCaptionLanguage(e.target.value)}
-                                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                            >
-                                <option value="English">English</option>
-                                <option value="Hindi">Hindi</option>
-                                <option value="Hinglish">Hinglish</option>
-                                <option value="Spanish">Spanish</option>
-                                <option value="French">French</option>
-                                <option value="German">German</option>
-                                <option value="Italian">Italian</option>
-                                <option value="Portuguese">Portuguese</option>
-                                <option value="Japanese">Japanese</option>
-                                <option value="Korean">Korean</option>
-                                <option value="Chinese">Chinese</option>
-                                <option value="Russian">Russian</option>
-                                <option value="Arabic">Arabic</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    {/* Cost Summary */}
-                    <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-2">
-                        <div className="flex justify-between text-sm">
-                            <span className="text-slate-600">Base Cost ({tier})</span>
-                            <span className="font-medium">{calculateAnalysisCost(tier, 0)} credits</span>
-                        </div>
-                        {competitors.length > 0 && (
-                            <div className="flex justify-between text-sm">
-                                <span className="text-slate-600">Competitors ({competitors.length})</span>
-                                <span className="font-medium">+{competitors.length * ANALYSIS_CONFIG.PER_COMPETITOR_COST} credits</span>
-                            </div>
-                        )}
-                        <div className="pt-2 border-t border-slate-200 flex justify-between items-center">
-                            <span className="font-bold text-slate-900">Total Cost</span>
-                            <span className={`font-bold ${!canAfford ? 'text-red-600' : 'text-blue-600'}`}>
-                                {cost} credits
-                            </span>
-                        </div>
-                        {!canAfford && (
-                            <p className="text-xs text-red-500 text-right mt-1">Insufficient credits (Bal: {balance})</p>
-                        )}
-                    </div>
-
-                    {/* Error Message */}
-                    {error && (
-                        <div className="p-3 bg-red-50 border border-red-100 rounded-xl flex items-start gap-2 text-red-600 text-sm">
-                            <X className="w-4 h-4 mt-0.5 shrink-0" />
-                            <p>{error}</p>
-                        </div>
-                    )}
-                </div>
-
-                <div className="flex gap-3 mt-8">
-                    <button
-                        onClick={onClose}
-                        disabled={isLoading}
-                        className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleConfirm}
-                        disabled={isLoading || !canAfford}
-                        className="flex-1 px-4 py-2.5 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isLoading ? (
-                            <>
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                Starting...
-                            </>
-                        ) : (
-                            <>
-                                <Sparkles className="w-4 h-4" />
-                                Start Analysis
-                            </>
-                        )}
-                    </button>
-                </div>
-            </div>
+        <div className="text-center">
+          <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/40 rounded-full flex items-center justify-center mx-auto mb-3">
+            <Sparkles className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          </div>
+          <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+            Configure Analysis
+          </h3>
         </div>
-    );
+      </div>
+
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto p-6 min-h-0">
+        <div className="space-y-6">
+
+          {/* Reel Count Tier */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Analysis Depth (Reels to Scrape)
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {(['LOW', 'MEDIUM', 'HIGH'] as AnalysisTier[]).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTier(t)}
+                  className={`px-3 py-2 rounded-xl text-sm font-medium border transition-all ${
+                    tier === t
+                      ? 'bg-blue-600 text-white border-blue-600 ring-2 ring-blue-200 dark:ring-blue-800'
+                      : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Competitors */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex justify-between">
+              <span>Competitors to Analyze</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                +{ANALYSIS_CONFIG.PER_COMPETITOR_COST} credits/each
+              </span>
+            </label>
+
+            {!competitorAnalysisAccess ? (
+              <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400 mb-2">
+                Upgrade to Gold plan to analyze specific competitors.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Enter username (e.g. 100xengineers)"
+                    value={newCompetitor}
+                    onChange={(e) => setNewCompetitor(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && addCompetitor()}
+                    className="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    onClick={addCompetitor}
+                    className="px-3 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600"
+                  >
+                    <Plus size={18} />
+                  </button>
+                </div>
+
+                {competitors.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {competitors.map((comp) => (
+                      <span
+                        key={comp}
+                        className="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs rounded-lg border border-blue-100 dark:border-blue-800"
+                      >
+                        @{comp}
+                        <button
+                          onClick={() => removeCompetitor(comp)}
+                          className="hover:text-blue-900 dark:hover:text-blue-100"
+                        >
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Writing Style & Language */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                <PenTool size={14} className="text-slate-400 dark:text-slate-500" />
+                Writing Style
+              </label>
+              <input
+                type="text"
+                placeholder="let ai decide"
+                value={writingStyle}
+                onChange={(e) => setWritingStyle(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                <Languages size={14} className="text-slate-400 dark:text-slate-500" />
+                Script Language
+              </label>
+              <select
+                value={scriptLanguage}
+                onChange={(e) => setScriptLanguage(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option>English</option>
+                <option>Hindi</option>
+                <option>Hinglish</option>
+                <option>Spanish</option>
+                <option>French</option>
+                <option>German</option>
+                <option>Italian</option>
+                <option>Portuguese</option>
+                <option>Japanese</option>
+                <option>Korean</option>
+                <option>Chinese</option>
+                <option>Russian</option>
+                <option>Arabic</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
+                <Languages size={14} className="text-slate-400 dark:text-slate-500" />
+                Caption Language
+              </label>
+              <select
+                value={captionLanguage}
+                onChange={(e) => setCaptionLanguage(e.target.value)}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option>English</option>
+                <option>Hindi</option>
+                <option>Hinglish</option>
+                <option>Spanish</option>
+                <option>French</option>
+                <option>German</option>
+                <option>Italian</option>
+                <option>Portuguese</option>
+                <option>Japanese</option>
+                <option>Korean</option>
+                <option>Chinese</option>
+                <option>Russian</option>
+                <option>Arabic</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Cost Summary */}
+          <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-700 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Base Cost ({tier})</span>
+              <span className="font-medium">{calculateAnalysisCost(tier, 0)} credits</span>
+            </div>
+
+            {competitors.length > 0 && (
+              <div className="flex justify-between text-sm">
+                <span>Competitors ({competitors.length})</span>
+                <span className="font-medium">
+                  +{competitors.length * ANALYSIS_CONFIG.PER_COMPETITOR_COST} credits
+                </span>
+              </div>
+            )}
+
+            <div className="pt-2 border-t flex justify-between items-center">
+              <span className="font-bold">Total Cost</span>
+              <span className={`font-bold ${!canAfford ? 'text-red-500' : 'text-blue-600'}`}>
+                {cost} credits
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-6 border-t border-slate-200 dark:border-slate-700 shrink-0">
+        <div className="flex gap-3">
+          <button onClick={onClose} className="flex-1 px-4 py-2.5 rounded-xl border">
+            Cancel
+          </button>
+
+          <button
+            onClick={handleConfirm}
+            disabled={isLoading || !canAfford}
+            className="flex-1 px-4 py-2.5 rounded-xl bg-blue-600 text-white flex items-center justify-center gap-2"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Starting...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4" />
+                Start Analysis
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+);
 }
