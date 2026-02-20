@@ -1,13 +1,42 @@
 @import "tailwindcss";
+@variant dark (&:is(.dark *));
 
 /* --- GLOBAL THEME VARIABLES --- */
+/* Light mode is the default (:root). Dark mode overrides are in .dark */
+
 :root {
-  /* Defaults */
   --blur-strength: 24px;
+
+  /* Colors */
+  --bg-primary: #ffffff;
+  --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8f0fe 100%);
+
+  /* Glass Surfaces */
+  --glass-surface: rgba(255, 255, 255, 0.95);
+  --glass-surface-hover: rgba(248, 250, 252, 0.98);
+  --glass-border: rgba(203, 213, 225, 0.6);
+  --glass-border-hover: rgba(148, 163, 184, 0.6);
+  --glass-inset-bg: rgba(248, 250, 252, 0.8);
+  --glass-inset-border: rgba(203, 213, 225, 0.8);
+
+  /* Typography */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+
+  /* Accents */
+  --accent-blue: #1e40af;
+  --accent-emerald: #047857;
+  --accent-purple: #6d28d9;
+  --accent-rose: #be123c;
+
+  /* Shadows */
+  --shadow-ambient: 0 4px 16px 0 rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* DARK MODE (Default/Deep Space) */
-[data-theme='dark'] {
+/* DARK MODE — applied when next-themes adds the `dark` class to <html> */
+.dark {
   /* Colors */
   --bg-primary: #0f172a;
   --bg-gradient: radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
@@ -25,11 +54,8 @@
 
   /* Typography */
   --text-primary: #f1f5f9;
-  /* Slate 100 */
   --text-secondary: #94a3b8;
-  /* Slate 400 */
   --text-muted: #64748b;
-  /* Slate 500 */
 
   /* Accents */
   --accent-blue: #3b82f6;
@@ -40,39 +66,6 @@
   /* Shadows */
   --shadow-ambient: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.2);
-}
-
-/* LIGHT MODE (Modern Airy) */
-[data-theme='light'] {
-  /* Colors */
-  --bg-primary: #ffffff;
-  --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e8f0fe 100%);
-
-  /* Glass Surfaces */
-  --glass-surface: rgba(255, 255, 255, 0.95);
-  --glass-surface-hover: rgba(248, 250, 252, 0.98);
-  --glass-border: rgba(203, 213, 225, 0.6);
-  --glass-border-hover: rgba(148, 163, 184, 0.6);
-  --glass-inset-bg: rgba(248, 250, 252, 0.8);
-  --glass-inset-border: rgba(203, 213, 225, 0.8);
-
-  /* Typography */
-  --text-primary: #0f172a;
-  /* Near black for maximum contrast */
-  --text-secondary: #475569;
-  /* Slate 600 */
-  --text-muted: #64748b;
-  /* Slate 500 */
-
-  /* Accents (Bright and saturated) */
-  --accent-blue: #1e40af;
-  --accent-emerald: #047857;
-  --accent-purple: #6d28d9;
-  --accent-rose: #be123c;
-
-  /* Shadows */
-  --shadow-ambient: 0 4px 16px 0 rgba(0, 0, 0, 0.08);
-  --shadow-glow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 @theme inline {
@@ -190,40 +183,19 @@ button.primary {
   background: var(--text-muted);
 }
 
-/* --- TEXT UTILITY OVERRIDES (For compatibility & New System) --- */
-
-/* 1. Legacy Overrides (Maintain existing behavior) */
-.text-slate-900,
-.text-slate-800,
-.text-slate-700,
-.text-gray-900 {
-  color: var(--text-primary) !important;
-}
-
-.text-slate-600,
-.text-slate-500,
-.text-gray-500,
-.text-slate-400 {
-  color: var(--text-secondary) !important;
-}
-
-/* 2. New Adaptive Utilities (Recommended) */
+/* --- TEXT UTILITIES --- */
+/* Use these semantic classes throughout the app instead of hardcoded dark: variants */
 .text-theme-primary {
-  color: var(--text-primary) !important;
+  color: var(--text-primary);
 }
 
 .text-theme-secondary {
-  color: var(--text-secondary) !important;
+  color: var(--text-secondary);
 }
 
 .text-theme-muted {
-  color: var(--text-muted) !important;
+  color: var(--text-muted);
 }
-
-/* Force white text in BUTTONS or special headers to stay white? 
-   Actually, usually primary buttons are white text. 
-   We let the .neu-btn-primary handle that.
-*/
 
 /* Recharts */
 .recharts-cartesian-grid line {

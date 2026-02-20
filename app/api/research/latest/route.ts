@@ -52,8 +52,8 @@ export async function GET(request: Request) {
             );
         }
 
-        console.log("/api/latest returns", result.data);
-        
+        // console.log("/api/latest returns", result.data);
+
         return NextResponse.json(result.data);
 
     } catch (error) {

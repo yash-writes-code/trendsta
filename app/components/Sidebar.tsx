@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Play, Hash, Sparkles, User, TrendingUp, Users, FileText, ChevronLeft, ChevronRight, LogOut, Settings } from "lucide-react";
+import { Home, Play, Hash, Sparkles, User, TrendingUp, Users, FileText, ChevronLeft, ChevronRight, LogOut, Settings, CreditCard, Gift } from "lucide-react";
 import Image from "next/image";
 import { useSidebar } from "../context/SidebarContext";
 import ThemeToggle from "./ThemeToggle";
@@ -20,6 +20,8 @@ const navItems = [
     { href: "/script-ideas", label: "Script Ideas", icon: FileText },
     { href: "/twitter-insights", label: "Twitter Insights", icon: Hash },
     { href: "/ai-consultant", label: "AI Consultant", icon: Sparkles },
+    { href: "/subscription", label: "Subscription", icon: CreditCard },
+    { href: "/referral", label: "Referrals", icon: Gift },
     { href: "/account", label: "Account", icon: Settings },
 ];
 

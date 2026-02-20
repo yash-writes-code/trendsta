@@ -21,8 +21,10 @@ import {
     SubscriptionStatus,
     PaymentType,
     PaymentStatus,
+    CommissionStatus,
 } from "../../generated/prisma";
 import { ensureIdempotent } from "./idempotency";
+// Note: Prisma Decimal fields accept numeric strings directly.
 
 // ============================================
 // HELPER FUNCTIONS
@@ -87,6 +89,84 @@ async function upsertWallet(
 }
 
 // ============================================
+// REFERRAL COMMISSION HELPER
+// ============================================
+
+const COMMISSION_PCT_NUM = 10; // 10% — change here to update globally
+
+/**
+ * Creates a Commission record the FIRST time a referred user makes a paid purchase.
+ * Idempotent: returns early if the user already has a prior Payment record (i.e. not their first purchase)
+ * or if a commission for this exact paymentId already exists.
+ */
+async function maybeCreateCommission(
+    userId: string,
+    paymentId: string,
+    rawAmount: number,   // total_amount from Dodo (in smallest currency unit, e.g. paise/cents)
+    currency: string
+): Promise<void> {
+    console.log(`[Commission] maybeCreateCommission called — userId=${userId} paymentId=${paymentId} rawAmount=${rawAmount} currency=${currency}`);
+
+    // 1. Does this user have a referrer?
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { referredById: true },
+    });
+    console.log(`[Commission] user.referredById=${user?.referredById ?? "(none)"}`);
+    if (!user?.referredById) {
+        console.log(`[Commission] user ${userId} was not referred — skipping commission`);
+        return;
+    }
+
+    // 2. Is this their very first payment? Count *other* success payments (excluding this one).
+    const priorPayments = await prisma.payment.count({
+        where: {
+            userId,
+            status: PaymentStatus.SUCCESS,
+            NOT: { providerPaymentId: paymentId },
+        },
+    });
+    console.log(`[Commission] priorPayments (excluding current)=${priorPayments}`);
+    if (priorPayments > 0) {
+        console.log(`[Commission] not first purchase (${priorPayments} prior payments) — skipping commission`);
+        return;
+    }
+
+    // 3. Avoid duplicate commission for the exact same paymentId
+    const existingCommission = await prisma.commission.findFirst({
+        where: { paymentId },
+    });
+    console.log(`[Commission] existingCommission for paymentId="${paymentId}": ${existingCommission ? `id=${existingCommission.id}` : "none"}`);
+    if (existingCommission) {
+        console.log(`[Commission] duplicate paymentId detected — skipping commission (idempotency guard)`);
+        return;
+    }
+
+    // 4. Calculate commission amount (10% of the payment amount)
+    // Dodo sends total_amount in smallest unit (paise/cents), so divide by 100 first.
+    const majorAmount = rawAmount / 100;
+    const commissionAmount = ((majorAmount * COMMISSION_PCT_NUM) / 100).toFixed(2);
+    console.log(`[Commission] calculated: ${rawAmount} smallest-units ÷ 100 = ${majorAmount} × ${COMMISSION_PCT_NUM}% = ${commissionAmount} ${currency}`);
+
+    await prisma.commission.create({
+        data: {
+            referrerId: user.referredById,
+            referredUserId: userId,
+            paymentId,
+            commissionPct: COMMISSION_PCT_NUM.toFixed(2),
+            amount: commissionAmount,
+            currency: currency || "USD",
+            status: CommissionStatus.PENDING,
+        },
+    });
+
+    console.log(
+        `[Commission] ✅ created — referrerId=${user.referredById} referredUserId=${userId} paymentId=${paymentId} amount=${commissionAmount} ${currency} pct=${COMMISSION_PCT_NUM}%`
+    );
+}
+
+
+// ============================================
 // WEBHOOK HANDLERS
 // Using `any` for payload types as Dodo SDK types are complex.
 // The actual structure is { type, data, business_id, timestamp }
@@ -136,6 +216,13 @@ export async function handlePaymentSucceeded(payload: any) {
         // 2. Check if this is a subscription payment
         if (data.subscription_id) {
             console.log("[Webhook] Payment linked to subscription. Credits handled by subscription events. Skipping bundle grant.");
+            // Fire commission here (not in subscription.active) because only payment.succeeded carries total_amount
+            await maybeCreateCommission(
+                user.id,
+                data.payment_id,
+                data.total_amount ?? 0,
+                data.currency ?? "USD"
+            );
             return;
         }
 
@@ -184,6 +271,14 @@ export async function handlePaymentSucceeded(payload: any) {
             // Update wallet topup balance
             await upsertWallet(tx, user.id, { topupBalance: stellaAmount });
         });
+
+        // Referral commission: fire after stellar grant so Payment row already exists
+        await maybeCreateCommission(
+            user.id,
+            data.payment_id,
+            data.total_amount ?? 0,
+            data.currency ?? "USD"
+        );
 
         console.log(`[Webhook] Granted ${stellaAmount} topup stellas to ${customerEmail}`);
     });
@@ -277,6 +372,9 @@ export async function handleSubscriptionActive(payload: any) {
                 });
             }
         });
+
+        // Commission is handled in handlePaymentSucceeded (which has total_amount).
+        // Do NOT call maybeCreateCommission here — subscription.active payload has no payment amount.
 
         console.log(`[Webhook] Subscription active for ${customerEmail} - Granted ${stellaGrant} monthly stellas`);
     });

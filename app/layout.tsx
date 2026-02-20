@@ -4,15 +4,16 @@ import { Suspense } from "react";
 import { SidebarProvider } from "./context/SidebarContext";
 import { AnalysisProvider } from "./context/AnalysisContext";
 import { QueryProvider } from "./providers/QueryProvider";
-import { ThemeProvider } from "./context/ThemeContext";
+import { ThemeProvider } from "next-themes";
 import AnalysingIndicator from "./components/AnalysingIndicator";
 import SmoothScroll from "./components/SmoothScroll";
 import Script from "next/script";
 import { Analytics } from "./analytics";
+import ReferralTracker from "./components/ReferralTracker";
+
 export const metadata: Metadata = {
   title: "Trendsta - Content Research Tool",
   description: "Your daily content strategy dashboard for viral content creation",
-
 };
 
 export default function RootLayout({
@@ -25,12 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
           strategy="afterInteractive"
         />
-
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
@@ -46,12 +45,15 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
-        <ThemeProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <QueryProvider>
             <AnalysisProvider>
               <SidebarProvider>
                 <SmoothScroll>
                   <AnalysingIndicator />
+                  <Suspense fallback={null}>
+                    <ReferralTracker />
+                  </Suspense>
                   {children}
                 </SmoothScroll>
               </SidebarProvider>

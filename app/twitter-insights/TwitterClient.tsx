@@ -13,6 +13,7 @@ import { useSocialAccount } from "@/hooks/useSocialAccount";
 import { useAnalysis } from "@/app/context/AnalysisContext";
 import { useSession } from "@/lib/auth-client";
 import { RawTweet, RawTwitterResearch } from "@/app/types/rawApiTypes";
+import GuestIndicator from "../components/GuestIndicator";
 
 export const dynamic = 'force-dynamic';
 
@@ -375,6 +376,8 @@ export default function TwitterClient() {
                             </button>
                         </div>
                     </div>
+
+                    <GuestIndicator />
 
                     {viewMode === 'insights' ? (
                         <SmartInsightsView

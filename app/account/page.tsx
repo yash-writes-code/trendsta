@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import { useSidebar } from "../context/SidebarContext";
+import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import { ChevronDown, Check, Save, Zap, Lock, Plus, X, Languages, PenTool } from "lucide-react";
 
@@ -11,6 +12,30 @@ import {
     SUB_NICHE_MAPPING,
 
 } from "../onboarding/onboardingData";
+
+
+interface Subscription {
+    id: string;
+    status: string;
+    currentPeriodEnd: string;
+    plan: {
+        id: string;
+        name: string;
+        tier: number;
+        productId: string;
+    };
+}
+
+
+interface Plan {
+    id: string;
+    name: string;
+    tier: number;
+    price: number;
+    currency: string;
+    providerProductId: string;
+    monthlyStellasGrant: number;
+}
 
 // Country codes for phone
 const countryCodes = [
@@ -26,45 +51,14 @@ const countryCodes = [
     { code: "+971", country: "AE", flag: "🇦🇪" },
 ];
 
-interface Plan {
-    id: string;
-    name: string;
-    tier: number;
-    price: number;
-    currency: string;
-    providerProductId: string;
-    monthlyStellasGrant: number;
-}
-
-interface Subscription {
-    id: string;
-    status: string;
-    currentPeriodEnd: string;
-    plan: {
-        id: string;
-        name: string;
-        tier: number;
-        productId: string;
-    };
-}
-
-interface PreviewData {
-    chargeAmount: number;
-    currency: string;
-    changeType: 'upgrade' | 'downgrade';
-    newPlanDetails: any;
-    targetProductId: string;
-    targetPlanName: string;
-    stellasToGrant: number;
-}
 
 export default function AccountPage() {
     // STATIC: Removed useSession for debugging -> Restored for checkout
     const { isCollapsed } = useSidebar();
+    const router = useRouter();
     const { data: session } = useSession();
 
-    // Tab state
-    const [activeTab, setActiveTab] = useState<'profile' | 'plan'>('profile');
+
 
     // Form state - using static placeholder values
     const [firstName, setFirstName] = useState("John");
@@ -116,6 +110,9 @@ export default function AccountPage() {
     const [autoScriptLanguage, setAutoScriptLanguage] = useState("English");
     const [autoCaptionLanguage, setAutoCaptionLanguage] = useState("English");
 
+    // Subscription State
+    const [currentSubscription, setCurrentSubscription] = useState<Subscription | null>(null);
+
     // Dropdown states
     const [showPhoneCodeDropdown, setShowPhoneCodeDropdown] = useState(false);
     const phoneDropdownRef = useRef<HTMLDivElement>(null);
@@ -134,36 +131,13 @@ export default function AccountPage() {
         }
     }, [showPhoneCodeDropdown]);
 
-    // Subscription State
-    const [plans, setPlans] = useState<Plan[]>([]);
-    const [currentSubscription, setCurrentSubscription] = useState<Subscription | null>(null);
-    const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
-    const [previewData, setPreviewData] = useState<PreviewData | null>(null);
-    const [isProcessingAction, setIsProcessingAction] = useState(false);
-    const [actionError, setActionError] = useState<string | null>(null);
-
-    // Wallet State
-    const [walletBalance, setWalletBalance] = useState({ monthlyBalance: 0, topupBalance: 0, totalBalance: 0 });
-
     // Get available sub-niches based on selected niche
     const availableSubNiches = niche ? SUB_NICHE_MAPPING[niche] || [] : [];
 
-    // Fetch Subscription & Plans
-    React.useEffect(() => {
+    // Fetch Subscription only (for feature gating)
+    useEffect(() => {
         const fetchData = async () => {
-            setIsLoadingSubscription(true);
             try {
-                // Fetch plans
-                let plansData = { plans: [] };
-                try {
-                    const plansRes = await fetch("/api/subscription/plans");
-                    if (!plansRes.ok) throw new Error(`Plans fetch failed: ${plansRes.status}`);
-                    plansData = await plansRes.json();
-                    if (plansData.plans) setPlans(plansData.plans);
-                } catch (e) {
-                    console.error("Error fetching plans:", e);
-                }
-
                 // Fetch current subscription
                 try {
                     const subRes = await fetch("/api/subscription/current");
@@ -181,144 +155,13 @@ export default function AccountPage() {
                 } catch (e) {
                     console.error("Error fetching subscription:", e);
                 }
-
-                // Fetch wallet balance
-                try {
-                    const walletRes = await fetch("/api/wallet");
-                    if (!walletRes.ok) throw new Error(`Wallet fetch failed: ${walletRes.status}`);
-                    const walletData = await walletRes.json();
-                    if (walletData.totalBalance !== undefined) {
-                        setWalletBalance(walletData);
-                    }
-                } catch (e) {
-                    console.error("Error fetching wallet:", e);
-                }
             } catch (err) {
                 console.error("Unexpected error in fetchData:", err);
-            } finally {
-                setIsLoadingSubscription(false);
             }
         };
 
-        if (true) {
-            fetchData();
-        }
-    }, [activeTab]);
-
-    const handlePlanAction = async (targetPlan: Plan) => {
-        if (!currentSubscription) {
-            // Handle new subscription via Checkout
-            setIsProcessingAction(true);
-            setActionError(null);
-            try {
-                if (!session?.user?.email) {
-                    throw new Error("User email not found. Please log in.");
-                }
-
-                const res = await fetch("/api/checkout", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        productId: targetPlan.providerProductId,
-                        email: session.user.email,
-                        name: session.user.name || `${firstName} ${lastName}`,
-                        metadata: {
-                            userId: session.user.id,
-                            source: "account_page_plan_selection"
-                        }
-                    }),
-                });
-
-                if (!res.ok) {
-                    const data = await res.json();
-                    throw new Error(data.error || "Failed to initiate checkout");
-                }
-
-                const { checkout_url } = await res.json();
-                if (checkout_url) {
-                    window.location.href = checkout_url;
-                } else {
-                    throw new Error("No checkout URL returned");
-                }
-            } catch (err: any) {
-                console.error("Checkout error:", err);
-                setActionError(err.message || "Failed to start checkout");
-                setIsProcessingAction(false);
-            }
-            return;
-        }
-
-        setActionError(null);
-        setIsProcessingAction(true);
-
-        try {
-            const res = await fetch("/api/subscription/preview", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ targetProductId: targetPlan.providerProductId }),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || "Failed to preview plan change");
-            }
-
-            setPreviewData({
-                ...data,
-                targetProductId: targetPlan.providerProductId,
-                targetPlanName: targetPlan.name
-            });
-        } catch (err: any) {
-            setActionError(err.message);
-        } finally {
-            setIsProcessingAction(false);
-        }
-    };
-
-    const confirmPlanChange = async () => {
-        if (!previewData) return;
-
-        setIsProcessingAction(true);
-        setActionError(null);
-
-        try {
-            const res = await fetch("/api/subscription/change", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    targetProductId: previewData.targetProductId,
-                    action: previewData.changeType
-                }),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || "Failed to change plan");
-            }
-
-            // Refresh data
-            setPreviewData(null);
-            // Re-fetch subscription
-            const subRes = await fetch("/api/subscription/current");
-            const subData = await subRes.json();
-            if (subData.hasSubscription) {
-                setCurrentSubscription({
-                    id: subData.subscription.id,
-                    status: subData.subscription.status,
-                    currentPeriodEnd: subData.subscription.currentPeriodEnd,
-                    plan: subData.plan
-                });
-            }
-
-        } catch (err: any) {
-            setActionError(err.message);
-        } finally {
-            setIsProcessingAction(false);
-        }
-    };
-
+        fetchData();
+    }, []);
 
     const handleNicheChange = (value: string) => {
         setNiche(value);
@@ -396,740 +239,408 @@ export default function AccountPage() {
                         </p>
                     </div>
 
-                    {/* Tabs */}
-                    <div className="flex items-center gap-1 mb-6 border-b border-white/10">
-                        <button
-                            onClick={() => setActiveTab('profile')}
-                            className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors border-b-2 ${activeTab === 'profile'
-                                ? 'border-blue-600 text-blue-600 bg-blue-500/10'
-                                : 'border-transparent text-theme-secondary hover:text-theme-primary'
-                                }`}
-                        >
-                            My Profile
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('plan')}
-                            className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors border-b-2 ${activeTab === 'plan'
-                                ? 'border-blue-600 text-blue-600 bg-blue-500/10'
-                                : 'border-transparent text-theme-secondary hover:text-theme-primary'
-                                }`}
-                        >
-                            Subscription Plan
-                        </button>
-                    </div>
+
 
                     {/* Content */}
-                    {activeTab === 'profile' ? (
-                        <div className="space-y-6 animate-fadeIn">
-                            {/* Personal Information Card */}
-                            <div className="glass-panel overflow-hidden">
-                                <div className="p-6 border-b border-white/10">
-                                    <h2 className="text-lg font-semibold text-theme-primary">Personal Information</h2>
-                                    <p className="text-sm text-theme-secondary">Edit your personal information</p>
-                                </div>
 
-                                <div className="p-6">
-                                    {/* Form Fields */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {/* First Name */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-theme-primary mb-2">
-                                                First name <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={firstName}
-                                                onChange={(e) => setFirstName(e.target.value)}
-                                                placeholder="Enter first name"
-                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                                            />
-                                        </div>
-
-                                        {/* Last Name */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-theme-primary mb-2">
-                                                Last name <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={lastName}
-                                                onChange={(e) => setLastName(e.target.value)}
-                                                placeholder="Enter last name"
-                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                                            />
-                                        </div>
-
-                                        {/* Email */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-theme-primary mb-2">
-                                                Email <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                type="email"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                placeholder="example@email.com"
-                                                disabled
-                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/5 text-theme-secondary transition-all font-medium focus:outline-none cursor-not-allowed"
-                                            />
-                                            <p className="text-xs text-theme-muted mt-1">Email cannot be changed</p>
-                                        </div>
-
-                                        {/* Phone Number */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-theme-primary mb-2">
-                                                Phone number
-                                            </label>
-                                            <div className="flex gap-2">
-                                                {/* Country Code Dropdown */}
-                                                <div className="relative" ref={phoneDropdownRef}>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setShowPhoneCodeDropdown(!showPhoneCodeDropdown)}
-                                                        className="flex items-center gap-2 px-3 py-3 rounded-xl border border-white/10 bg-black/20 transition-colors bg-glass-inset-bg min-w-[90px]"
-                                                    >
-                                                        <span className="text-lg">{selectedPhoneCode?.flag}</span>
-                                                        <span className="text-sm text-theme-secondary font-medium">{phoneCode}</span>
-                                                        <ChevronDown size={14} style={{ color: 'var(--text-secondary)' }} />
-                                                    </button>
-                                                    {showPhoneCodeDropdown && (
-                                                        <div className="absolute top-full left-0 mt-1 w-40 border border-white/10 rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto glass-panel"
-                                                        >
-                                                            {countryCodes.map((country) => (
-                                                                <button
-                                                                    key={country.country}
-                                                                    onClick={() => {
-                                                                        setPhoneCode(country.code);
-                                                                        setShowPhoneCodeDropdown(false);
-                                                                    }}
-                                                                    className="w-full flex items-center gap-2 px-3 py-2 text-left transition-colors hover:opacity-80"
-                                                                    style={{ backgroundColor: 'var(--glass-surface)' }}
-                                                                >
-                                                                    <span className="text-lg">{country.flag}</span>
-                                                                    <span className="text-sm text-theme-primary font-medium">{country.code}</span>
-                                                                </button>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <input
-                                                    type="tel"
-                                                    value={phoneNumber}
-                                                    onChange={(e) => setPhoneNumber(e.target.value)}
-                                                    placeholder="000 000-000 00"
-                                                    className="flex-1 px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                    <div className="space-y-6 animate-fadeIn">
+                        {/* Personal Information Card */}
+                        <div className="glass-panel overflow-hidden">
+                            <div className="p-6 border-b border-white/10">
+                                <h2 className="text-lg font-semibold text-theme-primary">Personal Information</h2>
+                                <p className="text-sm text-theme-secondary">Edit your personal information</p>
                             </div>
 
-                            <div className="glass-panel overflow-hidden">
-                                <div className="p-6 border-b border-white/10">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundImage: 'linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)' }}>
-                                            <Zap className="w-5 h-5 text-pink-500" />
-                                        </div>
-                                        <div>
-                                            <h2 className="text-lg font-semibold text-theme-primary">Instagram & Content</h2>
-                                            <p className="text-sm text-theme-primary">Configure your content analysis settings</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="p-6 space-y-6">
-                                    {/* Instagram Username */}
+                            <div className="p-6">
+                                {/* Form Fields */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* First Name */}
                                     <div>
                                         <label className="block text-sm font-medium text-theme-primary mb-2">
-                                            Instagram Username <span className="text-red-500">*</span>
+                                            First name <span className="text-red-500">*</span>
                                         </label>
                                         <input
                                             type="text"
-                                            value={instagramUsername}
-                                            readOnly
-                                            disabled
-                                            placeholder="@yourusername"
-                                            className="w-full px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none cursor-not-allowed"
-                                            style={{
-                                                backgroundColor: 'rgba(0, 0, 0, 0.03)',
-                                            }}
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                            placeholder="Enter first name"
+                                            className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                                         />
-                                        <p className="text-xs text-theme-muted mt-1">Username cannot be changed</p>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {/* Niche */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-theme-primary mb-2">
-                                                Content Niche <span className="text-red-500">*</span>
-                                            </label>
-                                            <select
-                                                value={niche}
-                                                onChange={(e) => {
-                                                    setNiche(e.target.value);
-                                                    setSubNiche(""); // Reset sub-niche when niche changes
-                                                }}
-                                                style={{
-                                                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                                                    backgroundRepeat: 'no-repeat',
-                                                    backgroundPosition: 'right 1rem center',
-                                                    backgroundSize: '1.25rem',
-                                                } as any}
-                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                                            >
-                                                <option value="">Select your niche</option>
-                                                {NICHE_OPTIONS.map((opt) => (
-                                                    <option key={opt.value} value={opt.value}>
-                                                        {opt.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        {/* Sub-Niche */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-theme-primary mb-2">
-                                                Sub-Niche <span className="text-red-500">*</span>
-                                            </label>
-                                            <select
-                                                value={subNiche}
-                                                onChange={(e) => setSubNiche(e.target.value)}
-                                                disabled={!niche}
-                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                                                style={{
-                                                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                                                    backgroundRepeat: 'no-repeat',
-                                                    backgroundPosition: 'right 1rem center',
-                                                    backgroundSize: '1.25rem',
-                                                } as any}
-                                            >
-                                                <option value="">
-                                                    {niche ? "Select your specialization" : "First select a niche"}
-                                                </option>
-                                                {availableSubNiches.map((opt) => (
-                                                    <option key={opt.value} value={opt.value}>
-                                                        {opt.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="rounded-2xl overflow-hidden relative" style={{ backgroundColor: 'var(--glass-surface)', border: '1px solid var(--glass-border)' }}>
-                                {(!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')) && (
-                                    <div className="absolute inset-0 z-20 backdrop-blur-sm bg-white/50 flex flex-col items-center justify-center text-center p-6">
-                                        <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mb-3 shadow-xl">
-                                            <Lock className="w-6 h-6 text-white" />
-                                        </div>
-                                        <h3 className="text-lg font-bold text-slate-900 mb-1">Platinum Feature</h3>
-                                        <p className="text-sm text-slate-600 max-w-xs mb-4">
-                                            Upgrade to Platinum to unlock automated analysis defaults and save time.
-                                        </p>
-                                        <button
-                                            onClick={() => setActiveTab('plan')}
-                                            className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
-                                        >
-                                            Upgrade Now
-                                        </button>
-                                    </div>
-                                )}
-
-                                <div className="p-6" style={{ borderBottomColor: 'var(--glass-border)', borderBottomWidth: '1px' }}>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundImage: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)' }}>
-                                            <Zap className="w-5 h-5 text-blue-600" />
-                                        </div>
-                                        <div>
-                                            <h2 className="text-lg font-semibold text-theme-primary">Automation Settings</h2>
-                                            <p className="text-sm text-theme-primary">Configure defaults for automated analysis</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="p-6 space-y-6">
-                                    {/* Competitors List */}
+                                    {/* Last Name */}
                                     <div>
                                         <label className="block text-sm font-medium text-theme-primary mb-2">
-                                            Default Competitor List
+                                            Last name <span className="text-red-500">*</span>
                                         </label>
-                                        <div className="flex gap-2 mb-3">
-                                            <input
-                                                type="text"
-                                                placeholder="Enter username (e.g. 100xengineers)"
-                                                value={autoNewCompetitor}
-                                                onChange={(e) => setAutoNewCompetitor(e.target.value)}
-                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
-                                                className="flex-1 px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none focus:ring-2 disabled:opacity-50"
-                                                style={{
-                                                    backgroundColor: 'var(--glass-inset-bg)',
-                                                    color: 'var(--text-primary)',
-                                                    borderColor: 'var(--glass-border)',
-                                                } as any}
-                                            />
-                                            <button
-                                                onClick={() => {
-                                                    if (autoNewCompetitor.trim() && !autoCompetitors.includes(autoNewCompetitor.trim())) {
-                                                        setAutoCompetitors([...autoCompetitors, autoNewCompetitor.trim()]);
-                                                        setAutoNewCompetitor("");
-                                                    }
-                                                }}
-                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
-                                                className="px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
-                                            >
-                                                <Plus size={20} />
-                                            </button>
-                                        </div>
-
-                                        {autoCompetitors.length > 0 ? (
-                                            <div className="flex flex-wrap gap-2">
-                                                {autoCompetitors.map((comp) => (
-                                                    <span key={comp} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 text-sm font-medium rounded-lg border border-blue-100">
-                                                        @{comp}
-                                                        <button
-                                                            onClick={() => setAutoCompetitors(autoCompetitors.filter(c => c !== comp))}
-                                                            disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
-                                                            className="hover:text-blue-900"
-                                                        >
-                                                            <X size={14} />
-                                                        </button>
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-sm text-theme-muted italic">No default competitors added.</p>
-                                        )}
+                                        <input
+                                            type="text"
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                            placeholder="Enter last name"
+                                            className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                        />
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                        {/* Writing Style */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-theme-primary mb-2 flex items-center gap-2">
-                                                <PenTool size={14} className="text-theme-secondary" />
-                                                Writing Style
-                                            </label>
+                                    {/* Email */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-theme-primary mb-2">
+                                            Email <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            placeholder="example@email.com"
+                                            disabled
+                                            className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/5 text-theme-secondary transition-all font-medium focus:outline-none cursor-not-allowed"
+                                        />
+                                        <p className="text-xs text-theme-muted mt-1">Email cannot be changed</p>
+                                    </div>
+
+                                    {/* Phone Number */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-theme-primary mb-2">
+                                            Phone number
+                                        </label>
+                                        <div className="flex gap-2">
+                                            {/* Country Code Dropdown */}
+                                            <div className="relative" ref={phoneDropdownRef}>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowPhoneCodeDropdown(!showPhoneCodeDropdown)}
+                                                    className="flex items-center gap-2 px-3 py-3 rounded-xl border border-white/10 bg-black/20 transition-colors bg-glass-inset-bg min-w-[90px]"
+                                                >
+                                                    <span className="text-lg">{selectedPhoneCode?.flag}</span>
+                                                    <span className="text-sm text-theme-secondary font-medium">{phoneCode}</span>
+                                                    <ChevronDown size={14} style={{ color: 'var(--text-secondary)' }} />
+                                                </button>
+                                                {showPhoneCodeDropdown && (
+                                                    <div className="absolute top-full left-0 mt-1 w-40 border border-white/10 rounded-xl shadow-lg z-50 max-h-48 overflow-y-auto glass-panel"
+                                                    >
+                                                        {countryCodes.map((country) => (
+                                                            <button
+                                                                key={country.country}
+                                                                onClick={() => {
+                                                                    setPhoneCode(country.code);
+                                                                    setShowPhoneCodeDropdown(false);
+                                                                }}
+                                                                className="w-full flex items-center gap-2 px-3 py-2 text-left transition-colors hover:opacity-80"
+                                                                style={{ backgroundColor: 'var(--glass-surface)' }}
+                                                            >
+                                                                <span className="text-lg">{country.flag}</span>
+                                                                <span className="text-sm text-theme-primary font-medium">{country.code}</span>
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
                                             <input
-                                                type="text"
-                                                value={autoWritingStyle}
-                                                onChange={(e) => setAutoWritingStyle(e.target.value)}
-                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
-                                                placeholder="let ai decide"
-                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none focus:ring-2 disabled:opacity-50"
-                                                style={{
-                                                    backgroundColor: 'var(--glass-inset-bg)',
-                                                    color: 'var(--text-primary)',
-                                                    borderColor: 'var(--glass-border)',
-                                                } as any}
+                                                type="tel"
+                                                value={phoneNumber}
+                                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                                placeholder="000 000-000 00"
+                                                className="flex-1 px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                                             />
-                                        </div>
-
-                                        {/* Script Language */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-theme-primary mb-2 flex items-center gap-2">
-                                                <Languages size={14} className="text-theme-secondary" />
-                                                Script Language
-                                            </label>
-                                            <select
-                                                value={autoScriptLanguage}
-                                                onChange={(e) => setAutoScriptLanguage(e.target.value)}
-                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
-                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 disabled:opacity-50"
-                                                style={{
-                                                    backgroundColor: 'var(--glass-inset-bg)',
-                                                    color: 'var(--text-primary)',
-                                                    borderColor: 'var(--glass-border)',
-                                                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                                                    backgroundRepeat: 'no-repeat',
-                                                    backgroundPosition: 'right 1rem center',
-                                                    backgroundSize: '1.25rem',
-                                                } as any}
-                                            >
-                                                <option value="English">English</option>
-                                                <option value="Hindi">Hindi</option>
-                                                <option value="Spanish">Spanish</option>
-                                                <option value="French">French</option>
-                                                <option value="German">German</option>
-                                            </select>
-                                        </div>
-
-                                        {/* Caption Language */}
-                                        <div>
-                                            <label className="block text-sm font-medium text-theme-primary mb-2 flex items-center gap-2">
-                                                <Languages size={14} className="text-theme-secondary" />
-                                                Caption Language
-                                            </label>
-                                            <select
-                                                value={autoCaptionLanguage}
-                                                onChange={(e) => setAutoCaptionLanguage(e.target.value)}
-                                                disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
-                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 disabled:opacity-50"
-                                                style={{
-                                                    backgroundColor: 'var(--glass-inset-bg)',
-                                                    color: 'var(--text-primary)',
-                                                    borderColor: 'var(--glass-border)',
-                                                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-                                                    backgroundRepeat: 'no-repeat',
-                                                    backgroundPosition: 'right 1rem center',
-                                                    backgroundSize: '1.25rem',
-                                                } as any}
-                                            >
-                                                <option value="English">English</option>
-                                                <option value="Hindi">Hindi</option>
-                                                <option value="Spanish">Spanish</option>
-                                                <option value="French">French</option>
-                                                <option value="German">German</option>
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Save Button */}
-                            <div className="flex items-center justify-end gap-4">
-                                {saveError && (
-                                    <span className="text-sm text-red-600 font-medium">
-                                        {saveError}
-                                    </span>
-                                )}
-                                {saveSuccess && (
-                                    <span className="text-sm text-emerald-600 font-medium flex items-center gap-1">
-                                        <Check size={16} />
-                                        Changes saved successfully
-                                    </span>
-                                )}
-                                <button
-                                    onClick={handleSave}
-                                    disabled={isSaving}
-                                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {isSaving ? (
-                                        <>
-                                            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                                            Saving...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Save size={18} />
-                                            Save Changes
-                                        </>
-                                    )}
-                                </button>
-                            </div>
                         </div>
-                    ) : (
-                        <div className="space-y-6 animate-fadeIn">
-                            {/* Stats Overview */}
-                            <div className="glass-panel p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+
+                        <div className="glass-panel overflow-hidden">
+                            <div className="p-6 border-b border-white/10">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundImage: 'linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%)' }}>
+                                        <Zap className="w-5 h-5 text-pink-500" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-lg font-semibold text-theme-primary">Instagram & Content</h2>
+                                        <p className="text-sm text-theme-primary">Configure your content analysis settings</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-6 space-y-6">
+                                {/* Instagram Username */}
                                 <div>
-                                    <div className="flex items-center gap-3 mb-1">
-                                        <h2 className="text-lg font-bold text-theme-primary">
-                                            {currentSubscription ? currentSubscription.plan.name : "Free Plan"}
-                                        </h2>
-                                        {currentSubscription && (
-                                            <span className="px-2.5 py-0.5 bg-purple-100 text-purple-700 text-[10px] font-bold rounded-full uppercase tracking-wide">
-                                                {currentSubscription.status}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p className="text-sm text-theme-secondary">
-                                        {currentSubscription
-                                            ? "Manage your active subscription"
-                                            : "Upgrade to unlock full power"}
-                                    </p>
+                                    <label className="block text-sm font-medium text-theme-primary mb-2">
+                                        Instagram Username <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={instagramUsername}
+                                        readOnly
+                                        disabled
+                                        placeholder="@yourusername"
+                                        className="w-full px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none cursor-not-allowed"
+                                        style={{
+                                            backgroundColor: 'rgba(0, 0, 0, 0.03)',
+                                        }}
+                                    />
+                                    <p className="text-xs text-theme-muted mt-1">Username cannot be changed</p>
                                 </div>
 
-                                <div className="flex items-center gap-8 w-full md:w-auto">
-                                    <div className="flex-1 md:flex-none">
-                                        <p className="text-xs text-slate-400 dark:text-slate-300 font-bold uppercase tracking-wider mb-1">Stella Balance</p>
-                                        <div className="flex items-end gap-2">
-                                            <span className="text-2xl font-black text-purple-600">{walletBalance.totalBalance}</span>
-                                            <span className="text-sm text-slate-400 font-medium mb-1">({walletBalance.monthlyBalance} monthly + {walletBalance.topupBalance} topup)</span>
-                                        </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Niche */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-theme-primary mb-2">
+                                            Content Niche <span className="text-red-500">*</span>
+                                        </label>
+                                        <select
+                                            value={niche}
+                                            onChange={(e) => {
+                                                setNiche(e.target.value);
+                                                setSubNiche(""); // Reset sub-niche when niche changes
+                                            }}
+                                            style={{
+                                                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                                backgroundRepeat: 'no-repeat',
+                                                backgroundPosition: 'right 1rem center',
+                                                backgroundSize: '1.25rem',
+                                            } as any}
+                                            className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                        >
+                                            <option value="">Select your niche</option>
+                                            {NICHE_OPTIONS.map((opt) => (
+                                                <option key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
-                                    <div className="flex-1 md:flex-none text-right">
-                                        <p className="text-xs text-theme-muted font-bold uppercase tracking-wider mb-1">Renewal</p>
-                                        <p className="text-theme-primary font-semibold">
-                                            {currentSubscription
-                                                ? new Date(currentSubscription.currentPeriodEnd).toLocaleDateString()
-                                                : "-"
-                                            }
-                                        </p>
+
+                                    {/* Sub-Niche */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-theme-primary mb-2">
+                                            Sub-Niche <span className="text-red-500">*</span>
+                                        </label>
+                                        <select
+                                            value={subNiche}
+                                            onChange={(e) => setSubNiche(e.target.value)}
+                                            disabled={!niche}
+                                            className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            style={{
+                                                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                                backgroundRepeat: 'no-repeat',
+                                                backgroundPosition: 'right 1rem center',
+                                                backgroundSize: '1.25rem',
+                                            } as any}
+                                        >
+                                            <option value="">
+                                                {niche ? "Select your specialization" : "First select a niche"}
+                                            </option>
+                                            {availableSubNiches.map((opt) => (
+                                                <option key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Subscriptions Status Messages */}
-                            {actionError && (
-                                <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl border border-red-100 text-sm">
-                                    {actionError}
-                                </div>
-                            )}
-
-                            {/* Preview Modal */}
-                            {previewData && (
-                                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                                    <div className="rounded-2xl p-8 max-w-md w-full shadow-2xl animate-fadeIn border glass-panel">
-                                        <h3 className="text-xl font-bold text-theme-primary mb-2">
-                                            Confirm {previewData.changeType === 'upgrade' ? 'Upgrade' : 'Downgrade'}
-                                        </h3>
-                                        <p className="text-theme-secondary mb-6">
-                                            You are about to switch to <span className="font-semibold text-theme-primary">{previewData.targetPlanName}</span>.
-                                        </p>
-
-                                        <div className="rounded-xl p-4 mb-6 space-y-3 bg-black/5">
-                                            <div className="flex justify-between items-center text-sm">
-                                                <span className="text-theme-secondary">New Price</span>
-                                                <span className="font-semibold text-theme-primary">{previewData.currency} {(previewData.newPlanDetails.amount / 100).toFixed(2)}/{previewData.newPlanDetails.interval}</span>
-                                            </div>
-                                            {previewData.changeType === 'upgrade' && (
-                                                <div className="flex justify-between items-center text-sm">
-                                                    <span className="text-theme-secondary">Immediate Charge (Prorated)</span>
-                                                    <span className="font-bold text-emerald-600">
-                                                        {previewData.currency} {(previewData.chargeAmount / 100).toFixed(2)}
-                                                    </span>
-                                                </div>
-                                            )}
-                                            {previewData.changeType === 'upgrade' && previewData.stellasToGrant > 0 && (
-                                                <div className="pt-3 border-t border-white/10">
-                                                    <div className="flex justify-between items-center text-sm">
-                                                        <span className="text-purple-600 font-medium">+ Bonus Stellas</span>
-                                                        <span className="font-bold text-purple-600">{previewData.stellasToGrant}</span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="flex gap-3">
-                                            <button
-                                                onClick={() => {
-                                                    setPreviewData(null);
-                                                    setActionError(null);
-                                                }}
-                                                className="flex-1 px-4 py-2.5 rounded-xl border border-white/10 text-theme-secondary font-semibold transition-colors"
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button
-                                                onClick={confirmPlanChange}
-                                                disabled={isProcessingAction}
-                                                className="flex-1 px-4 py-2.5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
-                                            >
-                                                {isProcessingAction ? "Processing..." : "Confirm Change"}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Plans Grid */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-                                {isLoadingSubscription && (
-                                    <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
-                                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent"></div>
-                                    </div>
-                                )}
-
-                                {/* Silver Map */}
-                                {plans.map((plan) => {
-                                    const isSilver = plan.name.toLowerCase().includes('silver');
-                                    const isGold = plan.name.toLowerCase().includes('gold');
-                                    const isPlatinum = plan.name.toLowerCase().includes('platinum');
-
-                                    // Determine styles based on plan name
-                                    let containerClass = "rounded-3xl p-6 flex flex-col border";
-                                    let containerStyle: any = {
-                                        backgroundColor: 'var(--glass-surface)',
-                                        borderColor: 'var(--glass-border)'
-                                    };
-                                    if (isGold) {
-                                        containerStyle = {
-                                            backgroundColor: 'var(--glass-surface)',
-                                            borderColor: 'rgba(217, 119, 6, 0.3)'
-                                        };
-                                    }
-                                    if (isPlatinum) {
-                                        containerStyle = {
-                                            backgroundColor: 'var(--glass-surface)',
-                                            borderColor: 'rgba(147, 51, 234, 0.3)',
-                                            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
-                                        };
-                                    }
-
-                                    const isCurrentPlan = currentSubscription?.plan.id === plan.id;
-                                    const isUpgrade = currentSubscription && plan.tier > currentSubscription.plan.tier;
-
-
-
-                                    // Base hover auras
-                                    let auraColor = "rgba(148, 163, 184, 0.4)"; // Silver
-                                    if (isGold) auraColor = "rgba(245, 158, 11, 0.3)";
-                                    if (isPlatinum) auraColor = "rgba(168, 85, 247, 0.4)";
-
-                                    return (
-                                        <div key={plan.id} className={`${containerClass} group relative transition-all duration-500 hover:-translate-y-2`} style={containerStyle}>
-                                            {/* Responsive Glass UI Aura */}
-                                            <div
-                                                className="absolute -inset-[2px] opacity-0 group-hover:opacity-100 transition-all duration-500 rounded-[inherit] pointer-events-none z-0 blur-xl"
-                                                style={{
-                                                    background: `radial-gradient(circle at 50% 0%, ${auraColor}, transparent 70%)`,
-                                                }}
-                                            />
-                                            {/* Platinum Glow & Badge */}
-                                            {isPlatinum && (
-                                                <>
-                                                    <div className="absolute top-0 right-0 p-4">
-                                                        <span className="px-3 py-1 bg-purple-500 text-white text-[10px] font-bold rounded-full uppercase tracking-wide shadow-lg shadow-purple-900/50">
-                                                            Best Seller
-                                                        </span>
-                                                    </div>
-                                                    <div className="absolute -top-20 -right-20 w-64 h-64 bg-purple-500/20 blur-3xl rounded-full pointer-events-none opacity-40"></div>
-                                                </>
-                                            )}
-
-                                            <div className="mb-4 relative z-10">
-                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${isPlatinum ? 'bg-purple-500/20 text-purple-400' :
-                                                    isGold ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-500' :
-                                                        'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
-                                                    }`}>
-                                                    {isPlatinum ? <Zap size={20} fill="currentColor" /> :
-                                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>}
-                                                </div>
-                                                <h3 className={`text-xl font-bold ${isPlatinum ? 'text-theme-primary' : 'text-theme-primary'}`}>{plan.name}</h3>
-                                                <p className={`text-xs mt-1 ${isPlatinum ? 'text-theme-secondary' : 'text-theme-secondary'}`}>
-                                                    {isPlatinum ? 'Full AI power for agencies & pros.' :
-                                                        isGold ? 'For serious competitors who need data.' :
-                                                            'Essential tools for creators starting out.'}
-                                                </p>
-                                            </div>
-
-                                            <div className="mb-6 relative z-10">
-                                                <div className="flex items-baseline gap-1">
-                                                    <span className={`text-3xl font-bold ${isPlatinum ? 'text-theme-primary' : 'text-theme-primary'}`}>
-                                                        ${plan.price / 100}
-                                                    </span>
-                                                    <span className={`text-sm ${isPlatinum ? 'text-theme-secondary' : 'text-theme-secondary'}`}>/mo</span>
-                                                </div>
-                                            </div>
-
-                                            <div className={`${isPlatinum ? 'bg-purple-500/10 border-purple-500/20' : isGold ? 'bg-amber-500/5 dark:bg-amber-900/10 border-amber-500/20 dark:border-amber-900/30' : 'bg-slate-500/5 dark:bg-white/5 border-slate-200 dark:border-white/5'} rounded-xl p-3 mb-6 border relative z-10`}>
-                                                <div className="flex justify-between items-center mb-2">
-                                                    <span className={`text-xs font-bold ${isPlatinum ? 'text-purple-600 dark:text-purple-200' : 'text-slate-700 dark:text-slate-300'}`}>Stella Balance</span>
-                                                    <span className={`text-xs font-bold ${isPlatinum ? 'text-purple-700 dark:text-purple-300' : isGold ? 'text-amber-600 dark:text-amber-500' : 'text-orange-500'}`}>
-                                                        {plan.monthlyStellasGrant}
-                                                    </span>
-                                                </div>
-                                                <div className="w-full bg-slate-200/20 h-1.5 rounded-full overflow-hidden mb-2">
-                                                    <div className={`h-full ${isPlatinum ? 'bg-purple-500 w-[80%]' : isGold ? 'bg-amber-500 w-[50%]' : 'bg-slate-400 w-[30%]'}`}></div>
-                                                </div>
-                                            </div>
-
-                                            <ul className="space-y-3 mb-8 flex-1 relative z-10">
-                                                {isSilver && (
-                                                    <>
-                                                        {[
-                                                            "Dashboard Access",
-                                                            "Instagram Reels Insights",
-                                                            "Viral Script Generator",
-                                                            "Twitter Trends"
-                                                        ].map(feature => (
-                                                            <li key={feature} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300">
-                                                                <Check size={14} className="text-emerald-500 shrink-0 mt-0.5" />
-                                                                {feature}
-                                                            </li>
-                                                        ))}
-                                                        {[
-                                                            "Competitor Analysis",
-                                                            "AI Consultant"
-                                                        ].map(feature => (
-                                                            <li key={feature} className="flex items-start gap-2 text-xs text-slate-300 dark:text-slate-600 line-through decoration-slate-300 dark:decoration-slate-600">
-                                                                <Check size={14} className="text-slate-200 dark:text-slate-700 shrink-0 mt-0.5" />
-                                                                {feature}
-                                                            </li>
-                                                        ))}
-                                                    </>
-                                                )}
-
-                                                {isGold && (
-                                                    <>
-                                                        <div className="mb-4 text-[10px] font-bold text-slate-400 dark:text-slate-300 uppercase tracking-wider">Everything in Silver, plus</div>
-                                                        {[
-                                                            "Competitor Deep-Dive Analysis",
-                                                            "Priority Support"
-                                                        ].map((feature, i) => (
-                                                            <li key={i} className={`flex items-start gap-2 text-sm ${isPlatinum ? 'text-slate-300' : 'text-slate-600 dark:text-slate-300'}`}>
-                                                                <Check size={16} className={`mt-0.5 shrink-0 ${isPlatinum ? 'text-purple-400' : isGold ? 'text-amber-500' : 'text-blue-500'}`} />
-                                                                <span>{feature}</span>
-                                                            </li>
-                                                        ))}
-                                                        {[
-                                                            "AI Consultant"
-                                                        ].map(feature => (
-                                                            <li key={feature} className="flex items-start gap-2 text-xs text-slate-300 dark:text-slate-600 line-through decoration-slate-300 dark:decoration-slate-600">
-                                                                <Check size={14} className="text-slate-200 dark:text-slate-700 shrink-0 mt-0.5" />
-                                                                {feature}
-                                                            </li>
-                                                        ))}
-                                                    </>
-                                                )}
-
-                                                {isPlatinum && (
-                                                    <>
-                                                        <div className="mb-4 text-[10px] font-bold text-theme-muted uppercase tracking-wider relative z-10">Everything in Gold, plus</div>
-                                                        {[
-                                                            "AI Consultant Access (2 Stellas/prompt)",
-                                                            "Deep Research Mode",
-                                                            "Scheduled Daily WhatsApp/Mail Updates",
-                                                            "Early Access to Beta Features"
-                                                        ].map(feature => (
-                                                            <li key={feature} className="flex items-start gap-2 text-xs text-theme-secondary font-medium">
-                                                                <div className="mt-0.5 rounded-full bg-purple-500/20 p-0.5">
-                                                                    <Check size={10} className="text-purple-400 shrink-0" strokeWidth={3} />
-                                                                </div>
-                                                                {feature}
-                                                            </li>
-                                                        ))}
-                                                    </>
-                                                )}
-                                            </ul>
-
-                                            <button
-                                                onClick={() => !isCurrentPlan && handlePlanAction(plan)}
-                                                disabled={isCurrentPlan || isProcessingAction}
-                                                className="w-full py-2.5 rounded-xl font-semibold transition-colors text-sm relative z-10"
-                                                style={{
-                                                    background: isCurrentPlan
-                                                        ? (isPlatinum ? 'rgba(168, 85, 247, 0.2)' : 'rgba(0, 0, 0, 0.06)')
-                                                        : (isPlatinum
-                                                            ? '#9333ea'
-                                                            : (isGold
-                                                                ? 'linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%)'
-                                                                : 'linear-gradient(135deg, #9ca3af 0%, #d1d5db 50%, #e5e7eb 100%)')),
-                                                    color: isCurrentPlan
-                                                        ? (isPlatinum ? '#c084fc' : 'var(--text-muted)')
-                                                        : (isPlatinum ? 'white' : (isGold ? '#78350f' : '#374151')),
-                                                    border: isCurrentPlan
-                                                        ? (isPlatinum ? '1px solid rgba(168, 85, 247, 0.3)' : '1px solid var(--glass-border)')
-                                                        : 'none',
-                                                    cursor: isCurrentPlan ? 'default' : 'pointer',
-                                                    boxShadow: isCurrentPlan
-                                                        ? 'none'
-                                                        : (isPlatinum ? '0 10px 15px -3px rgba(147, 51, 234, 0.3)' : (isGold ? '0 8px 16px rgba(217, 119, 6, 0.2)' : '0 8px 16px rgba(156, 163, 175, 0.2)')),
-                                                }}
-                                            >
-                                                {isProcessingAction && !isCurrentPlan ? 'Processing...' : (
-                                                    isCurrentPlan ? 'Current Plan' : (currentSubscription ? (isUpgrade ? 'Upgrade' : 'Downgrade') : 'Subscribe')
-                                                )}
-                                            </button>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-
                         </div>
-                    )
-                    }
+
+                        <div className="rounded-2xl overflow-hidden relative" style={{ backgroundColor: 'var(--glass-surface)', border: '1px solid var(--glass-border)' }}>
+                            {(!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')) && (
+                                <div className="absolute inset-0 z-20 backdrop-blur-sm bg-white/50 flex flex-col items-center justify-center text-center p-6">
+                                    <div className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center mb-3 shadow-xl">
+                                        <Lock className="w-6 h-6 text-white" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-slate-900 mb-1">Platinum Feature</h3>
+                                    <p className="text-sm text-slate-600 max-w-xs mb-4">
+                                        Upgrade to Platinum to unlock automated analysis defaults and save time.
+                                    </p>
+                                    <button
+                                        onClick={() => router.push('/subscription')}
+                                        className="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
+                                    >
+                                        Upgrade Now
+                                    </button>
+                                </div>
+                            )}
+
+                            <div className="p-6" style={{ borderBottomColor: 'var(--glass-border)', borderBottomWidth: '1px' }}>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundImage: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%)' }}>
+                                        <Zap className="w-5 h-5 text-blue-600" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-lg font-semibold text-theme-primary">Automation Settings</h2>
+                                        <p className="text-sm text-theme-primary">Configure defaults for automated analysis</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="p-6 space-y-6">
+                                {/* Competitors List */}
+                                <div>
+                                    <label className="block text-sm font-medium text-theme-primary mb-2">
+                                        Default Competitor List
+                                    </label>
+                                    <div className="flex gap-2 mb-3">
+                                        <input
+                                            type="text"
+                                            placeholder="Enter username (e.g. 100xengineers)"
+                                            value={autoNewCompetitor}
+                                            onChange={(e) => setAutoNewCompetitor(e.target.value)}
+                                            disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                            className="flex-1 px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none focus:ring-2 disabled:opacity-50"
+                                            style={{
+                                                backgroundColor: 'var(--glass-inset-bg)',
+                                                color: 'var(--text-primary)',
+                                                borderColor: 'var(--glass-border)',
+                                            } as any}
+                                        />
+                                        <button
+                                            onClick={() => {
+                                                if (autoNewCompetitor.trim() && !autoCompetitors.includes(autoNewCompetitor.trim())) {
+                                                    setAutoCompetitors([...autoCompetitors, autoNewCompetitor.trim()]);
+                                                    setAutoNewCompetitor("");
+                                                }
+                                            }}
+                                            disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                            className="px-4 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50"
+                                        >
+                                            <Plus size={20} />
+                                        </button>
+                                    </div>
+
+                                    {autoCompetitors.length > 0 ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {autoCompetitors.map((comp) => (
+                                                <span key={comp} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 text-sm font-medium rounded-lg border border-blue-100">
+                                                    @{comp}
+                                                    <button
+                                                        onClick={() => setAutoCompetitors(autoCompetitors.filter(c => c !== comp))}
+                                                        disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                                        className="hover:text-blue-900"
+                                                    >
+                                                        <X size={14} />
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-theme-muted italic">No default competitors added.</p>
+                                    )}
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    {/* Writing Style */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-theme-primary mb-2 flex items-center gap-2">
+                                            <PenTool size={14} className="text-theme-secondary" />
+                                            Writing Style
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={autoWritingStyle}
+                                            onChange={(e) => setAutoWritingStyle(e.target.value)}
+                                            disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                            placeholder="let ai decide"
+                                            className="w-full px-4 py-3 rounded-xl border transition-all font-medium focus:outline-none focus:ring-2 disabled:opacity-50"
+                                            style={{
+                                                backgroundColor: 'var(--glass-inset-bg)',
+                                                color: 'var(--text-primary)',
+                                                borderColor: 'var(--glass-border)',
+                                            } as any}
+                                        />
+                                    </div>
+
+                                    {/* Script Language */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-theme-primary mb-2 flex items-center gap-2">
+                                            <Languages size={14} className="text-theme-secondary" />
+                                            Script Language
+                                        </label>
+                                        <select
+                                            value={autoScriptLanguage}
+                                            onChange={(e) => setAutoScriptLanguage(e.target.value)}
+                                            disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                            className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 disabled:opacity-50"
+                                            style={{
+                                                backgroundColor: 'var(--glass-inset-bg)',
+                                                color: 'var(--text-primary)',
+                                                borderColor: 'var(--glass-border)',
+                                                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                                backgroundRepeat: 'no-repeat',
+                                                backgroundPosition: 'right 1rem center',
+                                                backgroundSize: '1.25rem',
+                                            } as any}
+                                        >
+                                            <option value="English">English</option>
+                                            <option value="Hindi">Hindi</option>
+                                            <option value="Spanish">Spanish</option>
+                                            <option value="French">French</option>
+                                            <option value="German">German</option>
+                                        </select>
+                                    </div>
+
+                                    {/* Caption Language */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-theme-primary mb-2 flex items-center gap-2">
+                                            <Languages size={14} className="text-theme-secondary" />
+                                            Caption Language
+                                        </label>
+                                        <select
+                                            value={autoCaptionLanguage}
+                                            onChange={(e) => setAutoCaptionLanguage(e.target.value)}
+                                            disabled={!currentSubscription?.plan?.name?.toLowerCase().includes('platinum')}
+                                            className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 disabled:opacity-50"
+                                            style={{
+                                                backgroundColor: 'var(--glass-inset-bg)',
+                                                color: 'var(--text-primary)',
+                                                borderColor: 'var(--glass-border)',
+                                                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                                backgroundRepeat: 'no-repeat',
+                                                backgroundPosition: 'right 1rem center',
+                                                backgroundSize: '1.25rem',
+                                            } as any}
+                                        >
+                                            <option value="English">English</option>
+                                            <option value="Hindi">Hindi</option>
+                                            <option value="Spanish">Spanish</option>
+                                            <option value="French">French</option>
+                                            <option value="German">German</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Save Button */}
+                        <div className="flex items-center justify-end gap-4">
+                            {saveError && (
+                                <span className="text-sm text-red-600 font-medium">
+                                    {saveError}
+                                </span>
+                            )}
+                            {saveSuccess && (
+                                <span className="text-sm text-emerald-600 font-medium flex items-center gap-1">
+                                    <Check size={16} />
+                                    Changes saved successfully
+                                </span>
+                            )}
+                            <button
+                                onClick={handleSave}
+                                disabled={isSaving}
+                                className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                                        Saving...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save size={18} />
+                                        Save Changes
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
                 </div >
             </main >
         </div >

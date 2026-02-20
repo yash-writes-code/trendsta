@@ -42,7 +42,14 @@ model User {
   // AI Consultant
   conversations      Conversation[]
   automationSettings AutomationSettings?
-  
+
+  // Referral system
+  referralCode  String?  @unique              // User's own shareable code e.g. "yash-a3f2"
+  referredById  String?  @db.Uuid             // FK → User who referred this user
+  referredBy    User?    @relation("Referrals", fields: [referredById], references: [id])
+  referrals     User[]   @relation("Referrals")
+  commissions   Commission[]                  // Commissions earned by this user as referrer
+
   @@map("user")
 }
 
@@ -560,4 +567,37 @@ model FeatureAllowance {
   @@unique([userId, feature])
   @@index([userId])
   @@map("feature_allowance")
+}
+
+// ============================================
+// REFERRAL & COMMISSION SYSTEM
+// ============================================
+
+enum CommissionStatus {
+  PENDING   // Earned, not yet paid out
+  PAID      // Paid out to referrer
+  CANCELLED // Refunded or reversed
+}
+
+/// One row is created the first time a referred user makes a paid purchase.
+/// `referrerId` is the person who shared the link; `referredUserId` is the buyer.
+model Commission {
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  referrerId     String           @db.Uuid
+  referrer       User             @relation(fields: [referrerId], references: [id])
+
+  referredUserId String           @db.Uuid  // The user whose purchase triggered this
+
+  paymentId      String           // providerPaymentId for traceability
+
+  commissionPct  Decimal          @db.Decimal(5, 2)   // e.g. 10.00
+  amount         Decimal          @db.Decimal(10, 2)  // Commission amount in payment currency
+  currency       String
+
+  status         CommissionStatus @default(PENDING)
+  createdAt      DateTime         @default(now())
+
+  @@index([referrerId])
+  @@map("commission")
 }

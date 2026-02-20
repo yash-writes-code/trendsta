@@ -12,6 +12,7 @@ import { useCompetitorResearch, useOverallStrategy } from "@/hooks/useResearch";
 import { useSocialAccount } from "@/hooks/useSocialAccount";
 import { useSession } from "@/lib/auth-client";
 import { transformCompetitorResearch, formatCompetitorInsights } from "@/lib/transformers";
+import GuestIndicator from "../components/GuestIndicator";
 
 export default function CompetitorsClient() {
     // Fetch data via hooks
@@ -92,6 +93,8 @@ export default function CompetitorsClient() {
                             </p>
                         </div>
                     </div>
+
+                    <GuestIndicator />
 
                     <SmartInsightsView
                         insightText={competitorInsightsText}
