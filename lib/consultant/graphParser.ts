@@ -43,7 +43,8 @@ export function parseGraphBlocks(llmResponse: string): ContentPart[] {
     const lowerResponse = response.toLowerCase();
     const lastGraphStart = Math.max(
         lowerResponse.lastIndexOf('```graph'),
-        response.lastIndexOf('```GRAPH') // Keep original case check too
+        lowerResponse.lastIndexOf('```\ngraph'),
+        lowerResponse.lastIndexOf('```\r\ngraph')
     );
     if (lastGraphStart !== -1) {
         const afterGraphStart = response.substring(lastGraphStart);
@@ -58,8 +59,11 @@ export function parseGraphBlocks(llmResponse: string): ContentPart[] {
     }
 
     // Regex to match complete ```GRAPH ... ``` blocks
-    // Case-insensitive to handle both ```GRAPH and ```graph
-    const graphRegex = /```[Gg][Rr][Aa][Pp][Hh]\s*([\s\S]*?)```/g;
+    // Case-insensitive, also matches ```\nGRAPH (newline before GRAPH keyword)
+    const graphRegex = /```[\r\n]*[Gg][Rr][Aa][Pp][Hh][\r\n]+(\{[\s\S]*?\})[\r\n]*```/g;
+
+    // Fallback: also match ```GRAPH followed directly (no newline gap)
+    const graphRegexInline = /```[Gg][Rr][Aa][Pp][Hh]\s*([\s\S]*?)```/g;
 
     // ALSO match bare JSON code blocks that look like graph specs
     // Very flexible: handles ```json, ```, various whitespace patterns
@@ -76,7 +80,7 @@ export function parseGraphBlocks(llmResponse: string): ContentPart[] {
     }
     const allMatches: GraphMatch[] = [];
 
-    // Find GRAPH-wrapped blocks
+    // Find GRAPH-wrapped blocks (newline format: ```\nGRAPH\n{...}\n```)
     let match;
     while ((match = graphRegex.exec(response)) !== null) {
         allMatches.push({
@@ -84,6 +88,18 @@ export function parseGraphBlocks(llmResponse: string): ContentPart[] {
             fullMatch: match[0],
             jsonContent: match[1],
         });
+    }
+
+    // Fallback: inline format ```GRAPH\n{...}\n``` (no gap between ``` and GRAPH)
+    while ((match = graphRegexInline.exec(response)) !== null) {
+        const existsAtPosition = allMatches.some(m => m.index === match!.index);
+        if (!existsAtPosition) {
+            allMatches.push({
+                index: match.index,
+                fullMatch: match[0],
+                jsonContent: match[1],
+            });
+        }
     }
 
     // Find bare JSON code blocks that look like graphs

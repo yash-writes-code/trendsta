@@ -50,34 +50,33 @@ function MarkdownContent({ content }: { content: string }) {
                 h3: ({ children }) => <h3 className="text-base font-bold text-theme-primary mt-3 mb-1.5">{children}</h3>,
                 h4: ({ children }) => <h4 className="text-sm font-bold text-theme-secondary mt-2 mb-1">{children}</h4>,
                 // Paragraphs — use primary for max contrast
-                p: ({ children }) => <p className="text-sm md:text-base leading-relaxed mb-3 last:mb-0 text-theme-primary">{children}</p>,
+                p: ({ children }) => <p className="text-sm md:text-base leading-relaxed mb-3 last:mb-0 text-theme-primary break-words whitespace-pre-wrap">{children}</p>,
                 // Strong/Bold
-                strong: ({ children }) => <strong className="font-bold text-theme-primary">{children}</strong>,
+                strong: ({ children }) => <strong className="font-bold text-theme-primary break-words">{children}</strong>,
                 // Italic/Emphasis
-                em: ({ children }) => <em className="italic text-theme-secondary">{children}</em>,
+                em: ({ children }) => <em className="italic text-theme-secondary break-words">{children}</em>,
                 // Lists — primary color for readability
-                ul: ({ children }) => <ul className="list-disc list-inside space-y-1.5 my-2 ml-2 text-theme-primary">{children}</ul>,
-                ol: ({ children }) => <ol className="list-decimal list-inside space-y-1.5 my-2 ml-2 text-theme-primary">{children}</ol>,
-                li: ({ children }) => <li className="text-sm md:text-base leading-relaxed text-theme-primary">{children}</li>,
+                ul: ({ children }) => <ul className="list-disc list-inside space-y-1.5 my-2 ml-2 text-theme-primary break-words">{children}</ul>,
+                ol: ({ children }) => <ol className="list-decimal list-inside space-y-1.5 my-2 ml-2 text-theme-primary break-words">{children}</ol>,
+                li: ({ children }) => <li className="text-sm md:text-base leading-relaxed text-theme-primary break-words">{children}</li>,
                 // Blockquotes
                 blockquote: ({ children }) => (
                     <blockquote className="border-l-4 border-blue-500 glass-inset pl-4 py-2 my-3 italic text-theme-secondary rounded-r-lg">
                         {children}
                     </blockquote>
                 ),
-                // Code
                 code: ({ className, children }) => {
                     const isInline = !className;
                     if (isInline) {
-                        return <code className="bg-white/10 text-blue-400 px-1.5 py-0.5 rounded text-sm font-mono">{children}</code>;
+                        return <code className="bg-white/10 text-blue-400 px-1.5 py-0.5 rounded text-sm font-mono break-words whitespace-pre-wrap">{children}</code>;
                     }
                     return (
-                        <code className="block bg-black/40 text-slate-200 p-4 rounded-lg text-sm font-mono overflow-x-auto my-3 border border-white/5">
+                        <code className="block bg-black/40 text-slate-200 p-4 rounded-lg text-sm font-mono overflow-x-auto my-3 border border-white/5 whitespace-pre-wrap word-break shrink">
                             {children}
                         </code>
                     );
                 },
-                pre: ({ children }) => <pre className="my-0">{children}</pre>,
+                pre: ({ children }) => <pre className="my-0 w-full overflow-hidden shrink">{children}</pre>,
                 // Links
                 a: ({ href, children }) => (
                     <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
@@ -328,30 +327,31 @@ export default function AIConsultantPage() {
     const handleScroll = useCallback(() => {
         if (chatContainerRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-            // User is considered "scrolled up" if more than 200px from bottom
-            // Larger threshold to prevent accidental re-scrolling
             const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-            userScrolledUpRef.current = distanceFromBottom > 200;
+            // More sensitive threshold so if they scroll up even slightly, auto-scroll stops
+            userScrolledUpRef.current = distanceFromBottom > 50;
         }
     }, []);
 
-    // Auto-scroll during streaming (respects user scroll position)
+    // Auto-scroll when a new USER message is sent, but DO NOT force
+    // scroll to bottom on every content tick, as it prevents reading from the top.
     useEffect(() => {
-        // Only auto-scroll if user hasn't scrolled up
-        if (!userScrolledUpRef.current) {
-            scrollToBottom();
-        }
-    }, [displayedContents, scrollToBottom]);
+        // We only want to scroll to bottom automatically when we are not scrolling up
+        // AND when it's a small update OR just before starting reading.
+        // Actually, to keep user at top of the message to read down, we just remove the continuous auto-scroll 
+        // to bottom that was happening on every chunk.
+    }, [displayedContents]);
 
-    // Reset scroll state when user sends message
+    // Force scroll to bottom only when user explicitly sends a message
     useEffect(() => {
         if (messages.length > 0) {
             const lastMessage = messages[messages.length - 1];
             if (lastMessage.role === 'user') {
                 userScrolledUpRef.current = false;
+                scrollToBottom();
             }
         }
-    }, [messages.length]);
+    }, [messages.length, scrollToBottom]);
 
     // Initialize speech recognition
     useEffect(() => {
@@ -440,8 +440,8 @@ export default function AIConsultantPage() {
         // Parse content into segments that respect GRAPH blocks
         const segments: string[] = [];
 
-        // Case-insensitive regex to find all graph blocks (```graph or ```GRAPH)
-        const graphRegex = /```[Gg][Rr][Aa][Pp][Hh][\s\S]*?```/g;
+        // Case-insensitive regex to find all graph blocks (```graph, ```GRAPH, or ```\nGRAPH)
+        const graphRegex = /```[\r\n]*[Gg][Rr][Aa][Pp][Hh][\s\S]*?```/g;
         let lastIndex = 0;
         let match;
 
@@ -478,8 +478,8 @@ export default function AIConsultantPage() {
                     currentContent += currentSegment.replace('__GRAPH_BLOCK__', '');
                     segmentIndex++;
                 } else {
-                    // Add multiple words per tick for smooth, fast streaming
-                    const wordsPerTick = 4;
+                    // Add 1 word per tick for a slower, ChatGPT-like reading speed
+                    const wordsPerTick = 1;
                     for (let i = 0; i < wordsPerTick && segmentIndex < segments.length; i++) {
                         const seg = segments[segmentIndex];
                         if (seg.startsWith('__GRAPH_BLOCK__')) break;
@@ -494,8 +494,8 @@ export default function AIConsultantPage() {
                 }));
 
                 if (segmentIndex < segments.length) {
-                    // 15ms interval for smoother, natural streaming feel
-                    setTimeout(stream, 15);
+                    // ~20ms interval combined with 1 word per tick aligns closely with typical reading/generation speed
+                    setTimeout(stream, 20);
                 } else {
                     // Streaming complete
                     setMessages(prev => prev.map(m =>
@@ -660,22 +660,17 @@ export default function AIConsultantPage() {
             </div>
 
             <main
-                className={`transition-all duration-300 ease-in-out flex flex-col items-center relative ${isCollapsed ? 'md:ml-20' : 'md:ml-64'}`}
-                style={{ height: '100dvh', maxHeight: '100dvh' }}
+                className={`transition-all duration-300 ease-in-out flex flex-col relative h-[100dvh] ${isCollapsed ? 'md:ml-20' : 'md:ml-64'}`}
             >
                 {showHistory && (
-                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden" onClick={() => setShowHistory(false)} />
+                    <div
+                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+                        onClick={() => setShowHistory(false)}
+                    />
                 )}
 
-                {/* Top Bar with Logo */}
-                <div className="w-full max-w-4xl flex items-center justify-between px-6 py-4 z-10 shrink-0">
-                    {hasStartedChat ? (
-                        <div className="flex items-center gap-2">
-                            <Image src="/logo3.png" alt="Trendsta" width={100} height={28} className="opacity-80" />
-                        </div>
-                    ) : (
-                        <div />
-                    )}
+                {/* Top Bar */}
+                <div className="w-full max-w-4xl mx-auto flex flex-row-reverse items-center justify-between px-6 py-4 z-10 shrink-0">
                     <button
                         onClick={() => setShowHistory(true)}
                         className="p-2 text-slate-400 hover:bg-slate-100 rounded-lg transition-colors"
@@ -685,10 +680,8 @@ export default function AIConsultantPage() {
                     </button>
                 </div>
 
-                {/* Main Content Area */}
-                <div className={`flex-1 min-h-0 w-full max-w-4xl flex flex-col ${hasStartedChat ? 'pb-0' : 'justify-center items-center pb-32 pt-24'}`}>
-
-
+                {/* Main Content */}
+                <div className="flex-1 min-h-0 w-full max-w-4xl mx-auto flex flex-col">
 
                     {/* Landing State */}
                     <AnimatePresence>
@@ -697,16 +690,15 @@ export default function AIConsultantPage() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                                className="text-center px-4 w-full"
+                                className="flex flex-col items-center justify-center text-center px-4 w-full flex-1"
                             >
                                 {/* Logo */}
-                                <div className="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                                <div className="relative w-24 h-24 mb-6 flex items-center justify-center">
                                     <Image
                                         src="/T_logo.png"
-                                        layout="fill"
-                                        objectFit="contain"
+                                        fill
+                                        className="object-contain drop-shadow-xl"
                                         alt="Trendsta Logo"
-                                        className="drop-shadow-xl"
                                     />
                                 </div>
 
@@ -714,8 +706,7 @@ export default function AIConsultantPage() {
                                     Your AI-powered content strategist. Ask me anything about reels, trends, and growth.
                                 </p>
 
-                                {/* Research Date Note */}
-                                {researchData && researchData.createdAt && (
+                                {researchData?.createdAt && (
                                     <div className="mb-8 max-w-md mx-auto">
                                         <p className="text-xs text-theme-muted bg-white/5 inline-block px-3 py-1 rounded-full border border-white/10">
                                             📊 Results based on data from {new Date(researchData.createdAt).toLocaleDateString()}.
@@ -724,7 +715,7 @@ export default function AIConsultantPage() {
                                     </div>
                                 )}
 
-                                {/* Prompt Suggestions Grid */}
+                                {/* Suggestions */}
                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-2xl mx-auto">
                                     {PROMPT_SUGGESTIONS.map((item, i) => (
                                         <motion.button
@@ -733,12 +724,12 @@ export default function AIConsultantPage() {
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: 0.1 + i * 0.05 }}
                                             onClick={() => handleSend(item.prompt)}
-                                            className="group relative glass-panel hover:bg-white/10 border-transparent hover:border-white/20 p-4 text-left transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                                            className="group glass-panel hover:bg-white/10 border-transparent hover:border-white/20 p-4 text-left transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
                                         >
-                                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                                            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center mb-3`}>
                                                 <item.icon size={16} className="text-white" />
                                             </div>
-                                            <p className="text-sm font-medium text-theme-secondary leading-tight group-hover:text-theme-primary">{item.label}</p>
+                                            <p className="text-sm font-medium text-theme-secondary">{item.label}</p>
                                         </motion.button>
                                     ))}
                                 </div>
@@ -746,14 +737,15 @@ export default function AIConsultantPage() {
                         )}
                     </AnimatePresence>
 
-                    {/* Chat Messages */}
+                    {/* Chat */}
                     {hasStartedChat && (
                         <div
                             ref={chatContainerRef}
                             onScroll={handleScroll}
-                            className="flex-1 w-full overflow-y-auto px-4 md:px-6 py-4 space-y-4 pb-32"
+                            className="flex-1 overflow-y-auto px-4 md:px-6 py-4 space-y-4 pb-32 overscroll-contain"
                         >
                             <div className="h-2" />
+
                             {messages.map((message) => (
                                 <ChatMessage
                                     key={message.id}
@@ -763,137 +755,113 @@ export default function AIConsultantPage() {
                                     isSpeaking={speakingMessageId === message.id}
                                 />
                             ))}
+
                             {isLoading && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="flex justify-start"
-                                >
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
                                     <div className="flex items-start gap-3">
-                                        <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center">
-                                            <Image src="/T_logo.png" alt="Trendsta" width={24} height={24} className="object-contain" />
+                                        <div className="w-8 h-8 flex items-center justify-center">
+                                            <Image src="/T_logo.png" alt="Trendsta" width={24} height={24} />
                                         </div>
-                                        <div className="glass-panel px-4 py-3 rounded-2xl rounded-tl-md shadow-sm flex items-center gap-2">
-                                            {thinkingMode === 'fast' ? (
-                                                <Zap size={16} className="text-amber-500 animate-pulse" />
-                                            ) : thinkingMode === 'thinking' ? (
-                                                <BrainCircuit size={16} className="text-violet-500 animate-pulse" />
-                                            ) : (
-                                                <Sparkles size={16} className="text-cyan-500 animate-pulse" />
-                                            )}
+                                        <div className="glass-panel px-4 py-3 rounded-2xl rounded-tl-md flex items-center gap-2">
                                             <span className="text-sm text-theme-muted">
-                                                {thinkingMode === 'fast' ? 'Thinking...' : thinkingMode === 'thinking' ? 'Reasoning...' : 'Deep researching...'}
-                                            </span>
-                                            <span className="flex gap-1">
-                                                <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                                                <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                                                <span className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                                {thinkingMode === 'fast'
+                                                    ? 'Thinking...'
+                                                    : thinkingMode === 'thinking'
+                                                        ? 'Reasoning...'
+                                                        : 'Deep researching...'}
                                             </span>
                                         </div>
                                     </div>
                                 </motion.div>
                             )}
+
                             <div ref={messagesEndRef} className="h-4" />
                         </div>
                     )}
                 </div>
 
-                {/* Input Area */}
-                <div className={`w-full max-w-4xl z-20 px-4 md:px-6 shrink-0 ${hasStartedChat ? 'pb-4 pt-2' : 'relative pb-6'}`}>
-                    <div className="relative">
-                        {/* Main Input */}
-                        <div className="bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 p-2 rounded-2xl shadow-xl flex items-center gap-2 transition-all duration-300 focus-within:bg-white/60 dark:focus-within:bg-white/10 focus-within:ring-4 focus-within:ring-blue-500/10 focus-within:border-blue-500/40">
-                            <textarea
-                                ref={inputRef}
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                placeholder="Ask Trendsta anything..."
-                                className="flex-1 bg-transparent border-none outline-none focus:ring-0 text-base p-3 min-h-[48px] max-h-[120px] resize-none text-theme-primary placeholder-theme-muted"
-                                rows={1}
-                            />
+                {/* Input */}
+                <div className="w-full max-w-4xl mx-auto z-20 px-4 md:px-6 shrink-0 pb-4 pt-2">
+                    <div className="bg-white/40 dark:bg-white/5 backdrop-blur-xl border border-white/40 dark:border-white/10 p-2 rounded-2xl flex items-center gap-2">
 
-                            {/* Mic Button */}
-                            <button
-                                onClick={toggleListening}
-                                className={`p-2.5 rounded-xl transition-all ${isListening ? 'bg-red-500 text-white animate-pulse' : 'text-theme-muted hover:text-theme-primary hover:bg-white/10'}`}
-                                title={isListening ? "Stop listening" : "Voice input"}
-                            >
-                                {isListening ? <MicOff size={20} /> : <Mic size={20} />}
-                            </button>
+                        <textarea
+                            ref={inputRef}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Ask Trendsta anything..."
+                            className="flex-1 bg-transparent outline-none text-base p-3 min-h-[48px] max-h-[120px] resize-none"
+                        />
 
-                            {/* Send Button */}
-                            <button
-                                onClick={() => handleSend()}
-                                disabled={!input.trim() || isLoading}
-                                className={`p-2.5 rounded-xl transition-all ${input.trim() && !isLoading ? 'bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl hover:scale-105' : 'bg-white/5 text-slate-600'}`}
-                            >
-                                <ArrowRight size={20} strokeWidth={2.5} />
-                            </button>
-                        </div>
+                        <button
+                            onClick={toggleListening}
+                            className={`p-2.5 rounded-xl ${isListening ? 'bg-red-500 text-white' : 'text-theme-muted'}`}
+                        >
+                            {isListening ? <MicOff size={20} /> : <Mic size={20} />}
+                        </button>
+
+                        <button
+                            onClick={() => handleSend()}
+                            disabled={!input.trim() || isLoading}
+                            className="p-2.5 rounded-xl bg-blue-600 text-white"
+                        >
+                            <ArrowRight size={20} />
+                        </button>
                     </div>
 
-                    {/* Mode Toggle — 3 modes */}
+                    {/* Mode Toggle */}
                     <div className="flex justify-center mt-3 gap-1.5">
                         {/* Fast */}
                         <button
                             onClick={() => setThinkingMode('fast')}
-                            className={`group relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 ${thinkingMode === 'fast'
-                                ? 'bg-amber-500/15 border border-amber-500/40 text-amber-400 shadow-sm shadow-amber-500/10'
-                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-white/8'
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 ${thinkingMode === 'fast'
+                                ? 'bg-amber-500/15 border border-amber-500/40 text-amber-400 shadow-sm'
+                                : 'text-theme-muted hover:text-theme-primary hover:bg-white/5'
                                 }`}
                             title="Fast — 1 Stella per message"
                         >
                             <Zap size={13} className={thinkingMode === 'fast' ? 'text-amber-400' : ''} />
                             Fast
-                            <span className={`text-[10px] px-1 py-0.5 rounded-md font-mono ${thinkingMode === 'fast' ? 'bg-amber-500/20 text-amber-300' : 'bg-white/5 text-slate-500'
-                                }`}>1✦</span>
+                            <span className={`text-[10px] px-1 py-0.5 rounded-md font-mono ${thinkingMode === 'fast' ? 'bg-amber-500/20 text-amber-300' : 'bg-white/5 text-theme-muted'}`}>1✦</span>
                         </button>
 
-                        {/* Separator */}
                         <div className="w-px bg-white/10 self-stretch my-1" />
 
                         {/* Thinking */}
                         <button
                             onClick={() => setThinkingMode('thinking')}
-                            className={`group relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 ${thinkingMode === 'thinking'
-                                ? 'bg-violet-500/15 border border-violet-500/40 text-violet-400 shadow-sm shadow-violet-500/10'
-                                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-white/8'
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 ${thinkingMode === 'thinking'
+                                ? 'bg-violet-500/15 border border-violet-500/40 text-violet-400 shadow-sm'
+                                : 'text-theme-muted hover:text-theme-primary hover:bg-white/5'
                                 }`}
                             title="Thinking — 2 Stellas per message"
                         >
                             <BrainCircuit size={13} className={thinkingMode === 'thinking' ? 'text-violet-400' : ''} />
                             Thinking
-                            <span className={`text-[10px] px-1 py-0.5 rounded-md font-mono ${thinkingMode === 'thinking' ? 'bg-violet-500/20 text-violet-300' : 'bg-white/5 text-slate-500'
-                                }`}>2✦</span>
+                            <span className={`text-[10px] px-1 py-0.5 rounded-md font-mono ${thinkingMode === 'thinking' ? 'bg-violet-500/20 text-violet-300' : 'bg-white/5 text-theme-muted'}`}>2✦</span>
                         </button>
 
-                        {/* Separator */}
                         <div className="w-px bg-white/10 self-stretch my-1" />
 
-                        {/* Deep Research — locked below planTier 3 */}
+                        {/* Deep Research */}
                         <div className="relative group/deep">
                             <button
-                                onClick={() => {
-                                    if (planTier >= 3) setThinkingMode('deep');
-                                }}
+                                onClick={() => { if (planTier >= 3) setThinkingMode('deep'); }}
                                 disabled={planTier < 3}
                                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 ${planTier < 3
-                                    ? 'opacity-40 cursor-not-allowed text-slate-500'
+                                    ? 'opacity-40 cursor-not-allowed text-theme-muted'
                                     : thinkingMode === 'deep'
-                                        ? 'bg-cyan-500/15 border border-cyan-500/40 text-cyan-400 shadow-sm shadow-cyan-500/10'
-                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-white/8'
+                                        ? 'bg-cyan-500/15 border border-cyan-500/40 text-cyan-400 shadow-sm'
+                                        : 'text-theme-muted hover:text-theme-primary hover:bg-white/5'
                                     }`}
                                 title={planTier < 3 ? 'Requires Platinum Plan' : 'Deep Research — 4 Stellas per message'}
                             >
                                 <Sparkles size={13} className={thinkingMode === 'deep' && planTier >= 3 ? 'text-cyan-400' : ''} />
                                 Deep Research
-                                {planTier >= 3 && (
-                                    <span className={`text-[10px] px-1 py-0.5 rounded-md font-mono ${thinkingMode === 'deep' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-white/5 text-slate-500'
-                                        }`}>4✦</span>
-                                )}
-                                {planTier < 3 && (
-                                    <span className="text-[10px] px-1 py-0.5 rounded-md bg-white/5 text-slate-500">🔒</span>
+                                {planTier >= 3 ? (
+                                    <span className={`text-[10px] px-1 py-0.5 rounded-md font-mono ${thinkingMode === 'deep' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-white/5 text-theme-muted'}`}>4✦</span>
+                                ) : (
+                                    <span className="text-[10px] px-1 py-0.5 rounded-md bg-white/5 text-theme-muted">🔒</span>
                                 )}
                             </button>
                             {planTier < 3 && (
@@ -904,6 +872,7 @@ export default function AIConsultantPage() {
                         </div>
                     </div>
                 </div>
+
             </main>
         </div>
     );

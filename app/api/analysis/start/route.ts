@@ -116,9 +116,9 @@ export async function POST(request: NextRequest) {
 
         // Map Tier to Reel Count
         const reelCountMap = {
-            'LOW': 3,
-            'MEDIUM': 6,
-            'HIGH': 9
+            'LOW': 30,
+            'MEDIUM': 60,
+            'HIGH': 90
         };
         const noOfReelsToScrape = reelCountMap[reelCountTier] || 30;
 
@@ -147,12 +147,10 @@ export async function POST(request: NextRequest) {
         // Silver -> gemini-2.0-flash-001
         // Gold/Platinum -> gemini-2.0-pro-exp-02-05 (using the user's requested string: google/gemini-3-pro-preview for now if that's what they meant, but checking the prompt "google/gemini-3-pro-preview". I'll use exactly what they asked.)
 
-        // const analysisModel = plan.tier === 1
-        //     ? "google/gemini-2.0-flash-001"
-        //     : "google/gemini-3-pro-preview";
         const analysisModel = plan.tier === 1
-            ? "qwen/qwen3.5-35b-a3b"
-            : "qwen/qwen3.5-35b-a3b";
+            ? "google/gemini-2.5-flash"
+            : "google/gemini-3.1-pro-preview";
+       
 
         const n8nPayload = {
             creator_niche: user.niche,
@@ -165,10 +163,10 @@ export async function POST(request: NextRequest) {
             reelsTill_Filter: 14,
             minLikesReel_Filter: 0,
             competitorListUsernames: isCompetitorAnalysis ? competitorUsernames : [],
-            reels_per_competitor: isCompetitorAnalysis ? 1 : 0,
+            reels_per_competitor: isCompetitorAnalysis ? 5 : 0,
             is_user_specific: true,
             client_username: socialAccount.username,
-            user_reels_to_scrape: 1,
+            user_reels_to_scrape: 5,
             use_apify_transcript: false,
             socialAccountId: socialAccountId,
             apify_key: apifyKey,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 import { AI_CONFIG, ModelMode, MODEL_MODES } from '@/lib/aiConfig';
 import {
     getOrCreateSession,
@@ -14,7 +15,7 @@ import {
     prepareMessagesForAPI,
     updateSessionSummary,
 } from '@/lib/consultant';
-import { buildPerQuestionSystemPrompt } from '@/lib/consultant/contextManager';
+import { buildPerQuestionSystemPrompt, CreatorProfile } from '@/lib/consultant/contextManager';
 import { DebugLogger, estimateTokenCount } from '@/lib/consultant/debugLogger';
 
 // ============================================================
@@ -49,6 +50,23 @@ export async function POST(request: NextRequest) {
         }
 
         const userId = session.user.id;
+
+        // Fetch user data for dynamic profile
+        const dbUser = await prisma.user.findUnique({
+            where: { id: userId },
+            include: { automationSettings: true }
+        });
+
+        const creatorProfile: CreatorProfile = {
+            name: dbUser?.name || "Creator",
+            niche: dbUser?.niche || "Content Creation",
+            subNiche: dbUser?.subNiche || undefined,
+            script_language: dbUser?.automationSettings?.scriptLanguage || "English",
+            text_overlay_language: dbUser?.automationSettings?.captionLanguage || "English",
+            writing_style: dbUser?.automationSettings?.writingStyle || "Let the Trend/Data Decide",
+            location: dbUser?.location || "Global",
+            followers: null
+        };
 
         const body: ChatRequest = await request.json();
         const { message: userMessage, conversationId, modelMode = 'fast' } = body;
@@ -316,7 +334,8 @@ export async function POST(request: NextRequest) {
         const systemPrompt = buildPerQuestionSystemPrompt(
             contextsForThisQuestion,
             allContexts,
-            summary
+            summary,
+            creatorProfile
         );
 
         // Build context breakdown for debug

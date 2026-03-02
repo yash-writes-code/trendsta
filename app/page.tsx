@@ -934,45 +934,61 @@ function HoverListFeaturesSection() {
             "Six specialised modes: Trending, Viral Ideas, Competitors, and more",
           ]}
           graphic={
-            <div className="relative z-20 rounded-[2rem] overflow-hidden shadow-2xl border border-white/5 bg-[#0a0a0a] flex flex-col items-center pt-10 px-6 pb-8 select-none">
-              <div className="mb-4">
-                <Image src="/T_logo.png" alt="Trendsta" width={44} height={44} className="object-contain" />
-              </div>
-              <div className="text-center mb-5">
-                <h3 className="text-base md:text-lg font-medium text-[#8F9BB3] font-sans tracking-tight leading-snug">
-                  Your AI-powered content strategist.<br />Ask me anything about reels, trends, and growth.
-                </h3>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-full text-xs text-[#636C7A] mb-6 font-sans">
-                <BarChart3 size={12} className="text-indigo-400" />
-                <span>Results based on data from 06/02/2026.</span>
-              </div>
-              <div className="grid grid-cols-3 gap-3 w-full max-w-lg mb-5">
-                {[{ c: "#2D9CDB", Icon: TrendingUp, label: "Trending" }, { c: "#F2994A", Icon: Lightbulb, label: "Viral Ideas" }, { c: "#DE5EAC", Icon: Users, label: "Competitors" }, { c: "#27AE60", Icon: BarChart3, label: "Performance" }, { c: "#EB5757", Icon: Hash, label: "Hashtags" }, { c: "#9B51E0", Icon: PenTool, label: "Scripts" }].map(({ c, Icon, label }, i) => (
-                  <div key={i} className="bg-[#141414] border border-white/5 rounded-xl p-3 flex flex-col gap-2 cursor-pointer hover:border-white/10 transition-colors">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white" style={{ background: c }}><Icon size={14} /></div>
-                    <span className="text-[#8F9BB3] text-xs font-medium font-sans">{label}</span>
+            <>
+              {/* Mobile Graphic */}
+              <div className="md:hidden relative z-20 rounded-[2rem] overflow-hidden shadow-2xl border border-white/5 bg-[#0a0a0a] flex flex-col items-center pt-10 px-6 pb-8 select-none">
+                <div className="mb-4">
+                  <Image src="/T_logo.png" alt="Trendsta" width={44} height={44} className="object-contain" />
+                </div>
+                <div className="text-center mb-5">
+                  <h3 className="text-base md:text-lg font-medium text-[#8F9BB3] font-sans tracking-tight leading-snug">
+                    Your AI-powered content strategist.<br />Ask me anything about reels, trends, and growth.
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-full text-xs text-[#636C7A] mb-6 font-sans">
+                  <BarChart3 size={12} className="text-indigo-400" />
+                  <span>Results based on data from 06/02/2026.</span>
+                </div>
+                <div className="grid grid-cols-3 gap-3 w-full max-w-lg mb-5">
+                  {[{ c: "#2D9CDB", Icon: TrendingUp, label: "Trending" }, { c: "#F2994A", Icon: Lightbulb, label: "Viral Ideas" }, { c: "#DE5EAC", Icon: Users, label: "Competitors" }, { c: "#27AE60", Icon: BarChart3, label: "Performance" }, { c: "#EB5757", Icon: Hash, label: "Hashtags" }, { c: "#9B51E0", Icon: PenTool, label: "Scripts" }].map(({ c, Icon, label }, i) => (
+                    <div key={i} className="bg-[#141414] border border-white/5 rounded-xl p-3 flex flex-col gap-2 cursor-pointer hover:border-white/10 transition-colors">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white" style={{ background: c }}><Icon size={14} /></div>
+                      <span className="text-[#8F9BB3] text-xs font-medium font-sans">{label}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="w-full max-w-lg">
+                  <div className="w-full bg-[#141414] border border-white/10 rounded-2xl flex items-center p-2">
+                    <div className="flex-1 px-3 text-[#636C7A] text-sm font-sans">Ask Trendsta anything...</div>
+                    <div className="flex items-center gap-2">
+                      <button className="w-8 h-8 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5"><Mic size={16} /></button>
+                      <button className="w-8 h-8 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white"><ArrowRight size={16} /></button>
+                    </div>
                   </div>
-                ))}
-              </div>
-              <div className="w-full max-w-lg">
-                <div className="w-full bg-[#141414] border border-white/10 rounded-2xl flex items-center p-2">
-                  <div className="flex-1 px-3 text-[#636C7A] text-sm font-sans">Ask Trendsta anything...</div>
-                  <div className="flex items-center gap-2">
-                    <button className="w-8 h-8 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5"><Mic size={16} /></button>
-                    <button className="w-8 h-8 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white"><ArrowRight size={16} /></button>
+                  <div className="flex items-center gap-4 text-xs font-sans mt-3 justify-center">
+                    <div className="flex items-center gap-1.5 px-4 py-1.5 bg-[#FFF2DE] text-[#CA8215] rounded-full font-bold">
+                      <Zap size={11} fill="currentColor" /> Fast Mode
+                    </div>
+                    <div className="flex items-center gap-1.5 px-4 py-1.5 text-gray-500 font-medium">
+                      <Cpu size={11} /> Deep Research
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 text-xs font-sans mt-3 justify-center">
-                  <div className="flex items-center gap-1.5 px-4 py-1.5 bg-[#FFF2DE] text-[#CA8215] rounded-full font-bold">
-                    <Zap size={11} fill="currentColor" /> Fast Mode
-                  </div>
-                  <div className="flex items-center gap-1.5 px-4 py-1.5 text-gray-500 font-medium">
-                    <Cpu size={11} /> Deep Research
-                  </div>
-                </div>
               </div>
-            </div>
+
+              {/* Desktop Video */}
+              <div className="hidden md:flex relative z-20 rounded-[2rem] shadow-2xl overflow-hidden shadow-xl" style={{ backgroundColor: "#0a0a0a" }}>
+                <video
+                  src="/landing/AI_CONSULTANT%20(1).mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="none"
+                  className="w-full h-auto object-cover rounded-[2rem]"
+                />
+              </div>
+            </>
           }
         />
       </div>

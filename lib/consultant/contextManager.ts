@@ -5,12 +5,22 @@
 // ============================================================
 
 import { ChatSession, ContextType, AllContexts } from './types';
-import { CREATOR_PROFILE } from '../aiConfig';
+
+export interface CreatorProfile {
+    name: string;
+    niche: string;
+    subNiche?: string;
+    script_language: string;
+    text_overlay_language: string;
+    writing_style: string;
+    location: string;
+    followers: string | null;
+}
 
 /**
  * Base system prompt without research contexts
  */
-const BASE_SYSTEM_PROMPT = `You are an elite AI Content Consultant for ${CREATOR_PROFILE.name}, a content creator in the ${CREATOR_PROFILE.niche} niche.
+const getBaseSystemPrompt = (profile: CreatorProfile) => `You are an elite Content Consultant for ${profile.name}, a content creator in the ${profile.niche} niche${profile.subNiche ? ` (specifically focusing on ${profile.subNiche})` : ''}.
 
 ## YOUR ROLE
 You are a hybrid Data Analyst + Content Strategist + Creative Director. You have access to research data from Instagram reels, Twitter/X trends, competitor accounts, and user performance metrics.
@@ -49,12 +59,12 @@ When making data-backed claims, you may include visual evidence using a GRAPH bl
 - Data must come from the research context provided
 
 ## CREATOR PROFILE
-- **Niche**: ${CREATOR_PROFILE.niche}
-- **Script Language**: ${CREATOR_PROFILE.script_language}
-- **Text Overlay Language**: ${CREATOR_PROFILE.text_overlay_language}
-- **Writing Style**: ${CREATOR_PROFILE.writing_style}
-- **Target Location**: ${CREATOR_PROFILE.location}
-${CREATOR_PROFILE.followers ? `- **Followers**: ${CREATOR_PROFILE.followers}` : ''}
+- **Niche**: ${profile.niche}${profile.subNiche ? ` (${profile.subNiche})` : ''}
+- **Script Language**: ${profile.script_language}
+- **Text Overlay Language**: ${profile.text_overlay_language}
+- **Writing Style**: ${profile.writing_style}
+- **Target Location**: ${profile.location}
+${profile.followers ? `- **Followers**: ${profile.followers}` : ''}
 
 ## OUT OF CAPABILITY HANDLING
 If the user asks for something beyond your capabilities, handle it gracefully:
@@ -90,9 +100,10 @@ If asked to "generate an image" or "create a thumbnail", respond with:
 export function buildPerQuestionSystemPrompt(
     contextsForThisQuestion: ContextType[],
     allContexts: AllContexts,
-    conversationSummary: string | null
+    conversationSummary: string | null,
+    creatorProfile: CreatorProfile
 ): string {
-    let prompt = BASE_SYSTEM_PROMPT;
+    let prompt = getBaseSystemPrompt(creatorProfile);
 
     // Add ONLY contexts needed for this specific question
     if (contextsForThisQuestion.length > 0) {
@@ -123,10 +134,11 @@ export function buildPerQuestionSystemPrompt(
 export function buildDynamicSystemPrompt(
     session: ChatSession,
     allContexts: AllContexts,
-    conversationSummary: string | null
+    conversationSummary: string | null,
+    creatorProfile: CreatorProfile
 ): string {
     const loadedList = Array.from(session.loadedContexts);
-    return buildPerQuestionSystemPrompt(loadedList, allContexts, conversationSummary);
+    return buildPerQuestionSystemPrompt(loadedList, allContexts, conversationSummary, creatorProfile);
 }
 
 /**
@@ -157,8 +169,9 @@ export function getLoadedContextNames(session: ChatSession): string[] {
  */
 export function estimateContextTokens(
     contexts: ContextType[],
-    allContexts: AllContexts
+    allContexts: AllContexts,
+    creatorProfile: CreatorProfile
 ): number {
-    const prompt = buildPerQuestionSystemPrompt(contexts, allContexts, null);
+    const prompt = buildPerQuestionSystemPrompt(contexts, allContexts, null, creatorProfile);
     return Math.ceil(prompt.length / 4);
 }

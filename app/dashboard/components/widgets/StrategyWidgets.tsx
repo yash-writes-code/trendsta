@@ -33,11 +33,11 @@ export function ViralTriggerWidget({ data }: ViralTriggerProps) {
                                 {idx + 1}
                             </span>
                             <div className="min-w-0 flex-1">
-                                <h4 className="font-bold text-slate-900 text-sm mb-1 break-words">{item.trigger}</h4>
-                                <p className="text-xs text-slate-500 leading-relaxed mb-2 break-words text-wrap whitespace-normal">{item.why_works}</p>
+                                <h4 className="font-bold text-theme-primary text-sm mb-1 break-words">{item.trigger}</h4>
+                                <p className="text-xs text-theme-secondary leading-relaxed mb-2 break-words text-wrap whitespace-normal">{item.why_works}</p>
                                 <div className="flex items-start gap-1.5 mt-2 opacity-80 p-2 rounded-lg bg-white/5 border border-white/5">
                                     <Sparkles size={12} className="text-amber-400 mt-0.5 flex-shrink-0" />
-                                    <span className="text-[10px] text-slate-500 font-medium italic break-words text-wrap whitespace-normal">"{item.example}"</span>
+                                    <span className="text-[10px] text-theme-muted font-medium italic break-words text-wrap whitespace-normal">"{item.example}"</span>
                                 </div>
                             </div>
                         </div>
@@ -71,10 +71,10 @@ export function ContentGapWidget({ data }: ContentGapProps) {
 
             <div className="flex-1 flex flex-col justify-between">
                 <div>
-                    <h4 className="text-lg font-black text-slate-700 leading-tight mb-2 break-words">
+                    <h4 className="text-lg font-black text-theme-primary leading-tight mb-2 break-words">
                         {data.gap}
                     </h4>
-                    <p className="text-sm text-slate-500 mb-4 leading-relaxed break-words text-wrap whitespace-normal">
+                    <p className="text-sm text-theme-secondary mb-4 leading-relaxed break-words text-wrap whitespace-normal">
                         {data.opportunity}
                     </p>
                 </div>
@@ -117,7 +117,7 @@ export function HookFormulaWidget({ data }: HookFormulaProps) {
                     <span className="text-[10px] font-bold text-fuchsia-500 uppercase tracking-wider mb-1 block">
                         Hook Formula Key
                     </span>
-                    <div className="p-3 neu-convex-sm rounded-xl text-sm font-bold text-slate-700 break-words">
+                    <div className="p-3 neu-convex-sm rounded-xl text-sm font-bold text-theme-primary break-words">
                         {data.pattern}
                     </div>
                 </div>
@@ -125,7 +125,7 @@ export function HookFormulaWidget({ data }: HookFormulaProps) {
                 {/* Why it works */}
                 <div>
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 block">The Psychology</span>
-                    <p className="text-xs text-slate-500 leading-relaxed italic break-words text-wrap whitespace-normal">
+                    <p className="text-xs text-theme-secondary leading-relaxed italic break-words text-wrap whitespace-normal">
                         "{data.why_works}"
                     </p>
                 </div>
@@ -134,8 +134,8 @@ export function HookFormulaWidget({ data }: HookFormulaProps) {
                 <div className="mt-auto">
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 block">Example</span>
                     {data.examples && data.examples.length > 0 && (
-                        <div className="flex items-start gap-2 text-xs text-slate-600 neu-convex-sm p-2.5 rounded-lg">
-                            <Quote size={12} className="text-slate-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex items-start gap-2 text-xs text-theme-secondary neu-convex-sm p-2.5 rounded-lg">
+                            <Quote size={12} className="text-theme-muted flex-shrink-0 mt-0.5" />
                             <span className="break-words text-wrap whitespace-normal">{data.examples[0]}</span>
                         </div>
                     )}
