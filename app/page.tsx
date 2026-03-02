@@ -29,6 +29,7 @@ import {
   Hash,
   PenTool,
   Mic,
+  Play,
 } from "lucide-react";
 import Image from "next/image";
 
