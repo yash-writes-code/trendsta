@@ -356,7 +356,7 @@ export default function TwitterClient() {
                             <button
                                 onClick={() => setViewMode('tweets')}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'tweets'
-                                    ? 'bg-blue-600 text-white shadow-md'
+                                    ? 'bg-orange-500 text-white shadow-md'
                                     : 'text-theme-secondary hover:text-theme-primary hover:bg-white/5'
                                     }`}
                             >
@@ -366,7 +366,7 @@ export default function TwitterClient() {
                             <button
                                 onClick={() => setViewMode('insights')}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${viewMode === 'insights'
-                                    ? 'bg-blue-600 text-white shadow-md'
+                                    ? 'bg-orange-500 text-white shadow-md'
                                     : 'text-theme-secondary hover:text-theme-primary hover:bg-white/5'
                                     }`}
                             >
@@ -392,7 +392,7 @@ export default function TwitterClient() {
                                     <button
                                         onClick={() => setActiveTab("top")}
                                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "top"
-                                            ? "bg-white/10 text-blue-500 shadow-sm"
+                                            ? "bg-white/10 text-orange-500 shadow-sm"
                                             : "text-theme-muted hover:text-theme-primary hover:bg-white/5"
                                             }`}
                                     >
@@ -402,7 +402,7 @@ export default function TwitterClient() {
                                     <button
                                         onClick={() => setActiveTab("latest")}
                                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === "latest"
-                                            ? "bg-white/10 text-blue-500 shadow-sm"
+                                            ? "bg-white/10 text-orange-500 shadow-sm"
                                             : "text-theme-muted hover:text-theme-primary hover:bg-white/5"
                                             }`}
                                     >

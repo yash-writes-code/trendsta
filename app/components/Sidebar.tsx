@@ -124,7 +124,7 @@ export default function Sidebar() {
                             key={item.href}
                             href={item.href}
                             className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative ${isActive
-                                ? "bg-white/10 border border-white/20 text-blue-400 font-bold shadow-[0_0_15px_rgba(59,130,246,0.3)]"
+                                ? "bg-white/10 border border-white/20 text-orange-500 font-bold shadow-[0_0_15px_rgba(249,115,22,0.3)]"
                                 : "text-theme-secondary hover:text-white hover:bg-white/5"
                                 } ${isCollapsed ? "justify-center" : ""}`}
                             title={isCollapsed ? item.label : undefined}
@@ -145,7 +145,7 @@ export default function Sidebar() {
 
                             {/* Free Chat Counter (Only for AI Consultant) */}
                             {item.label === "AI Consultant" && !isCollapsed && !usageLoading && (planTier === 1 || planTier === 2) && allowance > 0 && (
-                                <span className="ml-auto text-[10px] font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
+                                <span className="ml-auto text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
                                     {allowance} left
                                 </span>
                             )}
@@ -163,7 +163,7 @@ export default function Sidebar() {
                     }}
                     disabled={isAnalyzing}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative 
-                        ${isAnalyzing ? "bg-slate-50 text-slate-400 cursor-not-allowed border border-slate-100" : "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/40 hover:scale-[1.02]"}
+                        ${isAnalyzing ? "bg-slate-50 text-slate-400 cursor-not-allowed border border-slate-100" : "bg-gradient-to-r from-orange-500 via-orange-600 to-red-500 text-white shadow-lg shadow-orange-500/30 hover:shadow-orange-500/40 hover:scale-[1.02]"}
                         ${isCollapsed ? "justify-center" : ""}
                     `}
                     title={isCollapsed ? (isAnalyzing ? "Analysis in Progress" : "New Analysis") : undefined}

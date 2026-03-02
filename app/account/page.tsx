@@ -339,7 +339,7 @@ export default function AccountPage() {
     const selectedPhoneCode = countryCodes.find((c) => c.code === phoneCode);
 
     return (
-        <div className="min-h-screen relative selection:bg-blue-200">
+        <div className="min-h-screen relative selection:bg-orange-200 bg-[#fafafa]">
             <Sidebar />
 
             <main
@@ -349,12 +349,12 @@ export default function AccountPage() {
                 <div className="max-w-4xl mx-auto px-6 py-8">
                     {/* Header */}
                     <div className="mb-8">
-                        <div className="flex items-center gap-2 text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>
+                        <div className="flex items-center gap-2 text-sm mb-2 text-gray-500">
                             <ChevronDown className="w-4 h-4 rotate-90" />
-                            <span>Settings</span>
+                            <span className="uppercase tracking-wider font-bold">Settings</span>
                         </div>
-                        <h1 className="text-3xl font-bold text-theme-primary">Account Settings</h1>
-                        <p className="text-sm text-theme-secondary mt-1">
+                        <h1 className="text-4xl md:text-5xl font-mono tracking-[-0.05em] uppercase font-bold text-gray-900">Account Settings</h1>
+                        <p className="text-sm text-gray-500 mt-2 font-medium">
                             Manage your preferences, security, and connected tools all in one place.
                         </p>
                     </div>
@@ -364,7 +364,7 @@ export default function AccountPage() {
                         <button
                             onClick={() => setActiveTab('profile')}
                             className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors border-b-2 ${activeTab === 'profile'
-                                ? 'border-blue-600 text-blue-600 bg-blue-500/10'
+                                ? 'border-orange-500 text-orange-600 bg-orange-500/10'
                                 : 'border-transparent text-theme-secondary hover:text-theme-primary'
                                 }`}
                         >
@@ -373,7 +373,7 @@ export default function AccountPage() {
                         <button
                             onClick={() => setActiveTab('plan')}
                             className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors border-b-2 ${activeTab === 'plan'
-                                ? 'border-blue-600 text-blue-600 bg-blue-500/10'
+                                ? 'border-orange-500 text-orange-600 bg-orange-500/10'
                                 : 'border-transparent text-theme-secondary hover:text-theme-primary'
                                 }`}
                         >
@@ -404,7 +404,7 @@ export default function AccountPage() {
                                                 value={firstName}
                                                 onChange={(e) => setFirstName(e.target.value)}
                                                 placeholder="Enter first name"
-                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                                             />
                                         </div>
 
@@ -418,7 +418,7 @@ export default function AccountPage() {
                                                 value={lastName}
                                                 onChange={(e) => setLastName(e.target.value)}
                                                 placeholder="Enter last name"
-                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                                             />
                                         </div>
 
@@ -480,7 +480,7 @@ export default function AccountPage() {
                                                     value={phoneNumber}
                                                     onChange={(e) => setPhoneNumber(e.target.value)}
                                                     placeholder="000 000-000 00"
-                                                    className="flex-1 px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                    className="flex-1 px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                                                 />
                                             </div>
                                         </div>
@@ -530,14 +530,13 @@ export default function AccountPage() {
                                             <select
                                                 value={niche}
                                                 onChange={(e) => handleNicheChange(e.target.value)}
-                                                className="w-full px-4 py-3 rounded-xl border transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2"
                                                 style={{
                                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                                                     backgroundRepeat: 'no-repeat',
                                                     backgroundPosition: 'right 1rem center',
                                                     backgroundSize: '1.25rem',
                                                 } as any}
-                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                                             >
                                                 <option value="">Select your niche</option>
                                                 {NICHE_OPTIONS.map((opt) => (
@@ -557,7 +556,7 @@ export default function AccountPage() {
                                                 value={subNiche}
                                                 onChange={(e) => setSubNiche(e.target.value)}
                                                 disabled={!niche}
-                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="w-full px-4 py-3 rounded-xl border border-white/10 bg-black/20 text-theme-primary transition-all font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
                                                 style={{
                                                     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
                                                     backgroundRepeat: 'no-repeat',
@@ -597,7 +596,7 @@ export default function AccountPage() {
                                 <button
                                     onClick={handleSave}
                                     disabled={isSaving}
-                                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="flex items-center gap-2 px-6 py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isSaving ? (
                                         <>
@@ -709,7 +708,7 @@ export default function AccountPage() {
                                             <button
                                                 onClick={confirmPlanChange}
                                                 disabled={isProcessingAction}
-                                                className="flex-1 px-4 py-2.5 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+                                                className="flex-1 px-4 py-2.5 rounded-xl bg-orange-600 text-white font-semibold hover:bg-orange-700 transition-colors disabled:opacity-50"
                                             >
                                                 {isProcessingAction ? "Processing..." : "Confirm Change"}
                                             </button>
@@ -722,7 +721,7 @@ export default function AccountPage() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
                                 {isLoadingSubscription && (
                                     <div className="absolute inset-0 bg-white/50 backdrop-blur-sm z-10 flex items-center justify-center">
-                                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent"></div>
+                                        <div className="animate-spin rounded-full h-8 w-8 border-2 border-orange-600 border-t-transparent"></div>
                                     </div>
                                 )}
 
