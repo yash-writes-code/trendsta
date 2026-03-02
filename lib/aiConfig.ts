@@ -8,19 +8,19 @@ export const MODEL_MODES: Record<ModelMode, { name: string; description: string;
     fast: {
         name: 'Fast',
         description: 'Quick responses, everyday queries',
-        model: 'google/gemini-2.0-flash-001',
+        model: 'x-ai/grok-4.1-fast',
         icon: '⚡',
     },
     thinking: {
         name: 'Thinking',
         description: 'Balanced analysis with reasoning',
-        model: 'deepseek/deepseek-r1-0528:free',
+        model: 'google/gemini-3.1-pro-preview',
         icon: '🧠',
     },
     deep: {
         name: 'Deep Research',
         description: 'Maximum depth — complex strategy & research',
-        model: 'deepseek/deepseek-r1-0528:free',
+        model: 'anthropic/claude-sonnet-4.6',
         icon: '🔬',
     },
 };

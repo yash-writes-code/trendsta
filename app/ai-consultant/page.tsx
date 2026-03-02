@@ -47,21 +47,21 @@ function MarkdownContent({ content }: { content: string }) {
                 // Headers
                 h1: ({ children }) => <h1 className="text-xl font-bold text-theme-primary mt-4 mb-2">{children}</h1>,
                 h2: ({ children }) => <h2 className="text-lg font-bold text-theme-primary mt-4 mb-2">{children}</h2>,
-                h3: ({ children }) => <h3 className="text-base font-bold text-theme-secondary mt-3 mb-1.5">{children}</h3>,
-                h4: ({ children }) => <h4 className="text-sm font-bold text-theme-muted mt-2 mb-1">{children}</h4>,
-                // Paragraphs
-                p: ({ children }) => <p className="text-sm md:text-base leading-relaxed mb-3 last:mb-0 text-theme-secondary">{children}</p>,
+                h3: ({ children }) => <h3 className="text-base font-bold text-theme-primary mt-3 mb-1.5">{children}</h3>,
+                h4: ({ children }) => <h4 className="text-sm font-bold text-theme-secondary mt-2 mb-1">{children}</h4>,
+                // Paragraphs — use primary for max contrast
+                p: ({ children }) => <p className="text-sm md:text-base leading-relaxed mb-3 last:mb-0 text-theme-primary">{children}</p>,
                 // Strong/Bold
-                strong: ({ children }) => <strong className="font-semibold text-theme-primary">{children}</strong>,
+                strong: ({ children }) => <strong className="font-bold text-theme-primary">{children}</strong>,
                 // Italic/Emphasis
-                em: ({ children }) => <em className="italic text-theme-muted">{children}</em>,
-                // Lists
-                ul: ({ children }) => <ul className="list-disc list-inside space-y-1.5 my-2 ml-2 text-theme-secondary">{children}</ul>,
-                ol: ({ children }) => <ol className="list-decimal list-inside space-y-1.5 my-2 ml-2 text-theme-secondary">{children} </ol>,
-                li: ({ children }) => <li className="text-sm md:text-base leading-relaxed">{children}</li>,
+                em: ({ children }) => <em className="italic text-theme-secondary">{children}</em>,
+                // Lists — primary color for readability
+                ul: ({ children }) => <ul className="list-disc list-inside space-y-1.5 my-2 ml-2 text-theme-primary">{children}</ul>,
+                ol: ({ children }) => <ol className="list-decimal list-inside space-y-1.5 my-2 ml-2 text-theme-primary">{children}</ol>,
+                li: ({ children }) => <li className="text-sm md:text-base leading-relaxed text-theme-primary">{children}</li>,
                 // Blockquotes
                 blockquote: ({ children }) => (
-                    <blockquote className="border-l-4 border-blue-500 glass-inset-bg pl-4 py-2 my-3 italic text-theme-muted rounded-r-lg">
+                    <blockquote className="border-l-4 border-blue-500 glass-inset pl-4 py-2 my-3 italic text-theme-secondary rounded-r-lg">
                         {children}
                     </blockquote>
                 ),
@@ -92,6 +92,7 @@ function MarkdownContent({ content }: { content: string }) {
         </ReactMarkdown>
     );
 }
+
 
 // ============================================================
 // CHAT MESSAGE WITH STREAMING, MARKDOWN, AND TTS
@@ -542,7 +543,7 @@ export default function AIConsultantPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     message: messageText,
-                    chatId: chatId,
+                    conversationId: chatId,
                     modelMode: modelMode,
                 }),
             });
@@ -554,8 +555,8 @@ export default function AIConsultantPage() {
 
             const data = await response.json();
 
-            if (data.chatId && !chatId) {
-                setChatId(data.chatId);
+            if (data.conversationId && !chatId) {
+                setChatId(data.conversationId);
             }
 
             const aiMessage: Message = {

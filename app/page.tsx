@@ -146,28 +146,47 @@ function Navbar() {
       >
         {/* Main Navbar Pill */}
         <div
-          className="pointer-events-auto flex items-center justify-between h-14 px-2 pr-6 rounded-[20px] bg-[#1a1c1d]/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] transition-all duration-300"
-          style={{ width: "min(600px, 90vw)" }}
+          className="pointer-events-auto flex items-center justify-between h-14 px-2 pr-3 rounded-[20px] bg-[#1a1c1d]/60 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] transition-all duration-300 gap-2"
+          style={{ width: "min(700px, 93vw)" }}
         >
-          {/* Logo Container */}
+          {/* Logo */}
           <a href="#home-page" className="relative flex items-center justify-center w-10 h-10 rounded-xl overflow-hidden group shrink-0 transition-opacity hover:opacity-80">
             <Image src="/T_logo.png" alt="Trendsta" width={32} height={32} className="object-contain" />
           </a>
 
-          {/* Desktop Navigation Links (Hidden on small screens) */}
-          <div className="hidden sm:flex items-center gap-6 mx-auto absolute left-1/2 -translate-x-1/2 text-white/80 font-medium text-sm tracking-wide">
-            <a href="#features" className="hover:text-white transition-colors duration-200">Features</a>
-            <a href="#faqs" className="hover:text-white transition-colors duration-200">FAQs</a>
-            <a href="mailto:hello@trendsta.com" className="hover:text-white transition-colors duration-200">Contact</a>
+          {/* Desktop Nav Links — flow left after logo */}
+          <div className="hidden sm:flex items-center gap-6 ml-6 text-white/75 font-medium text-sm tracking-wide">
+            <a href="#features" className="hover:text-white transition-colors duration-200">Services</a>
+            <a href="#reviews" className="hover:text-white transition-colors duration-200">Testimonials</a>
+            <a href="#faq" className="hover:text-white transition-colors duration-200">FAQs</a>
           </div>
 
-          {/* Spacer */}
+          {/* Spacer pushes CTAs to the right */}
+          <div className="hidden sm:block flex-1" />
+
+          {/* Spacer for mobile */}
           <div className="flex-1 sm:hidden" />
 
-          {/* Menu Toggle Button */}
+          {/* Desktop CTA buttons */}
+          <div className="hidden sm:flex items-center gap-2 shrink-0">
+            <a
+              href="/signup"
+              className="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-indigo-600 rounded-xl hover:opacity-90 transition-opacity"
+            >
+              Get Started
+            </a>
+            <a
+              href="/dashboard"
+              className="px-4 py-2 text-sm font-semibold text-white/80 bg-white/10 rounded-xl border border-white/10 hover:bg-white/15 transition-colors"
+            >
+              View Demo
+            </a>
+          </div>
+
+          {/* Hamburger (mobile only) */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 transition-colors border border-white/5 flex flex-col items-center justify-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-white/20 z-10"
+            className="sm:hidden w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 transition-colors border border-white/5 flex flex-col items-center justify-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-white/20"
           >
             <motion.div
               animate={isMobileMenuOpen ? { rotate: 45, y: 4, backgroundColor: "#fff" } : { rotate: 0, y: 0, backgroundColor: "#fff" }}
@@ -181,53 +200,47 @@ function Navbar() {
         </div>
       </motion.nav>
 
-      {/* Mega Menu Dropdown Overlay */}
+      {/* Mobile Menu Dropdown */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            initial={{ opacity: 0, y: -16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-24 left-1/2 -translate-x-1/2 w-[min(480px,95vw)] bg-white/95 backdrop-blur-2xl z-40 border border-black/10 rounded-3xl shadow-2xl p-6 sm:p-8"
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed top-24 left-1/2 -translate-x-1/2 w-[min(340px,90vw)] bg-white/96 backdrop-blur-2xl z-40 border border-black/10 rounded-2xl shadow-2xl p-5"
           >
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
-              {/* Column 1: Explore */}
-              <div className="flex flex-col space-y-3">
-                <h6 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Explore</h6>
-                <a href="#overview" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 hover:text-indigo-400 font-medium text-sm transition-colors">Overview</a>
-                <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 hover:text-indigo-400 font-medium text-sm transition-colors">About</a>
-                <a href="#why-us" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 hover:text-indigo-400 font-medium text-sm transition-colors">Why Us</a>
-              </div>
-
-              {/* Column 2: What We Do */}
-              <div className="flex flex-col space-y-3">
-                <h6 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">What We Do</h6>
-                <a href="#products" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 hover:text-indigo-400 font-medium text-sm transition-colors">Products</a>
-                <a href="#features" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 hover:text-indigo-400 font-medium text-sm transition-colors">Features</a>
-                <a href="#testimonials" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 hover:text-indigo-400 font-medium text-sm transition-colors">Testimonials</a>
-              </div>
-
-              {/* Column 3: Contact */}
-              <div className="flex flex-col space-y-3 col-span-2 sm:col-span-1 border-t border-black/10 pt-6 sm:pt-0 sm:border-t-0">
-                <h6 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Contact</h6>
-                <a href="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 hover:text-indigo-400 font-medium text-sm transition-colors">Start a project</a>
-                <a href="mailto:hello@mvnstudio.com" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 hover:text-indigo-400 font-medium text-sm transition-colors">Email us</a>
-                <a href="tel:+10001234567" onClick={() => setIsMobileMenuOpen(false)} className="text-gray-900 hover:text-indigo-400 font-medium text-sm transition-colors">Book a call</a>
-              </div>
+            {/* Nav links */}
+            <div className="flex flex-col gap-1 mb-4">
+              {[
+                { label: "Services", href: "#features" },
+                { label: "Testimonials", href: "#reviews" },
+                { label: "FAQs", href: "#faq" },
+              ].map(({ label, href }) => (
+                <a
+                  key={href}
+                  href={href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center px-4 py-3 rounded-xl text-gray-800 font-semibold text-sm hover:bg-gray-100 transition-colors"
+                >
+                  {label}
+                </a>
+              ))}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-black/10 flex flex-col sm:flex-row gap-3">
+            {/* CTAs */}
+            <div className="flex flex-col gap-2 pt-4 border-t border-black/10">
               <a
                 href="/signup"
-                className="block w-full text-center px-6 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold rounded-xl"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block w-full text-center px-6 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold rounded-xl hover:opacity-90 transition-opacity"
               >
                 Get Started
               </a>
               <a
                 href="/dashboard"
-                className="w-full text-center px-6 py-3 bg-black/5 border border-black/10 text-gray-900 text-sm font-semibold rounded-xl hover:bg-black/5 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
+                className="block w-full text-center px-6 py-3 bg-black/5 border border-black/10 text-gray-900 text-sm font-semibold rounded-xl hover:bg-black/10 transition-colors"
               >
                 View Demo
               </a>
@@ -238,6 +251,7 @@ function Navbar() {
     </>
   );
 }
+
 
 function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -521,9 +535,9 @@ function ServicePanel({
   );
 
   return (
-    <div id={id} className="min-h-screen flex items-center bg-[#fafafa] border-b border-black/5 z-10">
+    <div id={id} className="py-16 md:py-24 lg:min-h-screen flex items-center bg-[#fafafa] border-b border-black/5 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
           {textSide === "left" ? (
             <>
               {textCol}
@@ -637,8 +651,8 @@ function DashboardGraphic() {
               </div>
             ))}
           </div>
-          <div className="grid grid-cols-12 gap-3">
-            <div className="col-span-8 bg-white rounded-xl p-4 border border-black/10 flex flex-col">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="bg-white rounded-xl p-4 border border-black/10 flex flex-col">
               <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-1">Viral Sweet Spot</h4>
               <p className="text-[10px] text-gray-500 mb-3">Faster (194+ WPM) and longer (60s+) than the niche average.</p>
               <div className="flex items-end gap-4 px-4 pb-2 border-b border-black/10" style={{ height: 60 }}>
@@ -650,7 +664,7 @@ function DashboardGraphic() {
                 ))}
               </div>
             </div>
-            <div className="col-span-4 bg-white rounded-xl p-4 border border-black/10 flex flex-col">
+            <div className="bg-white rounded-xl p-4 border border-black/10 flex flex-col">
               <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">Hook Leaderboard</h4>
               <div className="flex flex-col gap-2 flex-1 justify-center">
                 {[["Controversial Q", "98%", "bg-orange-500"], ["Direct Benefit", "75%", "bg-gray-300"], ["Tech Urgency", "60%", "bg-gray-200"]].map(([l, p, c], i) => (
@@ -715,16 +729,16 @@ function ScriptCard({ card }: { card: typeof SCRIPT_CARDS[0] }) {
   const dash = (pct / 100) * circ;
 
   return (
-    <div className="w-full bg-[#1a1a2e] rounded-2xl overflow-hidden flex flex-col md:flex-row select-none" style={{ minHeight: 220 }}>
-      {/* Left panel */}
-      <div className="flex flex-col items-center justify-center gap-3 p-6 bg-[#141428] md:w-52 shrink-0 relative">
-        {/* Tag */}
-        <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#2a2a4a] border border-purple-500/30 text-purple-400 text-[9px] font-bold tracking-wider">
+    <div className="w-full bg-[#1a1a2e] rounded-2xl overflow-hidden flex flex-col md:flex-row select-none">
+      {/* Left panel — horizontal strip on mobile, sidebar on md+ */}
+      <div className="flex flex-row md:flex-col items-center gap-4 p-4 md:p-6 bg-[#141428] md:w-52 shrink-0 relative">
+        {/* Tag — top-right on md, hidden on mobile (shown in right panel instead) */}
+        <div className="hidden md:flex absolute top-3 right-3 items-center gap-1 px-2 py-0.5 rounded-full bg-[#2a2a4a] border border-purple-500/30 text-purple-400 text-[9px] font-bold tracking-wider">
           <Zap size={8} fill="currentColor" /> {card.tag}
         </div>
-        {/* Score ring */}
-        <div className="relative w-24 h-24 flex items-center justify-center">
-          <svg width="96" height="96" viewBox="0 0 96 96" className="-rotate-90 absolute inset-0">
+        {/* Score ring — smaller on mobile */}
+        <div className="relative w-16 h-16 md:w-24 md:h-24 flex items-center justify-center shrink-0">
+          <svg width="64" height="64" viewBox="0 0 96 96" className="-rotate-90 absolute inset-0 w-full h-full">
             <circle cx="48" cy="48" r={r} fill="none" stroke="#2a2a4a" strokeWidth="6" />
             <circle
               cx="48" cy="48" r={r} fill="none"
@@ -733,21 +747,22 @@ function ScriptCard({ card }: { card: typeof SCRIPT_CARDS[0] }) {
               strokeDasharray={`${dash} ${circ}`}
             />
           </svg>
-          <span className="relative text-2xl font-bold text-white font-mono">{card.score}</span>
+          <span className="relative text-xl md:text-2xl font-bold text-white font-mono">{card.score}</span>
         </div>
-        <div className="text-center">
+        {/* Why This Works — beside ring on mobile, below on md */}
+        <div className="flex-1 md:text-center">
           <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-1">Why This Works</p>
-          <p className="text-[11px] text-gray-300 leading-snug text-center">{card.whyWorks}</p>
+          <p className="text-[11px] text-gray-300 leading-snug">{card.whyWorks}</p>
         </div>
-        {/* Audio Vibe */}
-        <div className="w-full bg-[#1a1a2e]/80 rounded-xl px-3 py-2 border border-white/5">
+        {/* Audio Vibe — hidden on mobile */}
+        <div className="hidden md:block w-full bg-[#1a1a2e]/80 rounded-xl px-3 py-2 border border-white/5">
           <p className="text-[8px] text-purple-400 font-bold uppercase tracking-wider flex items-center gap-1 mb-1">
             <Zap size={8} fill="currentColor" /> Audio Vibe
           </p>
           <p className="text-[10px] text-gray-300">{card.audioVibe}</p>
         </div>
-        {/* Duration */}
-        <div className="flex items-center gap-1.5 w-full bg-[#1a1a2e] border border-white/5 rounded-xl px-3 py-2 justify-center">
+        {/* Duration — hidden on mobile */}
+        <div className="hidden md:flex items-center gap-1.5 w-full bg-[#1a1a2e] border border-white/5 rounded-xl px-3 py-2 justify-center">
           <ArrowRight size={10} className="text-gray-400" />
           <span className="text-[10px] text-gray-300 font-mono">{card.duration}</span>
         </div>
@@ -814,7 +829,7 @@ function ScriptIdeas3DCards() {
 
   return (
     <div className="relative w-full" style={{ perspective: "1200px" }}>
-      <div className="relative" style={{ height: 280 }}>
+      <div className="relative" style={{ height: "clamp(320px, 50vw, 380px)" }}>
         {SCRIPT_CARDS.map((card, i) => {
           const offset = (i - active + SCRIPT_CARDS.length) % SCRIPT_CARDS.length;
           // 0 = active (front), 1 = behind-right, 2 = behind-left
@@ -870,20 +885,21 @@ function HoverListFeaturesSection() {
   return (
     <section id="features" className="relative bg-[#fafafa]">
 
-      {/* Section Header â€” non-sticky, just an intro */}
-      <div className="flex flex-col items-center justify-center text-center w-full pt-16 md:pt-20 px-4 bg-[#fafafa]">
-        <ShutterReveal bgColor="#fafafa">
-          <h2 className="text-6xl md:text-8xl lg:text-[110px] leading-[0.85] font-bold font-mono text-gray-900 flex flex-col uppercase items-center">
-            {/* <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-gray-700">trendsta</span> */}
-            <span>services</span>
-          </h2>
-        </ShutterReveal>
-        <p className="text-xl md:text-3xl text-gray-500 leading-tight font-medium max-w-2xl mt-6">
-          In the content wilderness,<br />creators find our AI tools truly invaluable.
+      {/* Section Header – non-sticky, just an intro */}
+      <div className="flex flex-col items-center justify-center text-center w-full pt-12 md:pt-20 px-4 bg-[#fafafa]">
+        <div className="w-full overflow-hidden flex justify-center">
+          <ShutterReveal bgColor="#fafafa">
+            <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-[110px] leading-[0.85] font-bold font-mono text-gray-900 flex flex-col uppercase items-center">
+              <span>services</span>
+            </h2>
+          </ShutterReveal>
+        </div>
+        <p className="text-lg md:text-2xl lg:text-3xl text-gray-500 leading-tight font-medium max-w-2xl mt-4 md:mt-6 px-2">
+          In the content wilderness,<br className="hidden sm:block" />creators find our AI tools truly invaluable.
         </p>
       </div>
 
-      {/* â€”â€”â€” Dashboard â€”â€”â€” */}
+      {/* ——— Dashboard ——— */}
       <div>
         <ServicePanel
           id="service-dashboard"
@@ -1208,7 +1224,7 @@ function Insight3DStack({ cards }: { cards: typeof INSTAGRAM_CARDS }) {
 
   return (
     <div className="relative w-full" style={{ perspective: "1200px" }}>
-      <div className="relative" style={{ height: 300 }}>
+      <div className="relative" style={{ height: "clamp(340px, 55vw, 400px)" }}>
         {cards.map((card, i) => {
           const offset = (i - active + cards.length) % cards.length;
           const isActive = offset === 0;
@@ -1306,25 +1322,27 @@ function TestimonialsSection() {
             </svg>
             CUSTOMERS
           </div>
-          <ShutterReveal bgColor="#fafafa">
-            <h2 className="text-6xl md:text-8xl lg:text-[110px] leading-[0.85] font-bold tracking-[-0.06em] font-mono text-gray-900 mb-4 md:mb-6 flex flex-col uppercase items-center">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-gray-700">
-                what our
-              </span>
-              <span>clients say</span>
-            </h2>
-          </ShutterReveal>
+          <div className="w-full overflow-hidden flex justify-center">
+            <ShutterReveal bgColor="#fafafa">
+              <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-[110px] leading-[0.85] font-bold tracking-[-0.06em] font-mono text-gray-900 mb-4 md:mb-6 flex flex-col uppercase items-center">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-gray-700">
+                  what our
+                </span>
+                <span>clients say</span>
+              </h2>
+            </ShutterReveal>
+          </div>
           <p className="text-lg text-gray-500">
             Join customers who trust AI to transform their business.
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center lg:items-stretch mb-20">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 items-stretch mb-10 md:mb-20">
 
           {/* Main Hero Testimonial */}
-          <div className="flex-1 w-full bg-black/5 border border-black/10 rounded-3xl p-8 md:p-12 flex flex-col justify-center items-center shadow-inner relative overflow-hidden">
+          <div className="flex-1 w-full bg-black/5 border border-black/10 rounded-3xl p-6 md:p-12 flex flex-col justify-center items-center shadow-inner relative overflow-hidden">
 
-            <h4 className="text-xl md:text-3xl font-bold text-gray-900 leading-snug text-center max-w-2xl relative z-10">
+            <h4 className="text-lg md:text-3xl font-bold text-gray-900 leading-snug text-center max-w-2xl relative z-10">
               Their <span className="text-indigo-500">AI-driven</span> approach helped us reach the right audience and <span className="text-indigo-500">grow faster</span> with smarter insights—streamlining our strategy, improving engagement, and <span className="text-indigo-500">delivering results</span> we couldn't achieve before.
             </h4>
             <div className="absolute opacity-5 -top-10 -left-10 w-64 h-64 text-black">
@@ -1335,7 +1353,7 @@ function TestimonialsSection() {
           </div>
 
           {/* Hero Banner Image */}
-          <div className="w-full lg:w-[45%] h-64 md:h-[400px] lg:h-auto rounded-3xl overflow-hidden shadow-2xl relative border border-black/10 shrink-0">
+          <div className="w-full lg:w-[45%] h-48 sm:h-64 md:h-80 lg:h-auto rounded-3xl overflow-hidden shadow-2xl relative border border-black/10 shrink-0">
             <Image
               src="https://framerusercontent.com/images/LQKuaHoocBNNOUwcuUIayGZ8z8.png"
               alt="Customer Success Banner"
@@ -1346,7 +1364,7 @@ function TestimonialsSection() {
         </div>
 
         {/* 3 Column Grid */}
-        <div className="grid md:grid-cols-3 gap-6 mb-20">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-10 md:mb-20">
           {testimonials.map((test, i) => (
             <div key={i} className="bg-white rounded-2xl p-6 shadow-xl border border-black/5 flex flex-col justify-between hover:-translate-y-1 transition-transform">
               <div>
@@ -1380,7 +1398,7 @@ function TestimonialsSection() {
         </div>
 
         {/* Bottom Stats Line */}
-        <div className="flex flex-col md:flex-row justify-around items-center gap-10 md:gap-4 pt-10 border-t border-black/10">
+        <div className="flex flex-row flex-wrap justify-around items-center gap-6 md:gap-4 pt-8 md:pt-10 border-t border-black/10">
           {stats.map((stat, i) => (
             <div key={i} className="flex flex-col items-center">
               <h3 className="text-3xl md:text-4xl font-mono font-bold text-gray-900 tracking-[-0.05em] mb-1">
@@ -1425,18 +1443,20 @@ function FAQSection() {
   ];
 
   return (
-    <section id="faq" className="py-8 md:py-24 bg-[#fafafa] relative border-t border-black/10">
+    <section id="faq" className="py-10 md:py-24 bg-[#fafafa] relative border-t border-black/10">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16 md:mb-24">
-          <ShutterReveal bgColor="#fafafa">
-            <h2 className="text-6xl md:text-8xl lg:text-[110px] leading-[0.85] font-bold tracking-[-0.06em] font-mono text-gray-900 mb-6 flex flex-col uppercase items-center">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-gray-700">
-                frequently
-              </span>
-              <span>asked</span>
-            </h2>
-          </ShutterReveal>
-          <p className="text-xl md:text-3xl text-gray-600 leading-tight font-medium mt-6">
+        <div className="text-center mb-10 md:mb-24">
+          <div className="w-full overflow-hidden flex justify-center">
+            <ShutterReveal bgColor="#fafafa">
+              <h2 className="text-4xl sm:text-6xl md:text-8xl lg:text-[110px] leading-[0.85] font-bold tracking-[-0.06em] font-mono text-gray-900 mb-6 flex flex-col uppercase items-center">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-gray-700">
+                  frequently
+                </span>
+                <span>asked</span>
+              </h2>
+            </ShutterReveal>
+          </div>
+          <p className="text-lg md:text-3xl text-gray-600 leading-tight font-medium mt-4 md:mt-6">
             Everything you need to know about growing with Trendsta.
           </p>
         </div>
@@ -1511,22 +1531,22 @@ function Footer() {
 
 function ViewDemoCTA() {
   return (
-  
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <p className="text-slate-400 text-sm md:text-base mb-6 tracking-wide">
-          No credit card required &mdash; explore the full dashboard instantly.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-          <a
-            href="/dashboard"
-            className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-white/5 text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-sm md:text-base"
-          >
-            <Play size={16} className="fill-white" />
-            View Demo
-          </a>
-        </div>
+
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+      <p className="text-slate-400 text-sm md:text-base mb-6 tracking-wide">
+        No credit card required &mdash; explore the full dashboard instantly.
+      </p>
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+        <a
+          href="/dashboard"
+          className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-white/5 text-white font-semibold rounded-full border border-white/10 hover:bg-white/10 transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-sm md:text-base"
+        >
+          <Play size={16} className="fill-white" />
+          View Demo
+        </a>
       </div>
-  
+    </div>
+
   );
 }
 
