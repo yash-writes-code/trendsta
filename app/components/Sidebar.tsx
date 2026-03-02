@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Play, Hash, Sparkles, User, TrendingUp, Users, FileText, ChevronLeft, ChevronRight, LogOut, Settings, CreditCard, Gift } from "lucide-react";
+import { Home, Play, Hash, Sparkles, User, TrendingUp, Users, FileText, ChevronLeft, ChevronRight, Settings, CreditCard, Gift } from "lucide-react";
 import Image from "next/image";
 import { useSidebar } from "../context/SidebarContext";
 import ThemeToggle from "./ThemeToggle";
-import { useSession, authClient } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 import { useUsage } from "@/hooks/useUsage";
 import { useAnalysis } from "../context/AnalysisContext";
 import AnalysisConfirm from "./AnalysisConfirm";
@@ -63,16 +63,6 @@ export default function Sidebar() {
             setName("Guest User");
         }
     }, [session])
-
-    const handleLogout = async () => {
-        await authClient.signOut({
-            fetchOptions: {
-                onSuccess: () => {
-                    router.push("/signin");
-                }
-            }
-        });
-    };
     return (
         <aside
             className={`hidden md:flex flex-col neu-convex h-screen fixed left-0 top-0 z-50 transition-all duration-300 ease-in-out ${isCollapsed ? "w-20" : "w-64"
@@ -197,27 +187,18 @@ export default function Sidebar() {
                 {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
             </button>
 
-            {/* User Profile & Theme Toggle */}
-            <div className="p-4 space-y-3">
-
-                <div className={`flex items-center gap-3 ${isCollapsed ? "flex-col" : ""}`}>
-                    <div className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-all duration-200 ${isCollapsed ? "w-full justify-center" : "flex-1 neu-convex"}`}>
-                        <div className="w-10 h-10 rounded-full neu-icon-btn shrink-0">
-                            <User size={18} />
-                        </div>
-                        {!isCollapsed && (
-                            <div className="flex-1 overflow-hidden">
-                                <p className="text-sm font-bold text-slate-700 truncate">{name}</p>
-                            </div>
-                        )}
+            {/* User Profile & Actions */}
+            <div className="p-4 space-y-2 mt-auto">
+                {/* User Info */}
+                <div className={`flex items-center gap-3 p-2 rounded-xl transition-all duration-200 ${isCollapsed ? "w-full justify-center" : "w-full bg-white/5 border border-white/10"}`}>
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+                        <User size={18} className="text-theme-primary" />
                     </div>
-                    <button
-                        onClick={handleLogout}
-                        className={`text-theme-muted hover:text-red-500 ${isCollapsed ? "w-10 h-10" : ""}`}
-                        title={isCollapsed ? "Logout" : undefined}
-                    >
-                        <LogOut size={18} />
-                    </button>
+                    {!isCollapsed && (
+                        <div className="flex-1 overflow-hidden">
+                            <p className="text-sm font-bold text-theme-primary truncate">{name}</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </aside>
