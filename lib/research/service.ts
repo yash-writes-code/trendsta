@@ -21,22 +21,9 @@ export type ResearchResult = {
  */
 export async function getLatestResearch(
     userId: string,
-    userEmail?: string | null
 ): Promise<ResearchResult> {
     try {
-        let isGuest = false;
         let socialAccount = null;
-
-        // 1. Check for Guest Mode
-        // Logic: specific userId (usually from session) might be a guest user if they match the guest email
-        // BUT typically we check if the session user is missing. 
-        // Here we assume the caller has already authenticated the session user.
-        // However, if the caller passes a guest flag or if the user matches guest email, we handle it.
-
-        // Actually, the API route logic was: if (!session.user) -> Check Guest.
-        // If we are calling this function, we might have a logged in user OR we might want to fetch guest data.
-
-        // Let's rely on finding the social account first.
 
         // A. Try to find authenticated user's social account
         socialAccount = await prisma.socialAccount.findFirst({
@@ -44,26 +31,7 @@ export async function getLatestResearch(
             orderBy: { createdAt: "desc" },
         });
 
-        // B. If not found, AND if this user might be a guest fallback (or if we explicitly want guest data)
-        // The original logic was: IF NO SESSION USER -> Guest.
-        // If we strictly follow that: caller should pass a flag or we check env here.
-
-        // To keep it simple and consistent with the route:
-        // If no social account found for this user, we return 404.
-        // The "Guest" logic relied on `!session.user`. 
-        // Callers of this service should handle the "Guest Mock User" lookup themselves?
-        // Or we can encapsulate it here: "If userId is missing, try guest".
-
-        // Let's support an optional `useGuestFallback` param or just handle the guest lookup 
-        // IF the passed userId is the Guest User ID.
-        // But the guest user ID comes from the DB lookup of GUEST_EMAIL.
-
-        // Better approach: The caller handles deciding WHICH userId to query. 
-        // If the caller wants guest data, they resolve the Guest User's ID and pass it here.
-        // BUT, looking at the API route, there are slight differences (isGuest flag).
-
-        // Refined Logic:
-        // 1. Fetch Social Account for User
+       // 1. Fetch Social Account for User
         if (!socialAccount) {
             return {
                 success: false,

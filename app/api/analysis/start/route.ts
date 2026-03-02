@@ -8,6 +8,9 @@ import { getActiveSubscription, getWalletBalances, calculateDeductionSplit } fro
 interface StartAnalysisRequest {
     reelCountTier?: 'LOW' | 'MEDIUM' | 'HIGH';
     competitorUsernames?: string[];
+    writingStyle?: string;
+    scriptLanguage?: string;
+    captionLanguage?: string;
 }
 
 // POST /api/analysis/start
@@ -30,7 +33,13 @@ export async function POST(request: NextRequest) {
 
         // Parse request body
         const body: StartAnalysisRequest = await request.json();
-        const { reelCountTier = 'MEDIUM', competitorUsernames = [] } = body;
+        const {
+            reelCountTier = 'MEDIUM',
+            competitorUsernames = [],
+            writingStyle = "let ai decide",
+            scriptLanguage = "English",
+            captionLanguage = "English"
+        } = body;
 
         // 2. Verify social account belongs to user
         const socialAccount = await prisma.socialAccount.findFirst({
@@ -107,37 +116,62 @@ export async function POST(request: NextRequest) {
 
         // Map Tier to Reel Count
         const reelCountMap = {
-            'LOW': 3,
-            'MEDIUM': 5,
-            'HIGH': 10
+            'LOW': 30,
+            'MEDIUM': 6,
+            'HIGH': 90
         };
-        const noOfReelsToScrape = reelCountMap[reelCountTier] || 3;
+        const noOfReelsToScrape = reelCountMap[reelCountTier] || 30;
 
         // 7. Call n8n research webhook
-        const n8nUrl = process.env.N8N_WEBHOOK_URL!;
+        // Determine which Webhook URL to use
+        // If user wants competitors AND is eligible -> Use "Competitor" analysis webhook
+        // Else -> Use "Basic/No-Competitor" analysis webhook
+        const isCompetitorAnalysis = competitorUsernames.length > 0 && plan.competitorAnalysisAccess;
+
+        const n8nUrl = isCompetitorAnalysis
+            ? process.env.N8N_WEBHOOK_URL!
+            : process.env.N8N_WEBHOOK_URL_BASIC!; // Please ensure this ENV var is set
+
+        if (!n8nUrl) {
+            console.error("Missing N8N Webhook URL configuration");
+            return NextResponse.json(
+                { error: "Configuration error. Please contact support." },
+                { status: 500 }
+            );
+        }
+
         const n8nApiKey = process.env.N8N_API_KEY;
         const apifyKey = process.env.APIFY_API_KEY;
 
+        // Determine Model based on Plan
+        // Silver -> gemini-2.0-flash-001
+        // Gold/Platinum -> gemini-2.0-pro-exp-02-05 (using the user's requested string: google/gemini-3-pro-preview for now if that's what they meant, but checking the prompt "google/gemini-3-pro-preview". I'll use exactly what they asked.)
+        const planNameNormalized = plan.name.toLowerCase();
+
+        const analysisModel = planNameNormalized.includes('silver')
+            ? "google/gemini-2.0-flash-001"
+            : "google/gemini-3-pro-preview";
+
         const n8nPayload = {
-            creator_niche: "AI & Tech", // TODO: Get from user preferences
-            sub_niche: "AI",
-            language_of_script: "English",
-            language_of_text: "English",
-            writing_style: "Let the Data/trend decide",
-            location: "India",
+            creator_niche: user.niche,
+            sub_niche: user.subNiche,
+            language_of_script: scriptLanguage,
+            language_of_text: captionLanguage,
+            writing_style: writingStyle,
+            location: "India", // TODO: Add location to User profile
             noOfReelsToScrape: noOfReelsToScrape,
             reelsTill_Filter: 14,
             minLikesReel_Filter: 0,
-            competitorListUsernames: competitorUsernames.join(','),
-            reels_per_competitor: 1,
+            competitorListUsernames: isCompetitorAnalysis ? competitorUsernames : [],
+            reels_per_competitor: isCompetitorAnalysis ? 1 : 0,
             is_user_specific: true,
-            client_username: "aiwithbhushan",
-            user_reels_to_scrape: 1,
-            use_apify_transcript: true,
+            client_username: socialAccount.username,
+            user_reels_to_scrape: 1, 
+            use_apify_transcript: false,
             socialAccountId: socialAccountId,
             apify_key: apifyKey,
             callBackUrl: "https://trendsta.in",
-            analysis_model_openrouter: "google/gemini-2.0-flash-001",
+            analysis_model_openrouter: analysisModel,
         };
 
         let externalJobId: string;

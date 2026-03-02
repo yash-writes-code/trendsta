@@ -219,9 +219,8 @@ function Navbar() {
 
             <div className="mt-8 pt-6 border-t border-black/10 flex flex-col sm:flex-row gap-3">
               <a
-                href="/onboarding"
-                className="w-full text-center px-6 py-3 bg-white text-gray-900 text-sm font-semibold rounded-xl hover:bg-slate-200 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                href="/signup"
+                className="block w-full text-center px-6 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-sm font-semibold rounded-xl"
               >
                 Get Started
               </a>
@@ -306,8 +305,8 @@ function Hero() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto relative z-20">
             <a
-              href="/onboarding"
-              className="w-full sm:w-auto px-8 py-3.5 bg-white text-gray-900 border border-transparent text-sm font-bold tracking-wider uppercase transition-all hover:bg-gray-200 hover:-translate-y-0.5 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+              href="/signup"
+              className="w-full sm:w-auto px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold rounded-full hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] transition-all hover:scale-105 active:scale-95 text-base md:text-lg flex justify-center"
             >
               Get Started
             </a>

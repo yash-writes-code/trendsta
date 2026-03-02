@@ -18,6 +18,7 @@ import { useSocialAccount } from "@/hooks/useSocialAccount";
 import { useAnalysis } from "@/app/context/AnalysisContext";
 import { useSession } from "@/lib/auth-client";
 import { transformNicheResearch, transformUserResearch, buildResearchSummary } from "@/lib/transformers";
+import GuestIndicator from "../components/GuestIndicator";
 
 // Filter Button - Compact
 function FilterButton({ active, children, onClick }: { active: boolean; children: React.ReactNode; onClick: () => void }) {
@@ -196,6 +197,8 @@ export default function TopReelsClient() {
                             </button>
                         </div>
                     </div>
+
+                    <GuestIndicator />
 
                     {/* Content Area */}
                     {viewMode === 'reels' ? (

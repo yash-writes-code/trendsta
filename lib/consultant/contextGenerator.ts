@@ -48,7 +48,11 @@ export function generateNicheContext(data: RawNicheResearch): string {
 export function generateTwitterContext(data: RawTwitterResearch): string {
     if (!data) return '';
 
-    let {twitterLatest_research_context} = data;
+    let {twitterLatest_research_context} = data.latest;
+    let {twitterTop_research_context} = data.top;
 
+    if(twitterTop_research_context){
+        return twitterLatest_research_context?.concat(twitterTop_research_context) || "";
+    }
     return twitterLatest_research_context || "";
 }

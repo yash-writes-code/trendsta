@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Sparkles, Loader2 } from "lucide-react";
-import { useAnalysisStatus } from "@/hooks/useAnalysisStatus";
+import { useAnalysis } from "@/app/context/AnalysisContext";
 import AnalysisConfirm from "./AnalysisConfirm";
 
 interface NoResearchStateProps {
@@ -12,7 +12,7 @@ interface NoResearchStateProps {
 
 export default function NoResearchState({ onAnalyse }: NoResearchStateProps) {
     const router = useRouter();
-    const { isAnalyzing, mutate } = useAnalysisStatus();
+    const { isAnalysing, startAnalysis } = useAnalysis();
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [isStarting, setIsStarting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -21,16 +21,7 @@ export default function NoResearchState({ onAnalyse }: NoResearchStateProps) {
         setIsStarting(true);
         setError(null);
         try {
-            const res = await fetch("/api/analysis/start", {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const resData = await res.json();
-
-            if (!res.ok) throw new Error(resData.error || "Failed to start analysis");
-
-            mutate(); // Refresh status immediately
+            await startAnalysis(data);
             setIsConfirmOpen(false);
         } catch (error) {
             console.error(error);
@@ -45,7 +36,7 @@ export default function NoResearchState({ onAnalyse }: NoResearchStateProps) {
             onAnalyse();
         } else {
             // Default behavior: Check if analyzing first
-            if (isAnalyzing) {
+            if (isAnalysing) {
                 // Already analyzing, maybe show toast or just let the UI handle it
 
             } else {
@@ -58,7 +49,7 @@ export default function NoResearchState({ onAnalyse }: NoResearchStateProps) {
         <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center max-w-md px-4">
                 <div className="mb-6">
-                    {isAnalyzing ? (
+                    {isAnalysing ? (
                         <div className="w-16 h-16 mx-auto bg-purple-100 rounded-full flex items-center justify-center animate-pulse">
                             <Loader2 className="w-8 h-8 text-purple-600 animate-spin" />
                         </div>
@@ -68,16 +59,16 @@ export default function NoResearchState({ onAnalyse }: NoResearchStateProps) {
                 </div>
 
                 <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">
-                    {isAnalyzing ? "Analysis in Progress" : "No Research Yet"}
+                    {isAnalysing ? "Analysis in Progress" : "No Research Yet"}
                 </h2>
                 <p className="text-slate-600 mb-8 leading-relaxed">
-                    {isAnalyzing
+                    {isAnalysing
                         ? "We are currently analyzing your content. This may take a few minutes. You'll be notified when it's done."
                         : "Run your first analysis to unlock personalized insights, competitor research, and viral script ideas tailored to your content."
                     }
                 </p>
 
-                {!isAnalyzing && (
+                {!isAnalysing && (
                     <button
                         onClick={handleClick}
                         className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30 flex items-center gap-2 mx-auto"
@@ -87,7 +78,7 @@ export default function NoResearchState({ onAnalyse }: NoResearchStateProps) {
                     </button>
                 )}
 
-                {isAnalyzing && (
+                {isAnalysing && (
                     <div className="flex items-center justify-center gap-2 text-sm text-purple-600 font-medium">
                         <Loader2 className="w-4 h-4 animate-spin" />
                         Processing...

@@ -11,6 +11,7 @@ import { ScriptIdeasLink, QuickActions } from "./components/DashboardCards";
 import { useSidebar } from "../context/SidebarContext";
 import { TrendstaData } from "../types/trendsta";
 import { Calendar, Loader2 } from "lucide-react";
+import GuestIndicator from "../components/GuestIndicator";
 
 // Hooks & Transformers
 import { buildResearchSummary, transformScriptSuggestion } from "../../lib/transformers";
@@ -283,19 +284,9 @@ export default function DashboardClient() {
                             </h1>
                             <p className="text-theme-secondary mt-1">Analysis based on research from {formattedDate}</p>
                         </div>
-
-                        {/* Guest Banner */}
-                        {isGuest && (
-                            <div className="flex items-center gap-4 neu-pressed px-4 py-2 rounded-xl">
-                                <div className="text-indigo-600 text-sm font-medium">
-                                    Viewing as Guest Mode
-                                </div>
-                                <a href="/signin" className="neu-btn-primary text-xs">
-                                    Log In to Save
-                                </a>
-                            </div>
-                        )}
                     </div>
+
+                    <GuestIndicator />
 
                     {/* Key Metrics Row */}
                     <KeyMetricsRow data={metricsData} />

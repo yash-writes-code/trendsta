@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { TrendingUp, Menu, User, LogOut, Home, Play, Users, FileText, Hash, Sparkles, Settings } from "lucide-react";
+import { TrendingUp, Menu, User, LogOut, Home, Play, Users, FileText, Hash, Sparkles, Settings, CreditCard } from "lucide-react";
 import Image from "next/image";
 import { useSession, authClient } from "@/lib/auth-client";
 import { useRouter, usePathname } from "next/navigation";
@@ -15,6 +15,7 @@ const navItems = [
     { href: "/script-ideas", label: "Script Ideas", icon: FileText },
     { href: "/twitter-insights", label: "Twitter Insights", icon: Hash },
     { href: "/ai-consultant", label: "AI Consultant", icon: Sparkles },
+    { href: "/subscription", label: "Subscription", icon: CreditCard },
     { href: "/account", label: "Account", icon: Settings },
 ];
 
