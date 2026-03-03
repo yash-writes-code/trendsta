@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
         // Initialize debug logger
         const debug = new DebugLogger(chatSession.chatId, userMessage);
 
-        console.log(`\n🚀 [Chat API] Starting request for conversation: ${chatSession.chatId}`);
+        //console.log(`\n🚀 [Chat API] Starting request for conversation: ${chatSession.chatId}`);
 
         // 4. Fetch dynamic context from DB
         const { getLatestResearch } = await import('@/lib/research/service');
@@ -160,11 +160,11 @@ export async function POST(request: NextRequest) {
             if (r.userResearch) {
                 if (r.userResearch.user_research_context) {
                     allContexts.user = r.userResearch.user_research_context;
-                    console.log(`[Chat API] Loaded DYNAMIC User Context (Stored) (${allContexts.user.length} chars)`);
+                    //console.log(`[Chat API] Loaded DYNAMIC User Context (Stored) (${allContexts.user.length} chars)`);
                 } else {
                     const { generateUserContext } = await import('@/lib/consultant/contextGenerator');
                     allContexts.user = generateUserContext(r.userResearch);
-                    console.log(`[Chat API] Generated DYNAMIC User Context (${allContexts.user.length} chars)`);
+                    //console.log(`[Chat API] Generated DYNAMIC User Context (${allContexts.user.length} chars)`);
                 }
             } else {
                 console.log('[Chat API] No dynamic user_context found, using static default');
@@ -174,11 +174,11 @@ export async function POST(request: NextRequest) {
             if (r.competitorResearch) {
                 if (r.competitorResearch.competitor_research_context) {
                     allContexts.competitor = r.competitorResearch.competitor_research_context;
-                    console.log(`[Chat API] Loaded DYNAMIC Competitor Context (Stored) (${allContexts.competitor.length} chars)`);
+                    //console.log(`[Chat API] Loaded DYNAMIC Competitor Context (Stored) (${allContexts.competitor.length} chars)`);
                 } else {
                     const { generateCompetitorContext } = await import('@/lib/consultant/contextGenerator');
                     allContexts.competitor = generateCompetitorContext(r.competitorResearch);
-                    console.log(`[Chat API] Generated DYNAMIC Competitor Context (${allContexts.competitor.length} chars)`);
+                    //console.log(`[Chat API] Generated DYNAMIC Competitor Context (${allContexts.competitor.length} chars)`);
                 }
             }
 
@@ -186,11 +186,11 @@ export async function POST(request: NextRequest) {
             if (r.nicheResearch) {
                 if (r.nicheResearch.niche_research_context) {
                     allContexts.niche = r.nicheResearch.niche_research_context;
-                    console.log(`[Chat API] Loaded DYNAMIC Niche Context (Stored) (${allContexts.niche.length} chars)`);
+                    //console.log(`[Chat API] Loaded DYNAMIC Niche Context (Stored) (${allContexts.niche.length} chars)`);
                 } else {
                     const { generateNicheContext } = await import('@/lib/consultant/contextGenerator');
                     allContexts.niche = generateNicheContext(r.nicheResearch);
-                    console.log(`[Chat API] Generated DYNAMIC Niche Context (${allContexts.niche.length} chars)`);
+                    //console.log(`[Chat API] Generated DYNAMIC Niche Context (${allContexts.niche.length} chars)`);
                 }
             }
 
@@ -201,11 +201,11 @@ export async function POST(request: NextRequest) {
 
                 if (latestCtx || topCtx) {
                     allContexts.twitter = [latestCtx, topCtx].filter(Boolean).join('\n\n');
-                    console.log(`[Chat API] Loaded DYNAMIC Twitter Context (Stored) (${allContexts.twitter.length} chars)`);
+                    //console.log(`[Chat API] Loaded DYNAMIC Twitter Context (Stored) (${allContexts.twitter.length} chars)`);
                 } else {
                     const { generateTwitterContext } = await import('@/lib/consultant/contextGenerator');
                     allContexts.twitter = generateTwitterContext(r.twitterResearch);
-                    console.log(`[Chat API] Generated DYNAMIC Twitter Context (${allContexts.twitter.length} chars)`);
+                    //console.log(`[Chat API] Generated DYNAMIC Twitter Context (${allContexts.twitter.length} chars)`);
                 }
             }
         } else {

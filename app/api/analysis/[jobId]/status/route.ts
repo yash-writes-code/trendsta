@@ -98,7 +98,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
                             where: { referenceId: job!.id, status: "HELD" },
                         });
 
-                        console.log("Found held txns", heldTransactions);
+                        //console.log("Found held txns", heldTransactions);
 
                         // 2. Calculate refunds per bucket
                         let monthlyRefund = 0;
@@ -162,9 +162,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
                 });
 
                 if (latestResearch) {
-                    console.log(`[Auto-Complete] Job ${job.id} found research. Completing.`);
+                    //console.log(`[Auto-Complete] Job ${job.id} found research. Completing.`);
                     console.log("reserach job was found, and it was---------");
-                    console.log(latestResearch);
+                    //console.log(latestResearch);
 
                     // Update DB state
                     job = await prisma.analysisJob.update({

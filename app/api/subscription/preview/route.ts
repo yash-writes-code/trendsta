@@ -97,12 +97,12 @@ export async function POST(req: Request) {
         // Call Dodo preview API
         let preview;
         try {
-            console.log('[Subscription Preview] Calling Dodo API:', {
-                subscriptionId: currentSubscription.providerSubscriptionId,
-                targetProductId,
-                currentPlan: currentSubscription.plan.name,
-                targetPlan: targetPaymentProduct.plan.name,
-            });
+            // console.log('[Subscription Preview] Calling Dodo API:', {
+            //     subscriptionId: currentSubscription.providerSubscriptionId,
+            //     targetProductId,
+            //     currentPlan: currentSubscription.plan.name,
+            //     targetPlan: targetPaymentProduct.plan.name,
+            // });
 
             preview = await dodoPayments.subscriptions.previewChangePlan(
                 currentSubscription.providerSubscriptionId,

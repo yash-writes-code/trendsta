@@ -102,8 +102,8 @@ export async function POST(req: Request) {
                 throw error;
             }
 
-            console.log('[Subscription Change] Dodo response:', changePlanResult);
-
+            // console.log('[Subscription Change] Dodo response:', changePlanResult);
+           
             // Check if payment URL exists (requires user action)
             const requiresPayment = (changePlanResult as any).payment_url ||
                 (changePlanResult as any).hosted_invoice_url ||

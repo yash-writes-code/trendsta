@@ -32,7 +32,7 @@ export async function GET() {
             console.warn(`${LOG} unauthorized — no session`);
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        console.log(`${LOG} authenticated userId=${session.user.id} email=${session.user.email}`);
+        //console.log(`${LOG} authenticated userId=${session.user.id} email=${session.user.email}`);
 
         let user = await prisma.user.findUnique({
             where: { id: session.user.id },
@@ -66,7 +66,7 @@ export async function GET() {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        console.log(`${LOG} DB user: referralCode=${user.referralCode ?? "(none)"}, commissions=${user.commissions.length}`);
+        //console.log(`${LOG} DB user: referralCode=${user.referralCode ?? "(none)"}, commissions=${user.commissions.length}`);
 
         // Lazily generate referral code if missing
         if (!user.referralCode) {

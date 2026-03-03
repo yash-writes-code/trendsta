@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     }
 
     // 3. Safe to proceed (You have session.user)
-    console.log("User ID:", session.user);
+    //console.log("User ID:", session.user);
 
     return NextResponse.json({ success: true });
 

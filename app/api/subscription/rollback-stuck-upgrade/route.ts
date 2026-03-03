@@ -62,11 +62,11 @@ export async function POST(req: Request) {
             );
         }
 
-        console.log('[Rollback] Rolling back subscription:', {
-            from: currentSubscription.plan.name,
-            to: targetPlan.name,
-            userId: session.user.id,
-        });
+        // console.log('[Rollback] Rolling back subscription:', {
+        //     from: currentSubscription.plan.name,
+        //     to: targetPlan.name,
+        //     userId: session.user.id,
+        // });
 
         // Update subscription to target plan
         await prisma.subscription.update({
@@ -88,10 +88,10 @@ export async function POST(req: Request) {
                 },
             });
 
-            console.log('[Rollback] Adjusted wallet:', {
-                removed: stellaDifference,
-                reason: 'Rollback from incomplete upgrade',
-            });
+            // console.log('[Rollback] Adjusted wallet:', {
+            //     removed: stellaDifference,
+            //     reason: 'Rollback from incomplete upgrade',
+            // });
         }
 
         return NextResponse.json({

@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
             console.warn(`${LOG} unauthorized — no session`);
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
-        console.log(`${LOG} authenticated userId=${session.user.id} email=${session.user.email}`);
+        //console.log(`${LOG} authenticated userId=${session.user.id} email=${session.user.email}`);
 
         const body = await req.json();
         const { ref } = body;
