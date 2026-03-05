@@ -63,8 +63,19 @@ export const auth = betterAuth({
     database: prismaAdapter(prismaWithAutoId as typeof prisma, {
         provider: "postgresql",
     }),
+    rateLimit: {
+        window: 60, // Base window in seconds (1 minute)
+        max: 100, // Global max requests per window
+        customRules: {
+            "/forgot-password": {
+                window: 3600, // 1 hour window
+                max: 1, // Max 3 requests per hour
+            },
+        },
+    },
     emailAndPassword: {
         enabled: true,
+        resetPasswordTokenExpiresIn: 1800, // 30 minutes in seconds
         sendResetPassword: async ({ user, url, token }, request) => {
             // Send the actual reset email via Resend
             await sendPasswordResetEmail(user.email, url);
