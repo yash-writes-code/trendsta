@@ -3,7 +3,7 @@ import { ImageResponse } from "next/og";
 export const runtime = "edge";
 
 export async function GET() {
-  const base = "http://localhost:3000";
+  const base = "https://www.trendsta.in";
 
   return new ImageResponse(
     (
