@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
+import { Inter, Space_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { SidebarProvider } from "./context/SidebarContext";
@@ -52,18 +52,6 @@ images: ["/og"],
 }
 };
 
-const plusJakartaSans = Plus_Jakarta_Sans({ 
-  subsets: ["latin"],
-  variable: "--font-body",
-});
-
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  variable: "--font-display",
-});
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -89,7 +77,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${plusJakartaSans.variable} ${instrumentSerif.variable} antialiased`}>
+      <body className="antialiased">
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
