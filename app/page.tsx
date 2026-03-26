@@ -154,7 +154,7 @@ function Navbar() {
           </ul>
 
           <div className="flex items-center gap-3">
-            <a href="https://www.trendsta.in/login" className="hidden sm:inline-flex px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-[16px] hover:bg-gray-50 transition-all shadow-sm">Log in</a>
+            <a href="https://www.trendsta.in/signin" className="hidden sm:inline-flex px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-[16px] hover:bg-gray-50 transition-all shadow-sm">Log in</a>
             <a href="https://www.trendsta.in/signup" className="px-6 py-3 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-[16px] hover:scale-105 hover:shadow-[0_8px_24px_-6px_rgba(255,89,0,0.5)] transition-all">Get started</a>
           </div>
 
@@ -216,21 +216,13 @@ function Navbar() {
 
 function Hero() {
   return (
-    <section className="hero relative pt-32 pb-0 md:pt-40 lg:pt-48 overflow-hidden bg-cream flex flex-col items-center justify-center text-center z-10 w-full border-b border-black/5">
+    <section className="hero relative pb-0 overflow-hidden bg-cream flex flex-col text-center z-10 w-full border-b border-black/5">
       {/* Floating gradient blobs like Patreon */}
       <div className="hero-blob blob-1"></div>
       <div className="hero-blob blob-2"></div>
 
       {/* Content Container */}
       <div className="relative max-w-4xl mx-auto px-4 z-20 flex flex-col items-center">
-        {/* Eyebrow */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 text-sm font-medium mb-10 shadow-sm"
-        >
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white shadow-sm"></span>
-          Trusted by 10,000+ creators
-        </motion.div>
 
         {/* Headline */}
         <motion.h1
@@ -1002,7 +994,7 @@ function InteractiveFeatureTree() {
           viewport={{ once: true }}
           className="flex flex-col items-center text-center px-4 mb-16 md:mb-24"
         >
-          <div className="section-tag mx-auto mb-6 text-sm md:text-base">⚡ Everything you need</div>
+
           <h2 className="text-6xl md:text-8xl lg:text-[110px] leading-[0.95] font-display font-normal text-ink tracking-[-0.03em] mb-8">
             Built for creators<br />
             who want to <em className="italic text-transparent bg-clip-text bg-[linear-gradient(135deg,#FF5C1A_0%,#FF8C00_60%,#FFB800_100%)]">win.</em>
@@ -1038,8 +1030,8 @@ function InteractiveFeatureTree() {
                     key={`mobile-tab-${node.id}`}
                     onClick={() => setActiveMobileTab(node.id)}
                     className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl border transition-all text-sm font-bold font-sans shadow-sm ${isActive
-                        ? 'bg-white border-orange-400 text-orange-600'
-                        : 'bg-cream border-border-patreon text-gray-500 hover:border-orange-300'
+                      ? 'bg-white border-orange-400 text-orange-600'
+                      : 'bg-cream border-border-patreon text-gray-500 hover:border-orange-300'
                       }`}
                   >
                     <span className="text-lg">{node.icon}</span>
@@ -1528,14 +1520,7 @@ function FAQSection() {
 
         {/* Header Block */}
         <div className="mb-16 md:mb-24 text-center flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#ff5900]/10 border border-[#ff5900]/20 text-[#ff5900] text-xs font-semibold tracking-wide mb-6 font-sans">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 text-[#ff5900]">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-              <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg>
-            Got questions?
-          </div>
+      
           <h2 className="text-5xl md:text-7xl lg:text-[90px] leading-[0.95] font-display font-normal text-ink tracking-[-0.03em]">
             Frequently asked<br />
             <span className="text-[#ff5900] italic">questions.</span>
@@ -1605,7 +1590,7 @@ function Footer() {
             <a href="#features" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Features</a>
             <a href="#how" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">How it works</a>
             <a href="https://www.trendsta.in/dashboard" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Demo</a>
-            <a href="#" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Pricing</a>
+            <a href="https://www.trendsta.in/pricing" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Pricing</a>
           </div>
 
           {/* Contact + copyright */}
@@ -1635,7 +1620,7 @@ function CTASection() {
         </h2>
 
         <p className="text-[#a1a1aa] text-lg md:text-xl font-medium mb-12 max-w-lg leading-relaxed font-sans">
-          Join 10,000+ creators who know what goes viral before they hit publish.
+          Join 1000+ creators who know what goes viral before they hit publish.
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
@@ -1655,9 +1640,9 @@ function CTASection() {
 
 function StatsStrip() {
   const stats = [
-    { value: "10K+", label: "Creators growing with Trendsta" },
-    { value: "95%", label: "Average engagement boost in 30 days" },
-    { value: "2M+", label: "Viral scripts generated" }
+    { value: "1K+", label: "Creators growing with Trendsta" },
+    { value: "83%", label: "Average engagement boost in 30 days" },
+    { value: "700+", label: "Viral scripts generated" }
   ];
 
   return (
