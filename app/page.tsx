@@ -158,10 +158,8 @@ function Navbar() {
             <a href="https://www.trendsta.in/signup" className="px-6 py-3 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-[16px] hover:scale-105 hover:shadow-[0_8px_24px_-6px_rgba(255,89,0,0.5)] transition-all">Get started</a>
           </div>
 
-          <button className="nav-mobile-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Menu">
-            <span style={{ transform: isMobileMenuOpen ? "rotate(45deg) translateY(4px)" : "none" }}></span>
-            <span style={{ opacity: isMobileMenuOpen ? 0 : 1 }}></span>
-            <span style={{ transform: isMobileMenuOpen ? "rotate(-45deg) translateY(-4px)" : "none" }}></span>
+          <button className="nav-mobile-toggle flex items-center justify-center p-2 text-ink" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Menu">
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </nav>
@@ -174,7 +172,7 @@ function Navbar() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.98 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-24 left-1/2 -translate-x-1/2 w-[min(340px,90vw)] bg-[#F5F3EE]/95 backdrop-blur-2xl z-40 border border-[#E4E2DC] rounded-2xl shadow-2xl p-5"
+            className="fixed top-24 left-1/2 -translate-x-1/2 w-[min(340px,90vw)] bg-cream/95 backdrop-blur-2xl z-40 border border-border-patreon rounded-2xl shadow-2xl p-5"
           >
             <div className="flex flex-col gap-1 mb-4">
               {[
@@ -186,24 +184,24 @@ function Navbar() {
                   key={href}
                   href={href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center px-4 py-3 rounded-xl text-[#1A1A1A] font-semibold text-sm hover:bg-black/5 transition-colors"
+                  className="flex items-center px-4 py-3 rounded-xl text-ink font-semibold text-sm hover:bg-black/5 transition-colors"
                 >
                   {label}
                 </a>
               ))}
             </div>
-            <div className="flex flex-col gap-2 pt-4 border-t border-[#E4E2DC]">
+            <div className="flex flex-col gap-2 pt-4 border-t border-border-patreon">
               <a
                 href="https://www.trendsta.in/signup"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="btn btn-primary btn-orange w-full"
+                className="flex items-center justify-center w-full px-6 py-3 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-sm shadow-sm hover:shadow-md hover:scale-[1.02] transition-all"
               >
                 Get Started
               </a>
               <a
                 href="https://www.trendsta.in/dashboard"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="btn btn-ghost w-full"
+                className="flex items-center justify-center w-full px-6 py-3 rounded-full border border-black/10 text-ink font-bold text-sm hover:bg-black/5 transition-colors"
               >
                 View Demo
               </a>
@@ -226,7 +224,7 @@ function Hero() {
       {/* Content Container */}
       <div className="relative max-w-4xl mx-auto px-4 z-20 flex flex-col items-center">
         {/* Eyebrow */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.5, ease: "easeOut" }}
           className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-gray-200 text-gray-600 text-sm font-medium mb-10 shadow-sm"
         >
@@ -235,15 +233,15 @@ function Hero() {
         </motion.div>
 
         {/* Headline */}
-        <motion.h1 
+        <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
           className="text-6xl md:text-8xl lg:text-[110px] leading-[0.9] font-display font-normal text-gray-900 tracking-[-0.04em] mb-6"
         >
-          Know what goes <span className="text-[#ff5900] italic pr-1">viral</span><br/>before it does.
+          Know what goes <span className="text-[#ff5900] italic pr-1">viral</span><br />before it does.
         </motion.h1>
 
         {/* Subheadline */}
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
           className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed mb-10 font-medium tracking-tight"
         >
@@ -251,7 +249,7 @@ function Hero() {
         </motion.p>
 
         {/* CTAs */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4 w-full sm:w-auto z-20"
         >
@@ -264,7 +262,7 @@ function Hero() {
         </motion.div>
 
         {/* Hint */}
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.4 }}
           className="text-xs text-gray-400 font-medium mb-8"
         >
@@ -273,7 +271,7 @@ function Hero() {
 
 
         {/* Social Proof Row */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }}
           className="flex flex-wrap justify-center items-center gap-4 text-sm font-medium"
         >
@@ -292,10 +290,11 @@ function Hero() {
       </div>
 
       {/* Hero Product Preview (Peek) */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}
         className="hero-preview mt-12 mb-[-160px] md:mb-[-220px] lg:mb-[-280px] z-20"
       >
+        {/* Browser chrome */}
         <div className="preview-topbar">
           <div className="preview-dots">
             <div className="preview-dot"></div>
@@ -304,6 +303,7 @@ function Hero() {
           </div>
           <div className="preview-url">trendsta.in/dashboard</div>
         </div>
+        {/* Sidebar + Main */}
         <div className="preview-body text-left">
           <div className="preview-sidebar">
             <div className="preview-sidebar-title">Menu</div>
@@ -314,44 +314,95 @@ function Hero() {
             <div className="sidebar-item">Instagram Insights</div>
             <div className="sidebar-item">Twitter Insights</div>
           </div>
-          <div className="preview-main">
-            <div className="preview-main-header">
-              <span className="preview-main-title">Live Analytics Dashboard</span>
-              <span className="preview-live-badge"><span className="preview-live-dot"></span> LIVE</span>
+          <div className="preview-main bg-[#fafafa] flex flex-col gap-4">
+            <div>
+              <h3 className="text-base font-bold text-gray-900 mb-0.5">Analytics Dashboard</h3>
+              <p className="text-[10px] text-gray-500">Analysis based on research from Saturday, Jan 31, 2026</p>
             </div>
-            <div className="metric-grid">
-              <div className="metric-card">
-                <div className="metric-card-label">Best Post Time</div>
-                <div className="metric-card-val orange">10:00 AM</div>
-                <div className="metric-card-sub">High engagement window</div>
+            {/* 4 KPI cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {[
+                { label: "Best Time", value: "10:00 AM", sub: "High Engagement", bar: "bg-orange-500", txt: "text-orange-500" },
+                { label: "Target Pace", value: "190–200 WPM", sub: "High Energy", bar: "bg-amber-400", txt: "text-amber-500" },
+                { label: "Viral Trigger", value: "Hidden Enemy", sub: "VS Competitor", bar: "bg-gray-400", txt: "text-gray-600" },
+                { label: "Content Gap", value: "AI Ethics", sub: "Dark Side angle", bar: "bg-gray-900", txt: "text-gray-900" },
+              ].map((s, i) => (
+                <div key={i} className="bg-white rounded-xl p-3 border border-black/8 relative overflow-hidden">
+                  <div className={`absolute top-0 left-0 w-1 h-full ${s.bar}`} />
+                  <p className={`text-[9px] font-bold uppercase tracking-wider mb-1 ${s.txt}`}>{s.label}</p>
+                  <p className="text-sm font-bold text-gray-900 leading-tight">{s.value}</p>
+                  <p className="text-[9px] text-gray-400 mt-1">{s.sub}</p>
+                </div>
+              ))}
+            </div>
+            {/* Viral Sweet Spot + Hook Leaderboard */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white rounded-xl p-3 border border-black/8">
+                <h4 className="text-[10px] font-bold text-gray-900 uppercase tracking-wider mb-0.5">Viral Sweet Spot</h4>
+                <p className="text-[9px] text-gray-500 mb-2">You need to be faster and longer than the niche average.</p>
+                {/* Grouped bar chart — Duration + Pace */}
+                <div className="flex gap-3">
+                  {/* Duration group */}
+                  <div className="flex-1">
+                    <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-1">Duration (sec)</p>
+                    <div className="flex items-end gap-1.5 h-10 border-b border-black/8 pb-0.5">
+                      {[{ h: 28, c: "bg-orange-500", l: "You" }, { h: 20, c: "bg-gray-300", l: "Comp" }, { h: 16, c: "bg-gray-200", l: "Avg" }].map((b, i) => (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                          <div className={`w-full rounded-t-sm ${b.c}`} style={{ height: b.h }} />
+                          <span className="text-[7px] text-gray-400 leading-none">{b.l}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Pace group */}
+                  <div className="flex-1">
+                    <p className="text-[8px] text-gray-400 uppercase tracking-wider font-bold mb-1">Pace (WPM)</p>
+                    <div className="flex items-end gap-1.5 h-10 border-b border-black/8 pb-0.5">
+                      {[{ h: 12, c: "bg-orange-500", l: "You" }, { h: 34, c: "bg-gray-300", l: "Comp" }, { h: 20, c: "bg-gray-200", l: "Avg" }].map((b, i) => (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-0.5">
+                          <div className={`w-full rounded-t-sm ${b.c}`} style={{ height: b.h }} />
+                          <span className="text-[7px] text-gray-400 leading-none">{b.l}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {/* Legend */}
+                <div className="flex items-center gap-2.5 mt-1.5">
+                  <span className="flex items-center gap-1 text-[7px] text-gray-500"><span className="w-2 h-2 rounded-sm bg-orange-500 inline-block" />You</span>
+                  <span className="flex items-center gap-1 text-[7px] text-gray-500"><span className="w-2 h-2 rounded-sm bg-gray-300 inline-block" />Competitor</span>
+                  <span className="flex items-center gap-1 text-[7px] text-gray-500"><span className="w-2 h-2 rounded-sm bg-gray-200 inline-block border border-gray-300" />Avg</span>
+                </div>
               </div>
-              <div className="metric-card">
-                <div className="metric-card-label">Target Pace</div>
-                <div className="metric-card-val green">194 WPM</div>
-                <div className="metric-card-sub">Viral sweet spot</div>
-              </div>
-              <div className="metric-card">
-                <div className="metric-card-label">Content Gap</div>
-                <div className="metric-card-val" style={{fontSize:"16px", paddingTop:"3px"}}>AI Ethics</div>
-                <div className="metric-card-sub">Zero niche coverage</div>
+              <div className="bg-white rounded-xl p-3 border border-black/8">
+                <h4 className="text-[10px] font-bold text-gray-900 uppercase tracking-wider mb-2">Hook Leaderboard</h4>
+                <div className="flex flex-col gap-1.5">
+                  {[["Controversial Q", "98%", "bg-orange-500"], ["Direct Benefit", "75%", "bg-gray-300"], ["Tech Urgency", "60%", "bg-gray-200"]].map(([l, p, c], i) => (
+                    <div key={i} className="space-y-0.5">
+                      <div className="flex justify-between text-[8px] text-gray-700 font-medium"><span>{l}</span><span>{p}</span></div>
+                      <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden"><div className={`h-full ${c}`} style={{ width: p }} /></div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+            {/* Sparkline */}
             <div className="sparkline-row">
               <div className="sparkline-header">
                 <span className="sparkline-label">Engagement trend — past 7 days</span>
                 <span className="sparkline-badge">↑ +38% this week</span>
               </div>
-              <svg width="100%" height="56" viewBox="0 0 560 56" fill="none" preserveAspectRatio="none">
+              <svg width="100%" height="48" viewBox="0 0 560 56" fill="none" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#FF5C1A" stopOpacity=".25"/>
-                    <stop offset="100%" stopColor="#FF5C1A" stopOpacity="0"/>
+                    <stop offset="0%" stopColor="#FF5C1A" stopOpacity=".25" />
+                    <stop offset="100%" stopColor="#FF5C1A" stopOpacity="0" />
                   </linearGradient>
                 </defs>
-                <path d="M0 48 L80 44 L160 36 L240 38 L320 22 L400 14 L480 8 L560 4 L560 56 L0 56Z" fill="url(#sg)"/>
-                <path d="M0 48 L80 44 L160 36 L240 38 L320 22 L400 14 L480 8 L560 4" stroke="#FF5C1A" strokeWidth="2" fill="none" strokeLinecap="round"/>
-                <circle cx="480" cy="8" r="4" fill="#FF5C1A"/>
-                <circle cx="560" cy="4" r="4" fill="#FFB800"/>
+                <path d="M0 48 L80 44 L160 36 L240 38 L320 22 L400 14 L480 8 L560 4 L560 56 L0 56Z" fill="url(#sg)" />
+                <path d="M0 48 L80 44 L160 36 L240 38 L320 22 L400 14 L480 8 L560 4" stroke="#FF5C1A" strokeWidth="2" fill="none" strokeLinecap="round" />
+                <circle cx="480" cy="8" r="4" fill="#FF5C1A" />
+                <circle cx="560" cy="4" r="4" fill="#FFB800" />
               </svg>
             </div>
           </div>
@@ -557,68 +608,9 @@ function ServicePanel({
 // ------------ Dashboard Graphic with scroll-driven floaters ------------
 function DashboardGraphic() {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "center center"] });
-
-  // Floaters start spread outward and converge inward as user scrolls in
-  const leftX = useTransform(scrollYProgress, [0, 1], [-80, 0]);
-  const rightX = useTransform(scrollYProgress, [0, 1], [80, 0]);
-  const topY = useTransform(scrollYProgress, [0, 1], [-60, 0]);
-  const bottomY = useTransform(scrollYProgress, [0, 1], [60, 0]);
-  const floatOpacity = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
 
   return (
     <div ref={ref} className="relative">
-      {/* Floater TL — Best Time */}
-      <motion.div
-        style={{ x: leftX, y: topY, opacity: floatOpacity }}
-        className="absolute -top-10 -left-6 xl:-left-16 z-30 hidden md:flex w-44 bg-white rounded-2xl border border-black/10 shadow-xl p-3 flex-col gap-1.5"
-      >
-        <div className="flex items-center gap-2 text-[9px] font-bold text-orange-500 uppercase tracking-wider">
-          <Zap size={10} fill="currentColor" /> Best Time to Post
-        </div>
-        <p className="text-lg font-bold text-gray-900 leading-none">10:00 AM</p>
-        <p className="text-[9px] text-gray-400">High Engagement Window</p>
-      </motion.div>
-
-      {/* Floater TR — Viral Trigger */}
-      <motion.div
-        style={{ x: rightX, y: topY, opacity: floatOpacity }}
-        className="absolute -top-10 -right-6 xl:-right-16 z-30 hidden md:flex w-44 bg-white rounded-2xl border border-black/10 shadow-xl p-3 flex-col gap-1.5"
-      >
-        <div className="flex items-center gap-2 text-[9px] font-bold text-purple-500 uppercase tracking-wider">
-          <TrendingUp size={10} /> Viral Trigger
-        </div>
-        <p className="text-lg font-bold text-gray-900 leading-none">Hidden Enemy</p>
-        <p className="text-[9px] text-gray-400">VS Competitor angle</p>
-      </motion.div>
-
-      {/* Floater BL — Competitor Speed */}
-      <motion.div
-        style={{ x: leftX, y: bottomY, opacity: floatOpacity }}
-        className="absolute -bottom-10 -left-6 xl:-left-16 z-30 hidden md:flex w-48 bg-white rounded-2xl border border-black/10 shadow-xl p-3 flex-col gap-1.5"
-      >
-        <div className="flex items-center gap-2 text-[9px] font-bold text-sky-500 uppercase tracking-wider">
-          <BarChart3 size={10} /> Competitor Speed
-        </div>
-        <div className="flex items-center gap-2 mt-1">
-          {[70, 45, 90, 55, 80].map((h, i) => (
-            <div key={i} className={`flex-1 rounded-t-sm ${i === 2 ? "bg-orange-500" : "bg-gray-300"}`} style={{ height: `${h * 0.3}px` }} />
-          ))}
-        </div>
-        <p className="text-[9px] text-gray-400">You're 2× faster than avg</p>
-      </motion.div>
-
-      {/* Floater BR — Content Gap */}
-      <motion.div
-        style={{ x: rightX, y: bottomY, opacity: floatOpacity }}
-        className="absolute -bottom-10 -right-6 xl:-right-16 z-30 hidden md:flex w-44 bg-white rounded-2xl border border-black/10 shadow-xl p-3 flex-col gap-1.5"
-      >
-        <div className="flex items-center gap-2 text-[9px] font-bold text-green-600 uppercase tracking-wider">
-          <ChevronRight size={10} /> Content Gap
-        </div>
-        <p className="text-base font-bold text-gray-900 leading-tight">AI Ethics</p>
-        <p className="text-[9px] text-gray-400">Zero coverage in your niche</p>
-      </motion.div>
 
       {/* Main Dashboard Window */}
       <div className="relative z-20 rounded-2xl overflow-hidden shadow-2xl border border-black/10 bg-white">
@@ -635,7 +627,7 @@ function DashboardGraphic() {
             <h3 className="text-lg font-bold text-gray-900 mb-0.5">Analytics Dashboard</h3>
             <p className="text-[10px] text-gray-500">Analysis based on research from Saturday, Jan 31, 2026</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             {[
               { label: "Best Time", value: "10:00 AM", sub: "High Engagement", bar: "bg-orange-500", txt: "text-orange-500", accent: "border-orange-500/20" },
               { label: "Target Pace", value: "190-200 WPM", sub: "High Energy", bar: "bg-amber-400", txt: "text-amber-500", accent: "border-amber-400/20" },
@@ -882,67 +874,23 @@ function ScriptIdeas3DCards() {
 
 function AIChatUI() {
   return (
-    <div className="w-full flex flex-col gap-4">
-      {/* Mobile Graphic */}
-      <div className="md:hidden relative z-20 rounded-4xl overflow-hidden shadow-xl border border-white/5 bg-[#0a0a0a] flex flex-col items-center pt-10 px-6 pb-8 select-none scale-[0.8] origin-top">
-        <div className="mb-4">
-          <Image src="/T_logo.png" alt="Trendsta" width={44} height={44} className="object-contain" />
-        </div>
-        <div className="text-center mb-5">
-          <h3 className="text-base md:text-lg font-medium text-[#8F9BB3] font-sans tracking-tight leading-snug">
-            Your AI-powered content strategist.<br />Ask me anything about reels, trends, and growth.
-          </h3>
-        </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-full text-xs text-[#636C7A] mb-6 font-sans">
-          <BarChart3 size={12} className="text-indigo-400" />
-          <span>Results based on data from 06/02/2026.</span>
-        </div>
-        <div className="grid grid-cols-3 gap-3 w-full max-w-lg mb-5">
-          {[{ c: "#2D9CDB", Icon: TrendingUp, label: "Trending" }, { c: "#F2994A", Icon: Lightbulb, label: "Viral Ideas" }, { c: "#DE5EAC", Icon: Users, label: "Competitors" }, { c: "#27AE60", Icon: BarChart3, label: "Performance" }, { c: "#EB5757", Icon: Hash, label: "Hashtags" }, { c: "#9B51E0", Icon: PenTool, label: "Scripts" }].map(({ c, Icon, label }, i) => (
-            <div key={i} className="bg-[#141414] border border-white/5 rounded-xl p-3 flex flex-col gap-2 cursor-pointer hover:border-white/10 transition-colors">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white" style={{ background: c }}><Icon size={14} /></div>
-              <span className="text-[#8F9BB3] text-xs font-medium font-sans">{label}</span>
-            </div>
-          ))}
-        </div>
-        <div className="w-full max-w-lg">
-          <div className="w-full bg-[#141414] border border-white/10 rounded-2xl flex items-center p-2">
-            <div className="flex-1 px-3 text-[#636C7A] text-sm font-sans">Ask Trendsta anything...</div>
-            <div className="flex items-center gap-2">
-              <button className="w-8 h-8 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5"><Mic size={16} /></button>
-              <button className="w-8 h-8 rounded-xl bg-white/5 border border-white/5 flex items-center justify-center text-white"><ArrowRight size={16} /></button>
-            </div>
-          </div>
-          <div className="flex items-center gap-4 text-xs font-sans mt-3 justify-center">
-            <div className="flex items-center gap-1.5 px-4 py-1.5 bg-[#FFF2DE] text-[#CA8215] rounded-full font-bold">
-              <Zap size={11} fill="currentColor" /> Fast Mode
-            </div>
-            <div className="flex items-center gap-1.5 px-4 py-1.5 text-gray-500 font-medium">
-              <Cpu size={11} /> Deep Research
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Video */}
-      <div className="hidden md:flex relative w-full h-[280px] z-20 rounded-4xl shadow-2xl overflow-hidden" style={{ backgroundColor: "#0a0a0a" }}>
-        <video
-          src="/landing/AI_CONSULTANT%20(1).mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="none"
-          className="w-full h-full object-cover"
-        />
-      </div>
+    <div className="relative z-20 w-full rounded-2xl overflow-hidden shadow-2xl" style={{ backgroundColor: "#0a0a0a" }}>
+      <video
+        src="/landing/AI_CONSULTANT%20(1).mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="none"
+        className="w-full h-auto object-cover"
+      />
     </div>
   );
 }
 
 function TwitterInsightsUI() {
   return (
-    <div className="relative z-20 rounded-2xl overflow-hidden shadow-2xl border border-black/10 bg-[#0d0d0d] scale-[0.85] origin-top lg:origin-left">
+    <div className="relative z-20 rounded-2xl overflow-hidden shadow-2xl border border-black/10 bg-[#0d0d0d] w-full">
       <div className="flex items-center gap-3 px-5 pt-5 pb-3 border-b border-white/5 text-sm font-semibold">
         <button className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 text-orange-500 rounded-lg border border-orange-500/20 text-xs">
           <Zap size={12} fill="currentColor" /> Top Tweets
@@ -976,10 +924,10 @@ function TwitterInsightsUI() {
             </div>
           </div>
         ))}
-        <div className="grid grid-cols-3 gap-3 mt-2">
+        <div className="grid grid-cols-3 gap-2 mt-2">
           {[["#AI", "2.4M"], ["#SpaceX", "1.1M"], ["#Startups", "890K"]].map(([tag, vol], i) => (
-            <div key={i} className="bg-white/5 border border-white/5 rounded-xl px-3 py-2 flex flex-col gap-1">
-              <span className="font-bold text-orange-400 text-sm">{tag}</span>
+            <div key={i} className="bg-white/5 border border-white/5 rounded-xl px-2 py-1.5 flex flex-col gap-1 overflow-hidden">
+              <span className="font-bold text-orange-400 text-xs truncate">{tag}</span>
               <span className="text-gray-400 text-[10px] flex items-center gap-1">{vol} <TrendingUp size={10} className="text-green-500" /></span>
             </div>
           ))}
@@ -1000,7 +948,7 @@ function InteractiveFeatureTree() {
       title: "Dashboard",
       question: "Wanna see what's actually working?",
       description: "Trendsta shows real-time niche analytics so you know what content is winning, what hooks are performing, and what topics are trending — before everyone else.",
-      graphic: <div className="mt-4 lg:mt-8 w-full lg:w-[460px] max-w-full"><DashboardGraphic /></div>
+      graphic: <div className="w-full lg:w-[460px] max-w-full"><DashboardGraphic /></div>
     },
     {
       id: "scripts",
@@ -1008,7 +956,7 @@ function InteractiveFeatureTree() {
       title: "Scripts",
       question: "Still confused what to post?",
       description: "Trendsta converts live data into ready-to-post content ideas, including hooks, structure, and viral angles.",
-      graphic: <div className="mt-4 lg:mt-8 w-full lg:w-[460px] max-w-full"><ScriptIdeas3DCards /></div>
+      graphic: <div className="w-full lg:w-[460px] max-w-full"><ScriptIdeas3DCards /></div>
     },
     {
       id: "competitors",
@@ -1016,7 +964,7 @@ function InteractiveFeatureTree() {
       title: "Competitors",
       question: "Why are your competitors growing faster?",
       description: "See what they post, when they post, and what's working for them — then beat them.",
-      graphic: <div className="mt-4 lg:mt-8 w-full lg:w-[460px] max-w-full"><CompetitorAnalysis3DCards /></div>
+      graphic: <div className="w-full lg:w-[460px] max-w-full"><CompetitorAnalysis3DCards /></div>
     },
     {
       id: "ai",
@@ -1024,7 +972,7 @@ function InteractiveFeatureTree() {
       title: "AI Consultant",
       question: "Need guidance? Just ask.",
       description: "Your 24/7 AI content strategist that understands your niche, competitors, and trends — and tells you exactly what to do.",
-      graphic: <div className="mt-4 lg:mt-8 w-full lg:w-[460px] max-w-full"><AIChatUI /></div>
+      graphic: <div className="w-full lg:w-[460px] max-w-full"><AIChatUI /></div>
     },
     {
       id: "instagram",
@@ -1032,7 +980,7 @@ function InteractiveFeatureTree() {
       title: "Instagram",
       question: "Want to understand your Instagram better?",
       description: "Trendsta analyzes your Instagram and tells you what content works, what doesn't, and how to grow faster.",
-      graphic: <div className="mt-4 lg:mt-8 w-full lg:w-[460px] max-w-full"><InstagramInsights3DCards /></div>
+      graphic: <div className="w-full lg:w-[460px] max-w-full"><InstagramInsights3DCards /></div>
     },
     {
       id: "twitter",
@@ -1040,7 +988,7 @@ function InteractiveFeatureTree() {
       title: "Twitter",
       question: "Growing on Twitter but not sure what's working?",
       description: "Trendsta analyzes your tweets, engagement patterns, and trending topics in your niche.",
-      graphic: <div className="mt-4 lg:mt-8 w-full lg:w-[460px] max-w-full"><TwitterInsightsUI /></div>
+      graphic: <div className="w-full lg:w-[460px] max-w-full"><TwitterInsightsUI /></div>
     }
   ];
 
@@ -1048,15 +996,15 @@ function InteractiveFeatureTree() {
     <section className="features-section" id="features">
       <div className="section-inner w-full max-w-[1440px] px-auto">
         {/* Header Block */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          whileInView={{ opacity: 1, y: 0 }} 
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="flex flex-col items-center text-center px-4 mb-16 md:mb-24"
         >
           <div className="section-tag mx-auto mb-6 text-sm md:text-base">⚡ Everything you need</div>
           <h2 className="text-6xl md:text-8xl lg:text-[110px] leading-[0.95] font-display font-normal text-ink tracking-[-0.03em] mb-8">
-            Built for creators<br/>
+            Built for creators<br />
             who want to <em className="italic text-transparent bg-clip-text bg-[linear-gradient(135deg,#FF5C1A_0%,#FF8C00_60%,#FFB800_100%)]">win.</em>
           </h2>
           <p className="text-muted text-lg md:text-xl font-medium max-w-2xl leading-relaxed">
@@ -1070,7 +1018,7 @@ function InteractiveFeatureTree() {
             <div className="bg-orange-50 text-orange-600 font-bold px-6 py-3 rounded-full border border-orange-200 shadow-sm z-10 font-sans tracking-wide">
               Trendsta Intelligence
             </div>
-            
+
             {/* Tree Branch lines */}
             <div className="w-[85%] h-8 border-t-2 border-l-2 border-r-2 border-border-patreon rounded-t-[30px] mt-4 relative">
               <div className="absolute top-0 left-[20%] h-full w-0 border-l-2 border-border-patreon"></div>
@@ -1089,11 +1037,10 @@ function InteractiveFeatureTree() {
                   <button
                     key={`mobile-tab-${node.id}`}
                     onClick={() => setActiveMobileTab(node.id)}
-                    className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl border transition-all text-sm font-bold font-sans shadow-sm ${
-                      isActive 
-                        ? 'bg-white border-orange-400 text-orange-600' 
+                    className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl border transition-all text-sm font-bold font-sans shadow-sm ${isActive
+                        ? 'bg-white border-orange-400 text-orange-600'
                         : 'bg-cream border-border-patreon text-gray-500 hover:border-orange-300'
-                    }`}
+                      }`}
                   >
                     <span className="text-lg">{node.icon}</span>
                     <span className="whitespace-nowrap">{node.title}</span>
@@ -1125,7 +1072,7 @@ function InteractiveFeatureTree() {
                       <p className="text-muted leading-relaxed font-body text-base mb-8">
                         {node.description}
                       </p>
-                      <div className="w-full relative flex items-center justify-center overflow-hidden">
+                      <div className="w-full relative flex items-center justify-center overflow-hidden rounded-xl">
                         {node.graphic}
                       </div>
                     </motion.div>
@@ -1139,7 +1086,7 @@ function InteractiveFeatureTree() {
           <div className="hidden lg:flex flex-row gap-3 w-full h-[620px] items-stretch">
             {leafNodes.map((node) => {
               const isActive = hoveredNode === node.id;
-              
+
               return (
                 <motion.div
                   key={node.id}
@@ -1157,7 +1104,7 @@ function InteractiveFeatureTree() {
                   style={{ flexBasis: "0" }}
                 >
                   {/* Minimized State overlay */}
-                  <motion.div 
+                  <motion.div
                     initial={false}
                     animate={{ opacity: isActive ? 0 : 1 }}
                     className="absolute inset-0 flex flex-col items-center justify-start pt-10 gap-4 p-6 pb-10 select-none z-30"
@@ -1170,7 +1117,7 @@ function InteractiveFeatureTree() {
                   </motion.div>
 
                   {/* Expanded State content */}
-                  <motion.div 
+                  <motion.div
                     initial={false}
                     animate={{ opacity: isActive ? 1 : 0 }}
                     className="flex flex-col w-full h-full p-12 z-20 min-w-[400px] absolute inset-0 overflow-hidden items-start"
@@ -1185,8 +1132,8 @@ function InteractiveFeatureTree() {
                     <p className="text-muted leading-relaxed font-body text-lg mb-8 max-w-[400px] shrink-0">
                       {node.description}
                     </p>
-                    
-                    <motion.div 
+
+                    <motion.div
                       className="mt-6 relative w-full flex-1 flex flex-col justify-start shrink-0 pointer-events-auto"
                       initial={{ y: 20, opacity: 0 }}
                       animate={isActive ? { y: 0, opacity: 1 } : { y: 20, opacity: 0 }}
@@ -1194,7 +1141,7 @@ function InteractiveFeatureTree() {
                     >
                       {node.graphic}
                     </motion.div>
-                    
+
                   </motion.div>
                 </motion.div>
               );
@@ -1407,7 +1354,7 @@ function HowItWorksSection() {
   return (
     <section className="py-24 bg-white relative overflow-hidden" id="how">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header Block */}
         <div className="mb-16 md:mb-24">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#ff5900]/10 border border-[#ff5900]/20 text-[#ff5900] text-xs font-semibold tracking-wide mb-6">
@@ -1419,7 +1366,7 @@ function HowItWorksSection() {
             Simple process
           </div>
           <h2 className="text-5xl md:text-7xl lg:text-[100px] leading-[0.95] font-display font-normal text-[#1a1a1a] tracking-[-0.03em]">
-            From sign-up to<br/>
+            From sign-up to<br />
             <span className="text-[#ff5900] italic">going viral</span>{" "}
             <span className="font-display tracking-tight text-4xl md:text-6xl lg:text-[80px]">— in 3 steps.</span>
           </h2>
@@ -1493,7 +1440,7 @@ function SuccessStoriesSection() {
   return (
     <section className="py-24 bg-cream relative overflow-hidden" id="stories">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header Block */}
         <div className="mb-16 md:mb-24">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#ff5900]/10 border border-[#ff5900]/20 text-[#ff5900] text-xs font-semibold tracking-wide mb-6">
@@ -1503,7 +1450,7 @@ function SuccessStoriesSection() {
             Success stories
           </div>
           <h2 className="text-5xl md:text-7xl lg:text-[90px] leading-[0.95] font-display font-normal text-[#1a1a1a] tracking-[-0.03em]">
-            Creators who stopped<br/>
+            Creators who stopped<br />
             guessing — and <span className="text-[#ff5900] italic">started winning.</span>
           </h2>
         </div>
@@ -1519,12 +1466,12 @@ function SuccessStoriesSection() {
                   {story.initial}
                 </div>
               </div>
-              
+
               {/* Card Body */}
               <div className="pt-10 pb-8 px-6 flex flex-col flex-1">
                 <h3 className="text-xl font-bold text-ink mb-1">{story.name}</h3>
                 <p className="text-muted text-xs font-medium mb-4">{story.role}</p>
-                
+
                 {/* Stat Badge */}
                 <div className="inline-flex items-center gap-1.5 py-1 px-2.5 rounded bg-[#10b981]/10 text-[#10b981] text-[11px] font-bold self-start mb-6">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3">
@@ -1533,9 +1480,9 @@ function SuccessStoriesSection() {
                   </svg>
                   {story.stat}
                 </div>
-                
+
                 <div className="border-t border-black/5 my-4"></div>
-                
+
                 <p className="text-muted text-sm italic leading-relaxed mt-auto">
                   {story.quote}
                 </p>
@@ -1578,7 +1525,7 @@ function FAQSection() {
   return (
     <section id="faq" className="py-24 md:py-32 bg-cream relative border-t border-black/5">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header Block */}
         <div className="mb-16 md:mb-24 text-center flex flex-col items-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#ff5900]/10 border border-[#ff5900]/20 text-[#ff5900] text-xs font-semibold tracking-wide mb-6 font-sans">
@@ -1590,7 +1537,7 @@ function FAQSection() {
             Got questions?
           </div>
           <h2 className="text-5xl md:text-7xl lg:text-[90px] leading-[0.95] font-display font-normal text-ink tracking-[-0.03em]">
-            Frequently asked<br/>
+            Frequently asked<br />
             <span className="text-[#ff5900] italic">questions.</span>
           </h2>
           <p className="text-muted text-lg md:text-xl font-medium mt-6 font-sans">
@@ -1644,59 +1591,27 @@ function FAQSection() {
 
 function Footer() {
   return (
-    <footer className="bg-[#f6f5f0] border-t border-black/5 py-16 md:py-24 text-gray-500 font-sans">
+    <footer className="bg-[#f6f5f0] border-t border-black/5 py-8 text-gray-500 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          {/* Col 1: Brand */}
-          <div className="flex flex-col gap-6 md:pr-8">
-            <div className="flex items-center gap-3">
-              <Image src="/T_logo.png" alt="Trendsta Logo" width={36} height={36} className="rounded-xl drop-shadow-sm" />
-              <span className="text-xl font-bold text-gray-900 tracking-tight">Trendsta</span>
-            </div>
-            <p className="text-sm text-gray-500 leading-relaxed font-medium">
-              AI-powered content intelligence for creators who want to grow faster, post smarter, and trend harder.
-            </p>
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+          {/* Brand */}
+          <div className="flex items-center gap-3 shrink-0">
+            <Image src="/T_logo.png" alt="Trendsta Logo" width={30} height={30} className="rounded-lg drop-shadow-sm" />
+            <span className="text-base font-bold text-gray-900 tracking-tight">Trendsta</span>
           </div>
 
-          {/* Col 2: Product */}
-          <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-bold tracking-wider text-gray-900 uppercase mb-1">Product</h4>
+          {/* Product links */}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <a href="#features" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Features</a>
             <a href="#how" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">How it works</a>
             <a href="https://www.trendsta.in/dashboard" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Demo</a>
             <a href="#" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Pricing</a>
           </div>
 
-          {/* Col 3: Company */}
-          <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-bold tracking-wider text-gray-900 uppercase mb-1">Company</h4>
-            <a href="#" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">About</a>
-            <a href="#" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Blog</a>
-            <a href="#" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Careers</a>
-            <a href="mailto:info@trendsta.in" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Contact</a>
-          </div>
-
-          {/* Col 4: Legal */}
-          <div className="flex flex-col gap-4">
-            <h4 className="text-xs font-bold tracking-wider text-gray-900 uppercase mb-1">Legal</h4>
-            <a href="#" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Privacy Policy</a>
-            <a href="#" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Terms of Service</a>
-            <a href="#" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Cookie Policy</a>
-          </div>
-        </div>
-
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-black/5">
-          <div className="text-sm font-medium text-gray-400">© 2026 Trendsta Inc. All rights reserved.</div>
-          <div className="flex items-center gap-3">
-            <a href="#" className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-colors shadow-sm">
-              <Twitter size={14} fill="currentColor" />
-            </a>
-            <a href="#" className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-colors shadow-sm font-bold font-sans text-[13px] leading-none">
-              in
-            </a>
-            <a href="#" className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:border-gray-300 transition-colors shadow-sm">
-              <Instagram size={15} />
-            </a>
+          {/* Contact + copyright */}
+          <div className="flex flex-col items-start md:items-end gap-1 shrink-0">
+            <a href="mailto:info@trendsta.in" className="text-sm font-medium text-[#ff5900] hover:underline">info@trendsta.in</a>
+            <span className="text-xs text-gray-400">© 2026 Trendsta Inc. All rights reserved.</span>
           </div>
         </div>
       </div>
@@ -1714,8 +1629,8 @@ function CTASection() {
 
       <div className="relative z-10 w-full max-w-4xl flex flex-col items-center">
         <h2 className="text-6xl md:text-8xl lg:text-[100px] leading-[0.95] font-display italic text-[#f5f5f5] mb-6 tracking-tight drop-shadow-sm">
-          <span className="font-normal not-italic tracking-[-0.04em]">Your</span> next post is<br/>
-          a <span className="text-[#ff5900]">viral hit</span><br/>
+          <span className="font-normal not-italic tracking-[-0.04em]">Your</span> next post is<br />
+          a <span className="text-[#ff5900]">viral hit</span><br />
           waiting to happen.
         </h2>
 
@@ -1748,7 +1663,7 @@ function StatsStrip() {
   return (
     <section className="w-full bg-[#111111] py-16 border-y border-white/5 relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/[0.08] text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-white/8 text-center">
           {stats.map((stat, i) => (
             <div key={i} className="flex flex-col items-center justify-center py-8 md:py-0 px-4">
               <span className="text-6xl md:text-7xl font-display italic text-[#ff5900] mb-3 tracking-tight drop-shadow-sm">

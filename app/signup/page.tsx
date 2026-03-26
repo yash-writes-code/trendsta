@@ -83,62 +83,49 @@ export default function SignUp() {
     };
 
     return (
-        <div className="min-h-screen relative flex flex-col lg:flex-row bg-cream text-ink font-body selection:bg-[#ff5900]/10 overflow-x-hidden">
-            {/* Background radial glow */}
+        <div className="h-screen relative flex flex-col lg:flex-row bg-cream text-ink font-body selection:bg-[#ff5900]/10 overflow-hidden">
+            
             <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#ff5900]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
 
             {/* Left Panel - Branding */}
-            <div className="hidden lg:flex lg:w-[45%] relative z-10 items-center justify-center p-12 border-r border-border-patreon">
-                {/* Branding Content */}
-                <div className="relative text-left max-w-lg">
-                    <Link href="/" className="inline-flex items-center gap-3 mb-16 group">
+            <div className="hidden lg:flex lg:w-[42%] relative z-10 items-center justify-center px-12 border-r border-border-patreon">
+                <div className="relative text-left max-w-md">
+                    <Link href="/" className="inline-flex items-center gap-3 mb-10 group">
                         <Image
                             src="/T_logo.png"
-                            width={42}
-                            height={42}
+                            width={40}
+                            height={40}
                             alt="Trendsta"
                             className="rounded-xl drop-shadow-sm transition-transform duration-500 group-hover:scale-110"
                         />
                         <span className="text-2xl font-bold tracking-tight text-ink font-body">Trendsta</span>
                     </Link>
 
-                    <h2 className="text-6xl lg:text-7xl font-display font-normal text-ink mb-8 leading-[0.95] tracking-[-0.04em]">
+                    <h2 className="text-6xl font-display font-normal text-ink mb-6 leading-[0.95] tracking-[-0.04em]">
                         Join the <br />
                         <span className="text-[#ff5900] italic pr-1">creators</span><br/>winning with AI.
                     </h2>
-                    <p className="text-lg text-muted max-w-md leading-relaxed font-medium tracking-tight">
+                    <p className="text-base text-muted max-w-sm leading-relaxed font-medium tracking-tight">
                         Trendsta gives you real-time AI intelligence on what to post, when to post, and how to beat your competitors.
                     </p>
-                    
-                    <div className="mt-12 flex items-center gap-4">
-                        <div className="flex -space-x-3">
-                            {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="w-10 h-10 rounded-full border-2 border-cream bg-white flex items-center justify-center shadow-sm overflow-hidden">
-                                    <Image src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 10}`} alt="User" width={40} height={40} />
-                                </div>
-                            ))}
-                        </div>
-                        <p className="text-sm font-semibold text-muted">Join 10,000+ creators</p>
-                    </div>
                 </div>
             </div>
 
             {/* Right Panel - Form */}
-            <div className="flex-1 min-h-screen relative z-10 flex items-center justify-center p-4 sm:p-8 lg:p-12">
+            <div className="flex-1 overflow-y-auto relative z-10 flex items-center justify-center px-8 py-6">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="w-full max-w-md bg-white border border-border-patreon p-8 sm:p-10 rounded-[2.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)]"
+                    className="w-full max-w-md bg-white border border-border-patreon p-7 rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] my-6"
                 >
-                    {/* Brand Header (Mobile) */}
-                    <div className="lg:hidden flex items-center justify-center gap-3 mb-10">
-                        <Image src="/T_logo.png" alt="Trendsta" width={32} height={32} className="rounded-lg shadow-sm" />
-                        <span className="text-2xl font-bold text-ink tracking-tight">Trendsta</span>
+                    <div className="lg:hidden flex items-center justify-center gap-3 mb-6">
+                        <Image src="/T_logo.png" alt="Trendsta" width={30} height={30} className="rounded-lg shadow-sm" />
+                        <span className="text-xl font-bold text-ink tracking-tight">Trendsta</span>
                     </div>
 
-                    <div className="mb-10 text-center">
-                        <h1 className="text-4xl font-display font-normal text-ink mb-3 tracking-tight">Create Account</h1>
+                    <div className="mb-5 text-center">
+                        <h1 className="text-3xl font-display font-normal text-ink mb-2 tracking-tight">Create Account</h1>
                         <p className="text-muted text-sm font-medium">Get started with AI-powered viral insights.</p>
                     </div>
 
@@ -153,7 +140,7 @@ export default function SignUp() {
                         </motion.div>
                     )}
 
-                    <form onSubmit={handleEmailSignUp} className="space-y-5">
+                    <form onSubmit={handleEmailSignUp} className="space-y-3">
                         <div className="space-y-1.5">
                             <label className="block text-xs font-bold text-muted ml-1 uppercase tracking-wider">Full Name</label>
                             <input
@@ -161,7 +148,7 @@ export default function SignUp() {
                                 placeholder="John Doe"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full px-5 py-3.5 rounded-2xl bg-cream/50 border border-border-patreon text-ink placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5900]/10 focus:border-[#ff5900]/30 transition-all font-medium"
+                                className="w-full px-5 py-2.5 rounded-xl bg-cream/50 border border-border-patreon text-ink placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5900]/10 focus:border-[#ff5900]/30 transition-all font-medium text-sm"
                             />
                         </div>
                         <div className="space-y-1.5">
@@ -171,7 +158,7 @@ export default function SignUp() {
                                 placeholder="you@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-5 py-3.5 rounded-2xl bg-cream/50 border border-border-patreon text-ink placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5900]/10 focus:border-[#ff5900]/30 transition-all font-medium"
+                                className="w-full px-5 py-2.5 rounded-xl bg-cream/50 border border-border-patreon text-ink placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5900]/10 focus:border-[#ff5900]/30 transition-all font-medium text-sm"
                             />
                         </div>
                         <div className="space-y-1.5">
@@ -182,7 +169,7 @@ export default function SignUp() {
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-5 py-3.5 pr-12 rounded-2xl bg-cream/50 border border-border-patreon text-ink placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5900]/10 focus:border-[#ff5900]/30 transition-all font-medium"
+                                    className="w-full px-5 py-2.5 pr-12 rounded-xl bg-cream/50 border border-border-patreon text-ink placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5900]/10 focus:border-[#ff5900]/30 transition-all font-medium text-sm"
                                 />
                                 <button
                                     type="button"
@@ -202,7 +189,7 @@ export default function SignUp() {
                                     placeholder="••••••••"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="w-full px-5 py-3.5 pr-12 rounded-2xl bg-cream/50 border border-border-patreon text-ink placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5900]/10 focus:border-[#ff5900]/30 transition-all font-medium"
+                                    className="w-full px-5 py-2.5 pr-12 rounded-xl bg-cream/50 border border-border-patreon text-ink placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5900]/10 focus:border-[#ff5900]/30 transition-all font-medium text-sm"
                                 />
                                 <button
                                     type="button"
@@ -217,7 +204,7 @@ export default function SignUp() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-4 mt-2 rounded-2xl font-bold text-white bg-linear-to-r from-[#ff5900] to-[#ffb800] shadow-[0_8px_20px_-4px_rgba(255,89,0,0.4)] hover:scale-[1.01] hover:shadow-[0_12px_30px_-6px_rgba(255,89,0,0.5)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
+                            className="w-full py-3 mt-1 rounded-2xl font-bold text-white bg-linear-to-r from-[#ff5900] to-[#ffb800] shadow-[0_8px_20px_-4px_rgba(255,89,0,0.4)] hover:scale-[1.01] hover:shadow-[0_12px_30px_-6px_rgba(255,89,0,0.5)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group"
                         >
                             <div className="flex items-center justify-center gap-2">
                                 <span>{isLoading ? "Creating Account..." : "Start for Free"}</span>
@@ -226,7 +213,7 @@ export default function SignUp() {
                         </button>
                     </form>
 
-                    <p className="mt-8 text-xs text-center text-muted leading-relaxed font-medium">
+                    <p className="mt-4 text-xs text-center text-muted leading-relaxed font-medium">
                         By continuing, you agree to our{" "}
                         <a href="/terms" className="text-ink hover:text-[#ff5900] transition-colors underline decoration-border-patreon underline-offset-4">Terms</a>
                         {" "}and{" "}
@@ -234,7 +221,7 @@ export default function SignUp() {
                     </p>
 
                     {/* Divider */}
-                    <div className="my-10 flex items-center gap-4">
+                    <div className="my-4 flex items-center gap-4">
                         <div className="flex-1 h-px bg-border-patreon" />
                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Or continue with</span>
                         <div className="flex-1 h-px bg-border-patreon" />
@@ -258,7 +245,7 @@ export default function SignUp() {
                     </div>
 
                     {/* Sign In Link */}
-                    <div className="mt-10 text-center">
+                    <div className="mt-4 text-center">
                         <p className="text-muted font-medium text-sm">
                             Already have an account?{" "}
                             <Link href="/signin" className="text-[#ff5900] font-bold hover:underline underline-offset-4 ml-1">
