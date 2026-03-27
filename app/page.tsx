@@ -32,6 +32,7 @@ import {
   Play,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 // --- Components ---
 
@@ -141,21 +142,21 @@ function Navbar() {
     <>
       <nav id="mainNav">
         <div className="nav-inner">
-          <a href="/" className="nav-logo flex items-center gap-4">
+          <Link href="/" className="nav-logo flex items-center gap-4">
             <Image src="/T_logo.png" alt="Trendsta Logo" width={40} height={40} className="rounded-xl drop-shadow-sm blur-none transition-transform group-hover:scale-105" />
             <span className="hidden sm:inline-block tracking-tight text-2xl font-body font-bold text-ink">Trendsta</span>
-          </a>
+          </Link>
 
           <ul className="nav-links">
-            <li><a href="#features">Features</a></li>
-            <li><a href="#how">How It Works</a></li>
-            <li><a href="#stories">Stories</a></li>
-            <li><a href="#pricing">Pricing</a></li>
+            <li><Link href="#features">Features</Link></li>
+            <li><Link href="#how">How It Works</Link></li>
+            <li><Link href="#stories">Stories</Link></li>
+            <li><Link href="/pricing">Pricing</Link></li>
           </ul>
 
           <div className="flex items-center gap-3">
-            <a href="https://www.trendsta.in/signin" className="hidden sm:inline-flex px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-[16px] hover:bg-gray-50 transition-all shadow-sm">Log in</a>
-            <a href="https://www.trendsta.in/signup" className="px-6 py-3 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-[16px] hover:scale-105 hover:shadow-[0_8px_24px_-6px_rgba(255,89,0,0.5)] transition-all">Get started</a>
+            <Link href="/signin" className="hidden sm:inline-flex px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-[16px] hover:bg-gray-50 transition-all shadow-sm">Log in</Link>
+            <Link href="/signup" className="px-6 py-3 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-[16px] hover:scale-105 hover:shadow-[0_8px_24px_-6px_rgba(255,89,0,0.5)] transition-all">Get started</Link>
           </div>
 
           <button className="nav-mobile-toggle flex items-center justify-center p-2 text-ink" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Menu">
@@ -180,31 +181,31 @@ function Navbar() {
                 { label: "How It Works", href: "#how" },
                 { label: "FAQ", href: "#faq" },
               ].map(({ label, href }) => (
-                <a
+                <Link
                   key={href}
                   href={href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center px-4 py-3 rounded-xl text-ink font-semibold text-sm hover:bg-black/5 transition-colors"
                 >
                   {label}
-                </a>
+                </Link>
               ))}
             </div>
             <div className="flex flex-col gap-2 pt-4 border-t border-border-patreon">
-              <a
-                href="https://www.trendsta.in/signup"
+              <Link
+                href="/signup"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-center w-full px-6 py-3 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-sm shadow-sm hover:shadow-md hover:scale-[1.02] transition-all"
               >
                 Get Started
-              </a>
-              <a
-                href="https://www.trendsta.in/dashboard"
+              </Link>
+              <Link
+                href="/dashboard"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-center w-full px-6 py-3 rounded-full border border-black/10 text-ink font-bold text-sm hover:bg-black/5 transition-colors"
               >
                 View Demo
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}
@@ -245,22 +246,13 @@ function Hero() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4 w-full sm:w-auto z-20"
         >
-          <a href="https://www.trendsta.in/signup" className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-lg hover:scale-[1.03] hover:shadow-[0_12px_30px_-8px_rgba(255,89,0,0.7)] transition-all duration-300">
+          <Link href="/signup" className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-lg hover:scale-[1.03] hover:shadow-[0_12px_30px_-8px_rgba(255,89,0,0.7)] transition-all duration-300">
             Start for free
-          </a>
-          <a href="https://www.trendsta.in/dashboard" className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-lg hover:bg-gray-50 hover:scale-[1.02] transition-all duration-300 shadow-sm">
+          </Link>
+          <Link href="/dashboard" className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-lg hover:bg-gray-50 hover:scale-[1.02] transition-all duration-300 shadow-sm">
             Watch demo →
-          </a>
+          </Link>
         </motion.div>
-
-        {/* Hint */}
-        <motion.p
-          initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5, delay: 0.4 }}
-          className="text-xs text-gray-400 font-medium mb-8"
-        >
-          No credit card required · Cancel anytime
-        </motion.p>
-
 
         {/* Social Proof Row */}
         <motion.div
@@ -1520,7 +1512,7 @@ function FAQSection() {
 
         {/* Header Block */}
         <div className="mb-16 md:mb-24 text-center flex flex-col items-center">
-      
+
           <h2 className="text-5xl md:text-7xl lg:text-[90px] leading-[0.95] font-display font-normal text-ink tracking-[-0.03em]">
             Frequently asked<br />
             <span className="text-[#ff5900] italic">questions.</span>
@@ -1587,15 +1579,15 @@ function Footer() {
 
           {/* Product links */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <a href="#features" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Features</a>
-            <a href="#how" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">How it works</a>
-            <a href="https://www.trendsta.in/dashboard" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Demo</a>
-            <a href="https://www.trendsta.in/pricing" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Pricing</a>
+            <Link href="#features" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Features</Link>
+            <Link href="#how" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">How it works</Link>
+            <Link href="/dashboard" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Demo</Link>
+            <Link href="/pricing" className="text-sm text-gray-500 hover:text-gray-900 transition-colors font-medium">Pricing</Link>
           </div>
 
           {/* Contact + copyright */}
           <div className="flex flex-col items-start md:items-end gap-1 shrink-0">
-            <a href="mailto:info@trendsta.in" className="text-sm font-medium text-[#ff5900] hover:underline">info@trendsta.in</a>
+            <Link href="mailto:info@trendsta.in" className="text-sm font-medium text-[#ff5900] hover:underline">info@trendsta.in</Link>
             <span className="text-xs text-gray-400">© 2026 Trendsta Inc. All rights reserved.</span>
           </div>
         </div>
@@ -1624,12 +1616,12 @@ function CTASection() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-          <a href="https://www.trendsta.in/signup" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-[#18181b] font-bold text-lg hover:-translate-y-0.5 transition-transform shadow-[0_4px_14px_0_rgba(255,255,255,0.1)]">
+          <Link href="/signup" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-[#18181b] font-bold text-lg hover:-translate-y-0.5 transition-transform shadow-[0_4px_14px_0_rgba(255,255,255,0.1)]">
             Start for free today
-          </a>
-          <a href="https://www.trendsta.in/dashboard" className="w-full sm:w-auto px-8 py-4 rounded-full bg-transparent border border-white/20 text-white font-semibold text-lg hover:bg-white/5 transition-colors">
+          </Link>
+          <Link href="/dashboard" className="w-full sm:w-auto px-8 py-4 rounded-full bg-transparent border border-white/20 text-white font-semibold text-lg hover:bg-white/5 transition-colors">
             Watch the demo
-          </a>
+          </Link>
         </div>
       </div>
     </section>

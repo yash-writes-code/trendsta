@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Play, Eye, Heart, MessageCircle, Share2, Clock, ExternalLink, Zap, TrendingUp } from "lucide-react";
 import { ReelData } from "../types/trendsta";
+import Link from 'next/link';
 
 // Helper for relative time (e.g. 2d ago) from hours
 function formatTimeAgo(hours: number): string {
@@ -55,7 +56,7 @@ export default function ReelCard({ reel, index, onViewDetails }: ReelCardProps) 
             style={{ animationDelay: `${index * 0.05}s` }}
         >
             {/* Thumbnail Image - Clickable link to Instagram */}
-            <a
+            <Link
                 href={reel.url}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -106,7 +107,7 @@ export default function ReelCard({ reel, index, onViewDetails }: ReelCardProps) 
                         {/* Share removed as per request */}
                     </div>
                 </div>
-            </a>
+            </Link>
 
             {/* Card Footer */}
             <div className="p-4">

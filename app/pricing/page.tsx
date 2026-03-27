@@ -1,12 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "framer-motion";
 import { Check, Zap, Coins } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export default function PricingPage() {
+    const { data: session } = useSession();
+    const router = useRouter();
+    const isLoggedIn = !!(session?.user && !(session.user as any).isAnonymous);
+
+    const handlePlanClick = (planId: string) => {
+        if (isLoggedIn) {
+            router.push("/subscription");
+        } else {
+            router.push(`/signup?plan=${planId}`);
+        }
+    };
     const plans = [
         {
             id: "silver",
@@ -157,12 +170,12 @@ export default function PricingPage() {
                                     <span className="text-muted font-semibold text-sm">/mo</span>
                                 </div>
 
-                                <Link 
-                                    href={`/signup?plan=${plan.id}`}
+                                <button
+                                    onClick={() => handlePlanClick(plan.id)}
                                     className={`block w-full py-4 rounded-2xl text-center font-bold transition-all duration-300 mb-10 relative z-10 ${plan.buttonClass} shadow-md hover:shadow-lg hover:scale-[1.02]`}
                                 >
-                                    Get {plan.name}
-                                </Link>
+                                    {isLoggedIn ? `Get ${plan.name}` : `Get ${plan.name}`}
+                                </button>
 
                                 <div className="pt-8 border-t border-border-patreon space-y-4 flex-1 relative z-10">
                                     {plan.features.map((feature, fIdx) => (

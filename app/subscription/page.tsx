@@ -2,11 +2,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
-import { Zap, Check, ChevronDown, CreditCard, Star, Sparkles } from "lucide-react";
+import { Zap, Check, CreditCard } from "lucide-react";
 import Sidebar from "../components/Sidebar";
 import MobileHeader from "../components/MobileHeader";
 import { useSidebar } from "../context/SidebarContext";
 import { STELLA_BUNDLES } from "@/lib/constants/products";
+import { useCheckout } from "@/lib/hooks/useCheckout";
 
 interface Plan {
     id: string;
@@ -44,7 +45,8 @@ interface PreviewData {
 export default function SubscriptionPage() {
     const router = useRouter();
     const { isCollapsed } = useSidebar();
-    const { data: session } = useSession();
+    const { data: session, isPending: isSessionLoading } = useSession();
+    const { initiateCheckout, isProcessing: isCheckoutProcessing, error: checkoutError, clearError } = useCheckout();
 
     const [plans, setPlans] = useState<Plan[]>([]);
     const [currentSubscription, setCurrentSubscription] = useState<Subscription | null>(null);
@@ -54,6 +56,13 @@ export default function SubscriptionPage() {
     const [actionError, setActionError] = useState<string | null>(null);
 
     const [walletBalance, setWalletBalance] = useState({ monthlyBalance: 0, topupBalance: 0, totalBalance: 0 });
+
+    // Auth guard — redirect guests to landing page
+    useEffect(() => {
+        if (!isSessionLoading && (!session?.user || (session.user as any).isAnonymous)) {
+            router.push("/");
+        }
+    }, [session, isSessionLoading, router]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -113,94 +122,28 @@ export default function SubscriptionPage() {
 
 
     const handleBundlePurchase = async (bundle: { id: string, name: string, price: number }) => {
-        if (!session) {
-            router.push("/signin");
-            return;
-        }
-        setIsProcessingAction(true);
-        setActionError(null);
-        try {
-            if (!session?.user?.email) {
-                throw new Error("User email not found. Please log in.");
-            }
-
-            const res = await fetch("/api/checkout", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    productId: bundle.id,
-                    email: session.user.email,
-                    name: session.user.name,
-                    metadata: {
-                        userId: session.user.id,
-                        source: "subscription_page_bundle_purchase",
-                        bundleName: bundle.name
-                    }
-                }),
-            });
-
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || "Failed to initiate checkout");
-            }
-
-            const { checkout_url } = await res.json();
-            if (checkout_url) {
-                window.location.href = checkout_url;
-            } else {
-                throw new Error("No checkout URL returned");
-            }
-        } catch (err: any) {
-            console.error("Checkout error:", err);
-            setActionError(err.message || "Failed to start checkout");
-            setIsProcessingAction(false);
-        }
+        if (!session?.user?.email) return;
+        await initiateCheckout({
+            productId: bundle.id,
+            userEmail: session.user.email,
+            userName: session.user.name,
+            userId: session.user.id,
+            source: "subscription_page_bundle_purchase",
+        });
     };
 
     const handlePlanAction = async (targetPlan: Plan) => {
-        if (!session) {
-            router.push("/signin");
-            return;
-        }
+        if (!session?.user) return;
+
         if (!currentSubscription) {
-            // Handle new subscription via Checkout
-            setIsProcessingAction(true);
-            setActionError(null);
-            try {
-                if (!session?.user?.email) {
-                    throw new Error("User email not found. Please log in.");
-                }
-
-                const res = await fetch("/api/checkout", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        productId: targetPlan.providerProductId,
-                        email: session.user.email,
-                        name: session.user.name, // Use session name directly
-                        metadata: {
-                            userId: session.user.id,
-                            source: "subscription_page_plan_selection"
-                        }
-                    }),
-                });
-
-                if (!res.ok) {
-                    const data = await res.json();
-                    throw new Error(data.error || "Failed to initiate checkout");
-                }
-
-                const { checkout_url } = await res.json();
-                if (checkout_url) {
-                    window.location.href = checkout_url;
-                } else {
-                    throw new Error("No checkout URL returned");
-                }
-            } catch (err: any) {
-                console.error("Checkout error:", err);
-                setActionError(err.message || "Failed to start checkout");
-                setIsProcessingAction(false);
-            }
+            // New subscription — use shared checkout hook
+            await initiateCheckout({
+                productId: targetPlan.providerProductId,
+                userEmail: session.user.email,
+                userName: session.user.name,
+                userId: session.user.id,
+                source: "subscription_page_plan_selection",
+            });
             return;
         }
 
@@ -339,9 +282,9 @@ export default function SubscriptionPage() {
                         </div>
 
                         {/* Subscriptions Status Messages */}
-                        {actionError && (
+                        {(actionError || checkoutError) && (
                             <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-xl border border-red-100 text-sm">
-                                {actionError}
+                                {actionError || checkoutError}
                             </div>
                         )}
 
@@ -574,7 +517,7 @@ export default function SubscriptionPage() {
 
                                         <button
                                             onClick={() => !isCurrentPlan && handlePlanAction(plan)}
-                                            disabled={isCurrentPlan || isProcessingAction}
+                                            disabled={isCurrentPlan || isProcessingAction || isCheckoutProcessing}
                                             className="w-full py-2.5 rounded-xl font-semibold transition-colors text-sm relative z-10"
                                             style={{
                                                 background: isCurrentPlan
@@ -596,7 +539,7 @@ export default function SubscriptionPage() {
                                                     : (isPlatinum ? '0 10px 15px -3px rgba(147, 51, 234, 0.3)' : (isGold ? '0 8px 16px rgba(217, 119, 6, 0.2)' : '0 8px 16px rgba(156, 163, 175, 0.2)')),
                                             }}
                                         >
-                                            {isProcessingAction && !isCurrentPlan ? 'Processing...' : (
+                                            {(isProcessingAction || isCheckoutProcessing) && !isCurrentPlan ? 'Processing...' : (
                                                 isCurrentPlan ? 'Current Plan' : (currentSubscription ? (isUpgrade ? 'Upgrade' : 'Downgrade') : 'Subscribe')
                                             )}
                                         </button>

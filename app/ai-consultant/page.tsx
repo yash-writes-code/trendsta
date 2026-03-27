@@ -7,6 +7,7 @@ import { Send, Sparkles, TrendingUp, Menu, Zap, BrainCircuit, History, ArrowRigh
 import { useSidebar } from "../context/SidebarContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import InlineChart, { InlineChartError } from "../components/InlineChart";
 import { parseGraphBlocks, ContentPart } from "@/lib/consultant/graphParser";
 import ReactMarkdown from "react-markdown";
@@ -79,9 +80,9 @@ function MarkdownContent({ content }: { content: string }) {
                 pre: ({ children }) => <pre className="my-0 w-full overflow-hidden shrink">{children}</pre>,
                 // Links
                 a: ({ href, children }) => (
-                    <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
+                    <Link href={href || "#"} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">
                         {children}
-                    </a>
+                    </Link>
                 ),
                 // Horizontal Rule
                 hr: () => <hr className="my-4 border-white/10" />,

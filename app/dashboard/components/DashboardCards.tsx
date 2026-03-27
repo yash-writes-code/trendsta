@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export function ScriptIdeasLink({ count, score }: { count: number, score: number }) {
     return (
-        <a
+        <Link
             href="/script-ideas"
             className="block neu-convex p-6 hover:scale-[1.01] transition-all group"
         >
@@ -28,7 +28,7 @@ export function ScriptIdeasLink({ count, score }: { count: number, score: number
                     <ChevronRight size={20} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
                 </div>
             </div>
-        </a>
+        </Link>
     );
 }
 

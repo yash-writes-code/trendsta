@@ -1,14 +1,16 @@
 "use client";
 
 import { authClient, useSession } from "@/lib/auth-client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, TrendingUp, Zap, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
+import { SUBSCRIPTION_PLANS } from "@/lib/constants/products";
+import { useCheckout } from "@/lib/hooks/useCheckout";
 
-export default function SignUp() {
+function SignUpForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -20,7 +22,30 @@ export default function SignUp() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { data: session } = useSession();
+    const { initiateCheckout } = useCheckout();
+
+    // Map plan slug → Dodo product ID
+    const planSlug = searchParams.get("plan"); // e.g. "silver", "gold", "platinum"
+    const planProductId = planSlug
+        ? SUBSCRIPTION_PLANS.find((p) => p.slug.startsWith(planSlug))
+              ?.productId ?? null
+        : null;
+
+    /** After a successful signup, redirect to checkout (if plan param) or dashboard */
+    const handlePostSignup = async (userEmail: string, userName?: string) => {
+        if (planProductId && userEmail) {
+            await initiateCheckout({
+                productId: planProductId,
+                userEmail,
+                userName,
+                source: `signup_plan_${planSlug}`,
+            });
+        } else {
+            router.push("/dashboard");
+        }
+    };
 
     // Redirect to dashboard if already logged in
     useEffect(() => {
@@ -36,10 +61,14 @@ export default function SignUp() {
         try {
             await authClient.signIn.social({
                 provider: "google",
-                callbackURL: "/dashboard",
+                // callbackURL handled in onSuccess to support plan redirect
             }, {
                 onRequest: () => setIsLoading(true),
-                onSuccess: () => router.push("/dashboard"),
+                onSuccess: async (ctx) => {
+                    const userEmail = ctx.data?.user?.email ?? "";
+                    const userName = ctx.data?.user?.name;
+                    await handlePostSignup(userEmail, userName);
+                },
                 onError: (ctx) => {
                     setError(ctx.error.message);
                     setIsLoading(false);
@@ -67,10 +96,11 @@ export default function SignUp() {
                 email,
                 password,
                 name,
-                callbackURL: "/dashboard",
             }, {
                 onRequest: () => setIsLoading(true),
-                onSuccess: () => router.push("/dashboard"),
+                onSuccess: async () => {
+                    await handlePostSignup(email, name);
+                },
                 onError: (ctx) => {
                     setError(ctx.error.message);
                     setIsLoading(false);
@@ -117,7 +147,7 @@ export default function SignUp() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="w-full max-w-md bg-white border border-border-patreon p-7 rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] my-6"
+                    className="w-full max-w-md bg-white border border-border-patreon p-7 rounded-4xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] my-6"
                 >
                     <div className="lg:hidden flex items-center justify-center gap-3 mb-6">
                         <Image src="/T_logo.png" alt="Trendsta" width={30} height={30} className="rounded-lg shadow-sm" />
@@ -215,9 +245,9 @@ export default function SignUp() {
 
                     <p className="mt-4 text-xs text-center text-muted leading-relaxed font-medium">
                         By continuing, you agree to our{" "}
-                        <a href="/terms" className="text-ink hover:text-[#ff5900] transition-colors underline decoration-border-patreon underline-offset-4">Terms</a>
+                        <Link href="/terms" className="text-ink hover:text-[#ff5900] transition-colors underline decoration-border-patreon underline-offset-4">Terms</Link>
                         {" "}and{" "}
-                        <a href="/privacy" className="text-ink hover:text-[#ff5900] transition-colors underline decoration-border-patreon underline-offset-4">Privacy Policy</a>
+                        <Link href="/privacy" className="text-ink hover:text-[#ff5900] transition-colors underline decoration-border-patreon underline-offset-4">Privacy Policy</Link>
                     </p>
 
                     {/* Divider */}
@@ -256,5 +286,17 @@ export default function SignUp() {
                 </motion.div>
             </div>
         </div>
+    );
+}
+
+export default function SignUp() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-gray-500 font-medium">Loading...</div>
+            </div>
+        }>
+            <SignUpForm />
+        </Suspense>
     );
 }

@@ -6,6 +6,7 @@ import {
     ExternalLink, Play, Award, Zap, Flame, User, Music, Calendar,
     ChevronDown, ChevronUp, Copy, Check, Bookmark, Share2
 } from "lucide-react";
+import Link from 'next/link';
 //import ReelCard from "@/app/components/ReelCard";
 // Competitor Reel Interface matching the provided data structure
 export interface CompetitorReel {
@@ -146,7 +147,7 @@ const ReelCard = ({ reel, index }: { reel: CompetitorReel; index: number }) => {
         <div className="neu-convex overflow-hidden group">
             {/* Thumbnail Section */}
             <div className="relative aspect-[9/16] max-h-[280px] overflow-hidden bg-slate-900">
-                <a href={reel.url} target="_blank" rel="noopener noreferrer">
+                <Link href={reel.url} target="_blank" rel="noopener noreferrer">
                     <img
                         src={reel.thumbnail.toString()}
                         alt={`Reel by ${reel.creatorName}`}
@@ -157,7 +158,7 @@ const ReelCard = ({ reel, index }: { reel: CompetitorReel; index: number }) => {
                             (e.target as HTMLImageElement).src = "https://via.placeholder.com/270x480?text=Reel";
                         }}
                     />
-                </a>
+                </Link>
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
 
@@ -335,7 +336,7 @@ const ReelCard = ({ reel, index }: { reel: CompetitorReel; index: number }) => {
 
                         {/* Action Buttons */}
                         <div className="flex gap-2">
-                            <a
+                            <Link
                                 href={reel.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -343,7 +344,7 @@ const ReelCard = ({ reel, index }: { reel: CompetitorReel; index: number }) => {
                             >
                                 <ExternalLink size={12} />
                                 View Reel
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 )}

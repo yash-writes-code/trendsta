@@ -5,6 +5,7 @@ import Sidebar from "../components/Sidebar";
 import MobileHeader from "../components/MobileHeader";
 import NoResearchState from "../components/NoResearchState";
 import { useRouter } from "next/navigation";  
+import Link from "next/link";
 import { StatsOverview } from "./components/StatsOverview";
 import ResearchSummaryView from "./components/ResearchSummaryView";
 import { ScriptIdeasLink, QuickActions } from "./components/DashboardCards";
@@ -186,9 +187,9 @@ export default function DashboardClient() {
                             <div className="text-indigo-600 text-sm font-medium">
                                 Viewing as Guest Mode
                             </div>
-                            <a href="/signin" className="neu-btn-primary text-xs">
+                            <Link href="/signin" className="neu-btn-primary text-xs">
                                 Log In to Save
-                            </a>
+                            </Link>
                         </div>
                     )}
                 </div>

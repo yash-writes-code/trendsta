@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import Sidebar from "../components/Sidebar";
 import { TrendingUp, ArrowUp, Minus, Heart, Repeat2, MessageCircle, ExternalLink, Eye, Users, Zap, Menu, Clock, LayoutGrid, Sparkles, Loader2 } from "lucide-react";
 import MobileHeader from "../components/MobileHeader";
+import Link from "next/link";
 import { TweetData, ResearchSummary } from "@/app/types/trendsta";
 import SmartInsightsView from "../components/SmartInsightsView";
 import NoResearchState from "../components/NoResearchState";
@@ -134,14 +135,14 @@ function TweetCard({ tweet, index }: { tweet: TweetData; index: number }) {
                         )}
                     </div>
                 </div>
-                <a
+                <Link
                     href={tweet.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 text-theme-muted hover:text-blue-400 transition-colors"
                 >
                     <ExternalLink size={16} />
-                </a>
+                </Link>
             </div>
 
             {/* Tweet Content */}

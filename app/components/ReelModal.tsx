@@ -2,6 +2,7 @@ import React from "react";
 import { Play, Eye, Heart, MessageCircle, Share2, X, Clock, ExternalLink, TrendingUp } from "lucide-react";
 import { VelocityBadge } from "./ReelCard";
 import { ReelData } from "../types/trendsta";
+import Link from "next/link";
 
 // Helper for relative time (e.g. 2d ago) from hours
 function formatTimeAgo(hours: number): string {
@@ -45,7 +46,7 @@ export default function ReelModal({ reel, onClose }: ReelModalProps) {
 
                 <div className="flex flex-col md:flex-row max-h-[90vh]">
                     {/* Image Section */}
-                    <a
+                    <Link
                         href={reel.url}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -62,7 +63,7 @@ export default function ReelModal({ reel, onClose }: ReelModalProps) {
                                 <Play size={28} className="text-white ml-1" fill="currentColor" />
                             </div>
                         </div>
-                    </a>
+                    </Link>
 
                     {/* Details Section */}
                     <div className="flex-1 p-6 overflow-y-auto">
@@ -132,7 +133,7 @@ export default function ReelModal({ reel, onClose }: ReelModalProps) {
                         </div>
 
                         {/* View on Instagram Button */}
-                        <a
+                        <Link
                             href={reel.url}
                             target="_blank"
                             rel="noopener noreferrer"
@@ -140,7 +141,7 @@ export default function ReelModal({ reel, onClose }: ReelModalProps) {
                         >
                             <ExternalLink size={16} />
                             View on Instagram
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>
