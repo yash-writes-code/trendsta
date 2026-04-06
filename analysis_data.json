@@ -1,0 +1,213 @@
+[
+  {
+    "meta": {
+      "creator_handle": "@thevarunmayya",
+      "total_reels_analyzed": 5,
+      "average_views": 205053,
+      "follower_count": 1259761,
+      "report_tier": "free"
+    },
+    "sidebar_scoring": {
+      "visibility_tier": "free",
+      "virality_score": 48,
+      "virality_label": "Developing",
+      "virality_context": "Your reach efficiency is currently 64% of the industry benchmark, indicating a significant untapped follower base.",
+      "issues_found_count": 3,
+      "metrics": {
+        "content_metrics_percentage": 72,
+        "reach_efficiency": {
+          "status_label": "Warning",
+          "percentage": 64
+        },
+        "wpm_consistency": {
+          "status_label": "Mastered"
+        },
+        "snippet_duration": {
+          "status_label": "Strong"
+        },
+        "ad_immunity": {
+          "status_label": "Mastered"
+        }
+      },
+      "hook_power_percentage": 82,
+      "ai_readiness_percentage": 90
+    },
+    "main_analysis": {
+      "reach_efficiency_crisis": {
+        "visibility_tier": "partial",
+        "current_ratio": 0.16,
+        "industry_target_ratio": 0.25,
+        "missed_views_calculated": {
+          "value": 113378,
+          "visibility_tier": "locked"
+        }
+      },
+      "llm_diagnostic": {
+        "visibility_tier": "free",
+        "strengths": [
+          {
+            "title": "Urgent Leak Framing",
+            "description": "Your 'Anthropic leaked' hook generated a 1.36x multiplier, proving that high-stakes tech news is your primary growth engine.",
+            "impact_level": "High"
+          },
+          {
+            "title": "High-Density Pacing",
+            "description": "Maintaining 233 WPM across all clips creates an addictive information density that sustains 200k+ average views.",
+            "impact_level": "Medium"
+          }
+        ],
+        "critical_flaws": [
+          {
+            "title": "Interview Friction",
+            "description": "The Mohak Shroff interview underperformed by 45%, suggesting raw Q&A lacks the punch of your solo deep-dives.",
+            "impact_level": "High"
+          },
+          {
+            "title": "CTAs in Descriptions",
+            "description": "Reels with long, descriptive captions like your LinkedIn clip see a 93% drop in comment volume compared to short hooks.",
+            "impact_level": "Medium"
+          }
+        ]
+      },
+      "performance_funnel": {
+        "visibility_tier": "free",
+        "viral_percentage": 0,
+        "above_average_percentage": 60,
+        "average_percentage": 20,
+        "underperforming_percentage": 20
+      },
+      "topic_performance_ladder": {
+        "visibility_tier": "partial",
+        "topics": [
+          {
+            "topic_label": "AI Tools & Filmmaking",
+            "multiplier_score": "1.39x",
+            "visibility_tier": "free",
+            "percentile": {
+              "value": 100,
+              "visibility_tier": "locked"
+            }
+          },
+          {
+            "topic_label": "AI Industry Leaks",
+            "multiplier_score": "1.36x",
+            "visibility_tier": "free",
+            "percentile": {
+              "value": 66,
+              "visibility_tier": "locked"
+            }
+          },
+          {
+            "topic_label": "Tech Regulation News",
+            "multiplier_score": "1.02x",
+            "visibility_tier": "free",
+            "percentile": {
+              "value": 33,
+              "visibility_tier": "locked"
+            }
+          }
+        ],
+        "unlock_teaser": "Your AI Tool content has a specific 15:00 posting window that maximizes reach—unlock to see the full heat map."
+      },
+      "hook_power_analysis": {
+        "visibility_tier": "partial",
+        "top_hook": {
+          "text": "Anthropic just leaked their most secret",
+          "views": 284309,
+          "score": 100,
+          "visibility_tier": "free"
+        },
+        "worst_hook": {
+          "text": "Ladies and gentlemen, I'm with Mohak",
+          "views": 108553,
+          "score": 38,
+          "visibility_tier": "free"
+        },
+        "leaderboard": {
+          "visibility_tier": "locked",
+          "frameworks": [
+            "Secret Leak/Warning — 1.36x avg",
+            "Tool Efficiency Solution — 1.39x avg"
+          ],
+          "teaser_copy": "Your top 2 reels share a 'Forbidden Information' opening structure that generates 1.38x more reach."
+        }
+      },
+      "wpm_consistency_band": {
+        "visibility_tier": "partial",
+        "min_wpm": 221,
+        "max_wpm": 241,
+        "is_pace_a_problem": false,
+        "band_interpretation": {
+          "value": "Your pace is locked in a tight 221–241 WPM band, signaling elite-level scripting discipline.",
+          "visibility_tier": "locked"
+        }
+      },
+      "duration_sweet_spot": {
+        "visibility_tier": "partial",
+        "dead_zone_range": "30–45s",
+        "optimal_zones": [
+          "60s+",
+          "45–60s"
+        ],
+        "duration_fix": {
+          "value": "Abandon the 30s format for interviews; your audience demands the 60s+ deep-dive narrative for full value.",
+          "visibility_tier": "locked"
+        }
+      },
+      "ad_immunity_advantage": {
+        "visibility_tier": "partial",
+        "organic_baseline": "1.0x",
+        "sponsored_multiplier": "1.39x",
+        "ad_insight": {
+          "value": "Your sponsored content outperforms organic by 39%—you are significantly undercharging brands for this level of integration.",
+          "visibility_tier": "locked"
+        }
+      },
+      "audience_engagement_map": {
+        "visibility_tier": "locked",
+        "segments": [
+          {
+            "segment_name": "AI Tool Seekers",
+            "percentage": 45
+          },
+          {
+            "segment_name": "Tech News Junkies",
+            "percentage": 35
+          },
+          {
+            "segment_name": "Career Strategists",
+            "percentage": 20
+          }
+        ],
+        "teaser_copy": "Knowing which of your 3 audience segments drives 80% of your saves unlocks your content calendar strategy."
+      }
+    },
+    "generated_ai_scripts": {
+      "visibility_tier": "locked",
+      "teaser_copy": "3 ready-to-record scripts built from your top hook framework and best-performing topic.",
+      "scripts": [
+        {
+          "topic": "AI Industry Leaks",
+          "suggested_duration_sec": 65,
+          "hook": "OpenAI just internally flagged a model so dangerous they won't name it.",
+          "body": "It's not GPT-5. It's a specialized reasoning engine that solved a decade-old encryption benchmark in under 4 seconds.",
+          "cta": "Check the link in my bio for the full technical breakdown before it's pulled."
+        }
+      ]
+    },
+    "conversion_nudges": [
+      {
+        "target_section": "missed_views",
+        "copy": "You're leaving 113K views on the table every reel. Fix it now."
+      },
+      {
+        "target_section": "hook_leaderboard",
+        "copy": "Your 'Forbidden Info' framework is 1.38x more effective. See the template."
+      },
+      {
+        "target_section": "ad_immunity",
+        "copy": "You're undercharging brands by 39% based on your sponsored performance."
+      }
+    ]
+  }
+]

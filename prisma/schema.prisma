@@ -42,6 +42,7 @@ model User {
   // AI Consultant
   conversations      Conversation[]
   automationSettings AutomationSettings?
+  profileAnalysis    ProfileAnalysis?
 
   // Referral system
   referralCode  String?  @unique              // User's own shareable code e.g. "yash-a3f2"
@@ -600,4 +601,21 @@ model Commission {
 
   @@index([referrerId])
   @@map("commission")
+}
+
+// ============================================
+// PROFILE ANALYSIS
+// ============================================
+
+model ProfileAnalysis {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @unique @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  analysis  Json     // Storage for the n8n analysis payload
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("profile_analysis")
 }

@@ -37,8 +37,8 @@ const prismaWithAutoId = new Proxy(prisma, {
                     if (modelProp === 'create' && typeof method === 'function') {
                         return async (args: any) => {
                             // Remove id if it's null or undefined so PostgreSQL generates it
-                            console.log("arsg is");
-                            console.log(args);
+                            // console.log("arsg is");
+                            // console.log(args);
                             if (args?.data && (args.data.id === null || args.data.id === undefined)) {
 
                                 delete args.data.id;

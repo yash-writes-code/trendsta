@@ -33,6 +33,8 @@ function SignUpForm() {
               ?.productId ?? null
         : null;
 
+    const nextUrl = searchParams.get("next");
+    
     /** After a successful signup, redirect to checkout (if plan param) or dashboard */
     const handlePostSignup = async (userEmail: string, userName?: string) => {
         if (planProductId && userEmail) {
@@ -43,32 +45,41 @@ function SignUpForm() {
                 source: `signup_plan_${planSlug}`,
             });
         } else {
-            router.push("/dashboard");
+            // Forward the next URL to onboarding so it knows where to go after completion
+            console.log("redirecting to ",nextUrl ? `/onboarding?next=${encodeURIComponent(nextUrl)}` : "/dashboard");
+            
+            router.push(nextUrl ? `/onboarding?next=${encodeURIComponent(nextUrl)}` : "/dashboard");
         }
     };
 
     // Redirect to dashboard if already logged in
     useEffect(() => {
         if (session?.user && !(session.user as any).isAnonymous) {
-            router.push("/dashboard");
+            router.push(nextUrl || "/dashboard");
         }
-    }, [session, router]);
+    }, [session, router, nextUrl]);
 
     const handleGoogleSignIn = async () => {
         setIsLoading(true);
         setError(null);
 
+        // For OAuth (social sign-in), the browser follows a server-side redirect chain:
+        //   /api/auth/sign-in/social → Google → /api/auth/callback/google → callbackURL
+        // The server-side 302 always wins over any client-side router.push() done in onSuccess.
+        // So we MUST pass callbackURL here — it is the only reliable way to control where
+        // the user lands after OAuth completes.
+        const oauthCallbackUrl = planProductId
+            ? `/api/checkout-redirect?plan=${planSlug}&next=${encodeURIComponent(nextUrl || '/dashboard')}`
+            : nextUrl
+                ? `/onboarding?next=${encodeURIComponent(nextUrl)}`
+                : '/onboarding';
+
         try {
             await authClient.signIn.social({
                 provider: "google",
-                // callbackURL handled in onSuccess to support plan redirect
+                callbackURL: oauthCallbackUrl,
             }, {
                 onRequest: () => setIsLoading(true),
-                onSuccess: async (ctx) => {
-                    const userEmail = ctx.data?.user?.email ?? "";
-                    const userName = ctx.data?.user?.name;
-                    await handlePostSignup(userEmail, userName);
-                },
                 onError: (ctx) => {
                     setError(ctx.error.message);
                     setIsLoading(false);

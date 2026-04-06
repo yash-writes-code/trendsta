@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 import { useQueryClient } from '@tanstack/react-query';
 import { useProfileCompletion } from '@/hooks/useProfileCompletion';
@@ -42,10 +42,13 @@ const fadeInUp = {
     exit: { opacity: 0, y: -10 },
 };
 
-export default function OnboardingPage() {
+function OnboardingContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const queryClient = useQueryClient();
     const { isProfileComplete, isLoading: profileLoading } = useProfileCompletion();
+
+    const nextUrl = searchParams.get('next');
 
     const [currentStep, setCurrentStep] = useState(1);
     const [direction, setDirection] = useState(0);
@@ -58,10 +61,10 @@ export default function OnboardingPage() {
     // Redirect if profile is already complete
     useEffect(() => {
         if (!profileLoading && isProfileComplete) {
-            console.log('[Onboarding] Profile already complete, redirecting to dashboard');
-            router.push('/dashboard');
+            console.log('[Onboarding] Profile already complete, redirecting to destination');
+            router.push(nextUrl || '/dashboard');
         }
-    }, [isProfileComplete, profileLoading, router]);
+    }, [isProfileComplete, profileLoading, router, nextUrl]);
 
     // Update form field
     const updateField = useCallback((field: keyof OnboardingFormData, value: string) => {
@@ -155,14 +158,14 @@ export default function OnboardingPage() {
             // Small delay for cache invalidation to propagate
             await new Promise(resolve => setTimeout(resolve, 500));
 
-            // Redirect to dashboard
-            router.push('/dashboard');
+            // Redirect to destination
+            router.push(nextUrl || '/dashboard');
         } catch (error: any) {
             console.error('Onboarding error:', error);
             setApiError(error.message || 'Something went wrong. Please try again.');
             setIsCompleting(false);
         }
-    }, [formData, router]);
+    }, [formData, router, nextUrl, customSubNiche, queryClient]);
 
     // Get sub-niches for selected niche
     const availableSubNiches = formData.niche ? SUB_NICHE_MAPPING[formData.niche] || [] : [];
@@ -289,6 +292,16 @@ export default function OnboardingPage() {
                 </div>
             </main>
         </div>
+    );
+}
+
+import { Suspense } from 'react';
+
+export default function OnboardingPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#fafafa]" />}>
+            <OnboardingContent />
+        </Suspense>
     );
 }
 

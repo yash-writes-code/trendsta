@@ -11,6 +11,8 @@ import SmoothScroll from "./components/SmoothScroll";
 import Script from "next/script";
 import { Analytics } from "./analytics";
 import ReferralTracker from "./components/ReferralTracker";
+import { PostHogProvider } from "./providers/PostHogProvider";
+import { PostHogPageView } from "./components/PostHogPageView";
 
 export const metadata: Metadata = {
 metadataBase: new URL("https://trendsta.in"),
@@ -93,21 +95,26 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          <QueryProvider>
-            <AnalysisProvider>
-              <SidebarProvider>
-                <SmoothScroll>
-                  <AnalysingIndicator />
-                  <Suspense fallback={null}>
-                    <ReferralTracker />
-                  </Suspense>
-                  {children}
-                </SmoothScroll>
-              </SidebarProvider>
-            </AnalysisProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <PostHogProvider>
+          <Suspense fallback={null}>
+            <PostHogPageView />
+          </Suspense>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+            <QueryProvider>
+              <AnalysisProvider>
+                <SidebarProvider>
+                  <SmoothScroll>
+                    <AnalysingIndicator />
+                    <Suspense fallback={null}>
+                      <ReferralTracker />
+                    </Suspense>
+                    {children}
+                  </SmoothScroll>
+                </SidebarProvider>
+              </AnalysisProvider>
+            </QueryProvider>
+          </ThemeProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
