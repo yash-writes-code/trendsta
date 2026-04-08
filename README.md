@@ -1,36 +1,162 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## 1. Overview
 
-## Getting Started
+Trendsta is an AI-powered content growth platform designed to help creators and digital brands discover trends, generate high-performing content ideas, and make data-driven decisions.
+It combines trend analysis, automated data pipelines, and AI-generated insights into a unified system that reduces guesswork in content creation.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 2. Problem Statement
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Content creators face several challenges:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Difficulty identifying emerging trends early  
+- Lack of consistency in content performance  
+- No clear understanding of why content goes viral  
+- Heavy reliance on intuition instead of data  
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Existing tools either:
+- Provide raw analytics without actionable insights, or  
+- Offer generic suggestions without context
 
-## Learn More
+Additionally:
 
-To learn more about Next.js, take a look at the following resources:
+- Many users do not have the time to interpret dashboards and analytics  
+- Even when insights are available, they are not always easy to act upon  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 3. Solution
 
-## Deploy on Vercel
+Trendsta addresses these challenges by:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Collecting and processing trend signals from multiple sources  
+- Using AI to generate:
+  - Content ideas  
+  - Hooks  
+  - Scripts  
+- Providing actionable insights instead of raw data
+- Providing a conversational AI consultant for intuitive interaction  
+The system focuses on delivering **usable outputs**, not just analytics.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 4. System Architecture
+<img width="1151" height="1071" alt="image" src="https://github.com/user-attachments/assets/a8b9294e-cc6d-43e9-9e27-593a1a610efb" />
+---
+
+## 5. n8n Workflow (Trend Detection & Scraping)
+
+Trendsta currently uses an **n8n workflow** as the core automation layer for trend detection and data collection.
+
+### Purpose of the Workflow
+
+The n8n workflow is responsible for:
+
+- Scraping or collecting data from socials  
+- Extracting relevant signals (engagement, patterns, formats)  
+- Structuring this data for further processing  
+- Adds an intelligence layer using LLMs  
+
+---
+
+### High-Level Workflow Steps
+
+1. **Trigger**
+   - Invoked by backend API request or scheduled trigger for a particular user  
+
+2. **Data Collection**
+   - Scrapes data from across socials media platform  
+
+3. **Preprocessing**
+   - Cleans and filters raw data  
+   - Removes irrelevant entries  
+
+4. **Intelligence layer**
+   - Identifies useful indicators such as:
+     - Engagement patterns  
+     - Repeated formats  
+     - Viral hooks or structures
+   - Generates scripts and hashtags for user  
+
+5. **Structuring Output**
+   - Converts processed data into a consistent format  
+   - Saves it to relevant tables in the database 
+---
+
+### Why n8n?
+
+- Enables rapid prototyping of data pipelines  
+- Easy to modify and experiment with workflows  
+- Reduces initial backend complexity  
+- Allows quick iteration on scraping and trend logic  
+
+---
+
+## 6. AI Consultant (Conversational Interface)
+
+Trendsta includes a conversational AI consultant that allows users to interact with the system in a natural, chat-based format.
+
+### Purpose
+
+- Provides an alternative to traditional dashboards and analytics  
+- Allows users to directly ask questions and receive actionable insights  
+- Reduces the effort required to interpret complex data  
+
+### Capabilities
+
+- Answers queries based on processed trend and research data  
+- Suggests content ideas, hooks, and strategies  
+- Explains why certain content performs well  
+- Assists in decision-making for content direction and growth  
+
+### Implementation
+
+- Uses a **Retrieval-Augmented Generation (RAG)** approach to generate responses grounded in processed trend data  
+- Retrieves relevant insights from the database (generated via n8n workflows)  
+- Incorporates **context management** to maintain conversation continuity  
+- Uses **memory mechanisms** to retain user-specific context across interactions  
+- Ensures responses are:
+  - Context-aware  
+  - Data-backed  
+  - Actionable  
+
+This allows the AI consultant to function as a **stateful, personalized assistant**, rather than a stateless chatbot.
+
+
+## 8. Tech Stack
+
+- **Webapp** : Next.js  
+- **Automation Layer:** n8n  
+- **Consultant AI** Langchain  
+- **State Management:** Zustand  
+- **Database:** PostgreSQL  
+
+---
+
+## 9. Future Improvements
+
+- Replace n8n workflows with a **custom LangGraph-based pipeline** to improve efficiency
+- Improve scalability and performance of trend detection  
+- Multi-platform support (YouTube, LinkedIn, X)  
+
+---
+
+## 11. Limitations
+
+- AI output depends on LLM quality  
+- Trend detection is not fully real-time  
+- Current workflow takes some minutes to complete the analysis
+
+---
+
+## 12. Use Cases
+
+- Content creators (Instagram, YouTube, short-form platforms)  
+- Influencers and personal brands
+- AI faceless channels  
+- Marketing teams and agencies  
+- Growth-focused startups  
+
+- AI-generated content  
+- Conversational AI consulting  
+- Actionable insights  
