@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
             client_username: instagramUsername,
-            user_reels_to_scrape: 1,
+            user_reels_to_scrape: 3,
             use_apify_transcript: false,
             apify_key: apifyKey || "",
             userId: userId,
