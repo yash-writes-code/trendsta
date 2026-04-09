@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
 
 // --- Components ---
 
@@ -137,6 +138,8 @@ function ScrollIndicator({ color = "#2e3131", duration = 2.5 }: { color?: string
 
 function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
 
   return (
     <>
@@ -155,8 +158,15 @@ function Navbar() {
           </ul>
 
           <div className="flex items-center gap-3">
-            <Link href="/signin" className="hidden sm:inline-flex px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-[16px] hover:bg-gray-50 transition-all shadow-sm">Log in</Link>
-            <Link href="/signup" className="px-6 py-3 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-[16px] hover:scale-105 hover:shadow-[0_8px_24px_-6px_rgba(255,89,0,0.5)] transition-all">Get started</Link>
+            {!isLoggedIn && (
+              <Link href="/signin" className="hidden sm:inline-flex px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-[16px] hover:bg-gray-50 transition-all shadow-sm">Log in</Link>
+            )}
+            <Link
+              href="/dashboard"
+              className="px-6 py-3 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-[16px] hover:scale-105 hover:shadow-[0_8px_24px_-6px_rgba(255,89,0,0.5)] transition-all"
+            >
+              {isLoggedIn ? "Go to Dashboard" : "Get started"}
+            </Link>
           </div>
 
           <button className="nav-mobile-toggle flex items-center justify-center p-2 text-ink" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Menu">
@@ -193,19 +203,21 @@ function Navbar() {
             </div>
             <div className="flex flex-col gap-2 pt-4 border-t border-border-patreon">
               <Link
-                href="/signup"
+                href="/dashboard"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex items-center justify-center w-full px-6 py-3 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-sm shadow-sm hover:shadow-md hover:scale-[1.02] transition-all"
               >
-                Get Started
+                {isLoggedIn ? "Go to Dashboard" : "Get Started"}
               </Link>
-              <Link
-                href="/dashboard"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center justify-center w-full px-6 py-3 rounded-full border border-black/10 text-ink font-bold text-sm hover:bg-black/5 transition-colors"
-              >
-                View Demo
-              </Link>
+              {!isLoggedIn && (
+                <Link
+                  href="/signin"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center w-full px-6 py-3 rounded-full border border-black/10 text-ink font-bold text-sm hover:bg-black/5 transition-colors"
+                >
+                  Log In
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
@@ -216,6 +228,9 @@ function Navbar() {
 
 
 function Hero() {
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+
   return (
     <section className="hero relative pb-0 overflow-hidden bg-cream flex flex-col text-center z-10 w-full border-b border-black/5">
       {/* Floating gradient blobs like Patreon */}
@@ -246,7 +261,7 @@ function Hero() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4 w-full sm:w-auto z-20"
         >
-          <Link href="/signup?next=/analyse_my_profile" className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-lg hover:scale-[1.03] hover:shadow-[0_12px_30px_-8px_rgba(255,89,0,0.7)] transition-all duration-300">
+          <Link href={isLoggedIn ? "/analyse_my_profile" : "/signup?next=/analyse_my_profile"} className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-lg hover:scale-[1.03] hover:shadow-[0_12px_30px_-8px_rgba(255,89,0,0.7)] transition-all duration-300">
             Analyse my profile for free
           </Link>
           <Link href="/dashboard" className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-lg hover:bg-gray-50 hover:scale-[1.02] transition-all duration-300 shadow-sm">

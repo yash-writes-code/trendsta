@@ -186,6 +186,7 @@ export default function DashboardClient() {
                         <div className="flex items-center gap-4 neu-pressed px-4 py-2 rounded-xl">
                             <div className="text-indigo-600 text-sm font-medium">
                                 Viewing as Guest Mode
+                                
                             </div>
                             <Link href="/signin" className="neu-btn-primary text-xs">
                                 Log In to Save

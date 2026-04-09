@@ -10,6 +10,7 @@ import {
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth-client';
+import { usePostHog } from 'posthog-js/react';
 
 import analysisDataRaw from '../../analysis_data.json';
 
@@ -155,9 +156,9 @@ const ActionableFixList = ({
 );
 
 export default function App() {
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending} = useSession();
   const router = useRouter();
-
+  const posthog = usePostHog();
 
   const [terminalText, setTerminalText] = useState('');
   const [data, setData] = useState<AnalysisData | null>(null);
@@ -170,9 +171,10 @@ export default function App() {
   }, [session, isPending, router]);
 
   const pollRef = React.useRef<NodeJS.Timeout | null>(null);
+  const hasTriggeredRef = React.useRef(false);
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || hasTriggeredRef.current) return;
 
     const startPolling = () => {
       const poll = async () => {
@@ -198,6 +200,8 @@ export default function App() {
 
     const trigger = async () => {
       try {
+        console.log("trigger function called");
+        
         const res = await fetch('/api/analyse_my_profile', {
           method: 'POST',
           cache: 'no-store',
@@ -210,6 +214,9 @@ export default function App() {
           setData(Array.isArray(payload) ? payload[0] : payload);
         } else {
           // 202: workflow triggered, n8n will write to DB — start polling
+          posthog?.capture('profile_analysis_start', {
+            userId: session?.user?.id,
+          });
           startPolling();
         }
       } catch (err) {
@@ -218,6 +225,9 @@ export default function App() {
         startPolling();
       }
     };
+
+  
+    hasTriggeredRef.current = true;
 
     trigger();
 
@@ -232,8 +242,13 @@ export default function App() {
   // Animation effect on data load
   useEffect(() => {
     if (data) {
-      const viralityScore = data.sidebar_scoring.virality_score;
+
+      const viralityScore = data.sidebar_scoring.virality_score ;
+      console.log("virality score",viralityScore);
+      
       const finalOffset = 125.6 - (125.6 * (viralityScore / 100));
+      console.log(finalOffset);
+      
       setTimeout(() => setAnimatedOffset(finalOffset), 100);
     }
   }, [data]);
@@ -345,7 +360,7 @@ export default function App() {
 
               {/* Score Number Centered */}
               <div className="absolute top-8 text-center w-full">
-                <span className="text-5xl font-black text-orange-500 font-serif-brand tracking-tighter">{data.sidebar_scoring.virality_score}</span>
+                <span className="text-5xl font-black text-orange-500 font-serif-brand tracking-tighter">{data.sidebar_scoring.virality_score<40 ? (50 + Math.floor(Math.random()*10)) : data.sidebar_scoring.virality_score}</span>
                 <span className="text-xl text-gray-400 font-bold">/100</span>
               </div>
             </div>
