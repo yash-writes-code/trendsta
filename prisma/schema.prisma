@@ -1,3 +1,4 @@
+
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -10,6 +11,11 @@ datasource db {
 // ============================================
 // AUTH TABLES (Unchanged)
 // ============================================
+
+enum ROLES {
+  ADMIN
+  USER
+}
 
 model User {
   id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -26,10 +32,10 @@ model User {
   language       String          @default("en")
   timezone       String          @default("UTC+00:00")
 
-  location       String?         @default("India")
+  location String? @default("India")
   // Onboarding fields
-  niche          String?
-  subNiche       String?
+  niche    String?
+  subNiche String?
 
   // Plan & Stella relations
   subscriptions      Subscription[]
@@ -38,18 +44,23 @@ model User {
   wallet             Wallet?
   analysisJobs       AnalysisJob[]
   payments           Payment[]
-  
   // AI Consultant
   conversations      Conversation[]
   automationSettings AutomationSettings?
   profileAnalysis    ProfileAnalysis?
 
   // Referral system
-  referralCode  String?  @unique              // User's own shareable code e.g. "yash-a3f2"
-  referredById  String?  @db.Uuid             // FK → User who referred this user
-  referredBy    User?    @relation("Referrals", fields: [referredById], references: [id])
-  referrals     User[]   @relation("Referrals")
-  commissions   Commission[]                  // Commissions earned by this user as referrer
+  referralCode String?      @unique // User's own shareable code e.g. "yash-a3f2"
+  referredById String?      @db.Uuid // FK → User who referred this user
+  referredBy   User?        @relation("Referrals", fields: [referredById], references: [id])
+  referrals    User[]       @relation("Referrals")
+  commissions  Commission[] // Commissions earned by this user as referrer
+
+  role ROLES @default(USER)
+
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
 
   @@map("user")
 }
@@ -64,6 +75,8 @@ model Session {
   userAgent String?
   userId    String   @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
 
   @@unique([token])
   @@index([userId])
@@ -144,6 +157,7 @@ model Research {
 // ============================================
 
 // AI-generated script suggestions
+
 model ScriptSuggestions {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   researchId String   @unique @db.Uuid
@@ -156,6 +170,7 @@ model ScriptSuggestions {
 }
 
 // Overall strategy insights
+
 model OverallStrategy {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   researchId String   @unique @db.Uuid
@@ -168,6 +183,7 @@ model OverallStrategy {
 }
 
 // User's own Instagram research
+
 model UserResearch {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   researchId String   @unique @db.Uuid
@@ -180,6 +196,7 @@ model UserResearch {
 }
 
 // Competitor analysis research
+
 model CompetitorResearch {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   researchId String   @unique @db.Uuid
@@ -192,6 +209,7 @@ model CompetitorResearch {
 }
 
 // Niche/FYP research
+
 model NicheResearch {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   researchId String   @unique @db.Uuid
@@ -204,6 +222,7 @@ model NicheResearch {
 }
 
 // Twitter research (both latest and top)
+
 model TwitterResearch {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   researchId String   @unique @db.Uuid
@@ -219,7 +238,6 @@ model TwitterResearch {
 // ============================================
 // ENUMS FOR PLANS & SUBSCRIPTIONS
 // ============================================
-
 
 enum BillingPeriod {
   MONTHLY
@@ -255,10 +273,10 @@ enum Feature {
 }
 
 enum AnalysisJobStatus {
-  PENDING    // Job created, waiting to start
+  PENDING // Job created, waiting to start
   PROCESSING // External service is processing
-  COMPLETED  // Analysis finished successfully
-  FAILED     // Analysis failed
+  COMPLETED // Analysis finished successfully
+  FAILED // Analysis failed
 }
 
 // ============================================
@@ -266,23 +284,23 @@ enum AnalysisJobStatus {
 // ============================================
 
 // Tracks async analysis jobs for polling
+
 model AnalysisJob {
-  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId          String            @db.Uuid
-  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  socialAccountId String            @db.Uuid
-  status          AnalysisJobStatus @default(PENDING)
-  stellaCost      Int               // Credits to deduct on completion
-  externalJobId   String?           // ID from external analysis service
-  errorMessage    String?           // Error details if failed
-  createdAt       DateTime          @default(now())
-  completedAt     DateTime?
-  billingFinalized Boolean @default(false)
+  id               String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId           String            @db.Uuid
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  socialAccountId  String            @db.Uuid
+  status           AnalysisJobStatus @default(PENDING)
+  stellaCost       Int // Credits to deduct on completion
+  externalJobId    String? // ID from external analysis service
+  errorMessage     String? // Error details if failed
+  createdAt        DateTime          @default(now())
+  completedAt      DateTime?
+  billingFinalized Boolean           @default(false)
 
   @@index([userId])
   @@index([userId, status])
   @@map("analysis_job")
- 
 }
 
 // ============================================
@@ -293,12 +311,10 @@ model AutomationSettings {
   id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId          String   @unique @db.Uuid
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
   competitors     String[] @default([])
   writingStyle    String   @default("let ai decide")
   scriptLanguage  String   @default("English")
   captionLanguage String   @default("English")
-  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -310,12 +326,12 @@ model AutomationSettings {
 // ============================================
 
 model WebhookEvent {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  webhookId       String   @unique // WEBHOOK-ID from DodoPayments header
-  eventType       String   // e.g., "payment.succeeded", "subscription.active"
-  payload         Json     // Store full payload for debugging
-  processedAt     DateTime @default(now())
-  createdAt       DateTime @default(now())
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  webhookId   String   @unique // WEBHOOK-ID from DodoPayments header
+  eventType   String // e.g., "payment.succeeded", "subscription.active"
+  payload     Json // Store full payload for debugging
+  processedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
 
   @@index([webhookId])
   @@index([eventType])
@@ -332,20 +348,17 @@ enum MessageRole {
 }
 
 model Conversation {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String   @db.Uuid
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  title     String?  // Auto-generated from first message or user-set
-  summary   String?  @db.Text // Conversation summary for token efficiency
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String? // Auto-generated from first message or user-set
+  summary   String?   @db.Text // Conversation summary for token efficiency
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   messages  Message[]
-  
+  // For listing user's conversations
   @@index([userId])
-  @@index([userId, updatedAt(sort: Desc)]) // For listing user's conversations
+  @@index([userId, updatedAt(sort: Desc)])
   @@map("conversation")
 }
 
@@ -353,17 +366,14 @@ model Message {
   id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   conversationId String       @db.Uuid
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  
   role           MessageRole
   content        String       @db.Text
-  
   // Context tracking (for analytics)
   contextsUsed   String[]     @default([])
-  
   createdAt      DateTime     @default(now())
-  
+  // For ordered retrieval
   @@index([conversationId])
-  @@index([conversationId, createdAt]) // For ordered retrieval
+  @@index([conversationId, createdAt])
   @@map("message")
 }
 
@@ -371,19 +381,18 @@ model Message {
 // PLANS & SUBSCRIPTIONS
 // ============================================
 
-
 enum PaymentType {
   SUBSCRIPTION // Recurring (Silver, Gold)
-  ONE_TIME     // Single charge (Credit Bundles)
+  ONE_TIME // Single charge (Credit Bundles)
 }
 
 // 2. ONE-TIME BUNDLES (The "Definition" of a top-up)
-model StellaBundle {
-  id           String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name         String // "Starter Pack", "Pro Pack"
-  stellaAmount Int    // 500
-  isActive     Boolean @default(true) 
 
+model StellaBundle {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String // "Starter Pack", "Pro Pack"
+  stellaAmount Int // 500
+  isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -393,6 +402,7 @@ model StellaBundle {
 }
 
 // Predefined, static plans
+
 model Plan {
   id   String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name String @unique // silver, gold, platinum
@@ -420,33 +430,32 @@ model Plan {
 }
 
 // Maps external payment provider product to internal plan
+
 model PaymentProduct {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   type PaymentType // SUBSCRIPTION or ONE_TIME
 
   // Polymorphic Relations (Only one should be set)
-  planId   String? @db.Uuid
-  plan     Plan?   @relation(fields: [planId], references: [id])
-  
+  planId   String?       @db.Uuid
+  plan     Plan?         @relation(fields: [planId], references: [id])
   bundleId String?       @db.Uuid
   bundle   StellaBundle? @relation(fields: [bundleId], references: [id])
 
   // External Payment Provider Details
   providerName      String // "dodo"
-  providerProductId String @unique 
-  
+  providerProductId String         @unique
   billingPeriod     BillingPeriod? // Null for ONE_TIME
-  price             Int 
-  currency          String 
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  price             Int
+  currency          String
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   @@map("payment_product")
 }
 
 // Tracks user's current subscription (webhook-driven)
+
 model Subscription {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
@@ -475,15 +484,16 @@ enum PaymentStatus {
   REFUNDED
 }
 // Immutable financial record of payments
+
 model Payment {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  userId  String @db.Uuid
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  providerPaymentId String  @unique // Prevent duplicate payment records
-  amount            Decimal @db.Decimal(10, 2)
-  currency          String  @default("USD")
+  providerPaymentId String        @unique // Prevent duplicate payment records
+  amount            Decimal       @db.Decimal(10, 2)
+  currency          String        @default("USD")
   status            PaymentStatus
   subscriptionId    String? // If this payment is for a subscription
   invoiceUrl        String?
@@ -501,34 +511,35 @@ model Payment {
 // ============================================
 
 model Wallet {
-  id      String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId  String @unique @db.Uuid
-  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId String @unique @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   monthlyBalance Int @default(0) // Resets on cycle
   topupBalance   Int @default(0) // Permanent
 
-  updatedAt      DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
   @@map("wallet")
 }
 
 enum StellaTransactionStatus {
-  HELD       // reserved, not finalized
-  SETTLED    // finalized spend / grant
-  RELEASED   // reversed hold
+  HELD // reserved, not finalized
+  SETTLED // finalized spend / grant
+  RELEASED // reversed hold
 }
 
 // Ledger-based credit transactions - no balances stored
+
 model StellaTransaction {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
   userId String @db.Uuid
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  amount      Int // Positive for credits, negative for debits
-  bucket      StellaBucket // MONTHLY or TOPUP
-  reason      StellaReason
+  amount Int // Positive for credits, negative for debits
+  bucket StellaBucket // MONTHLY or TOPUP
+  reason StellaReason
 
   // [MODIFIED] METADATA FOR AUDIT
   // Store specific details here: { "researchId": "...", "competitorsAnalyzed": 4 }
@@ -550,6 +561,7 @@ model StellaTransaction {
 // ============================================
 
 // Tracks free/promotional usage for specific features
+
 model FeatureAllowance {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
@@ -575,29 +587,30 @@ model FeatureAllowance {
 // ============================================
 
 enum CommissionStatus {
-  PENDING   // Earned, not yet paid out
-  PAID      // Paid out to referrer
+  PENDING // Earned, not yet paid out
+  PAID // Paid out to referrer
   CANCELLED // Refunded or reversed
 }
 
 /// One row is created the first time a referred user makes a paid purchase.
 /// `referrerId` is the person who shared the link; `referredUserId` is the buyer.
+
 model Commission {
-  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  referrerId     String           @db.Uuid
-  referrer       User             @relation(fields: [referrerId], references: [id], onDelete: Cascade)
+  referrerId String @db.Uuid
+  referrer   User   @relation(fields: [referrerId], references: [id], onDelete: Cascade)
 
-  referredUserId String           @db.Uuid  // The user whose purchase triggered this
+  referredUserId String @db.Uuid // The user whose purchase triggered this
 
-  paymentId      String           // providerPaymentId for traceability
+  paymentId String // providerPaymentId for traceability
 
-  commissionPct  Decimal          @db.Decimal(5, 2)   // e.g. 10.00
-  amount         Decimal          @db.Decimal(10, 2)  // Commission amount in payment currency
-  currency       String
+  commissionPct Decimal @db.Decimal(5, 2) // e.g. 10.00
+  amount        Decimal @db.Decimal(10, 2) // Commission amount in payment currency
+  currency      String
 
-  status         CommissionStatus @default(PENDING)
-  createdAt      DateTime         @default(now())
+  status    CommissionStatus @default(PENDING)
+  createdAt DateTime         @default(now())
 
   @@index([referrerId])
   @@map("commission")
@@ -608,14 +621,20 @@ model Commission {
 // ============================================
 
 model ProfileAnalysis {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId    String   @unique @db.Uuid
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  analysis  Json     // Storage for the n8n analysis payload
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId   String @unique @db.Uuid
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analysis Json // Storage for the n8n analysis payload
 
   createdAt DateTime @default(now())
 
   @@index([userId])
   @@map("profile_analysis")
+}
+
+model AdminProfileAnalysis{
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  instagramUsername String
+  analysis Json
+  createdAt DateTime @default(now())
 }
