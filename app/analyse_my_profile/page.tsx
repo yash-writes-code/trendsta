@@ -317,36 +317,7 @@ export default function App() {
   const hoverClasses = "transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_30px_-10px_rgba(249,115,22,0.25)] hover:border-orange-500/30";
   const glassClasses = "bg-white/70 backdrop-blur-md";
 
-  const handleDownloadPDF = () => {
-    const printArea = document.getElementById('print-area');
-    if (!printArea) return;
-
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
-    document.body.appendChild(iframe);
-
-    const doc = iframe.contentWindow?.document;
-    if (!doc) return;
-
-    doc.open();
-    doc.write('<!DOCTYPE html><html><head><meta charset="utf-8" /><title>Trendsta Analysis</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet"><style>* { box-sizing: border-box; margin: 0; padding: 0; } body { font-family: "DM Sans", "Helvetica Neue", Arial, sans-serif; background: #fafafa; } @page { size: A4; margin: 0; } * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; print-color-adjust: exact !important; } a { text-decoration: none; }</style></head><body>' + printArea.innerHTML + '</body></html>');
-    doc.close();
-
-    iframe.onload = () => {
-      setTimeout(() => {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
-        setTimeout(() => {
-          if (document.body.contains(iframe)) document.body.removeChild(iframe);
-        }, 1000);
-      }, 600);
-    };
-  };
+ 
 
   return (
     <>
@@ -504,17 +475,7 @@ export default function App() {
               <div className="hidden md:flex bg-orange-50 border border-orange-200 px-4 py-2 rounded-full text-sm font-bold text-orange-600 shadow-sm">
                 {data.sidebar_scoring.issues_found_count} Critical Issues Detected
               </div>
-              <button
-                onClick={handleDownloadPDF}
-                className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900 hover:bg-gray-700 text-white font-bold text-sm transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7 10 12 15 17 10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                Download PDF
-              </button>
+              
             </div>
           </div>
 
