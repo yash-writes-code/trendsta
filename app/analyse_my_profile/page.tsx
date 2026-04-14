@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSession } from '@/lib/auth-client';
 import { usePostHog } from 'posthog-js/react';
-import { AnalysisPrintView } from './AnalysisPrintView';
+
 
 import analysisDataRaw from '../../analysis_data.json';
 
@@ -324,9 +324,6 @@ export default function App() {
     <div className="min-h-screen bg-[#fafafa] text-gray-900 font-sans selection:bg-orange-500/30 pb-20">
       
       <style dangerouslySetInnerHTML={{ __html: globalStyles }} />
-
-      {/* Hidden print-only layout */}
-      <AnalysisPrintView ref={printRef} data={data} />
 
       {/* Main Container */}
       <div className="max-w-[1280px] mx-auto p-4 md:p-8 flex flex-col md:flex-row gap-8 items-start">
