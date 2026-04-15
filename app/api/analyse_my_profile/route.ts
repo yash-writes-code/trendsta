@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
 
     // Fire and forget — n8n writes the result to profileAnalysis when done.
     // The client polls GET /api/analyse_my_profile to pick it up.
-    fetch(webhookUrl, {
+    await fetch(webhookUrl, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
