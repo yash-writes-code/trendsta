@@ -57,7 +57,6 @@ model User {
   commissions  Commission[] // Commissions earned by this user as referrer
 
   role ROLES @default(user)
-
   banned     Boolean?  @default(false)
   banReason  String?
   banExpires DateTime?

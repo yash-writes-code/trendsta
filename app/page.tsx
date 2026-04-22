@@ -1411,25 +1411,25 @@ function HowItWorksSection() {
 function SuccessStoriesSection() {
   const stories = [
     {
-      name: "Arjun Mehta",
+      name: "Priya Sharma",
       role: "Tech & AI Creator · Instagram",
-      initial: "A",
+      image: "/t1.webp",
       bgClass: "bg-gradient-to-br from-orange-400 to-[#ff5900]",
       stat: "+340% reach in 6 weeks",
       quote: `"Trendsta told me about AI Ethics before it hit 2M hashtag views. I posted first. 800K views on that reel."`
     },
     {
-      name: "Sara Okafor",
+      name: "Arjun Mehta",
       role: "Finance Creator · Twitter / X",
-      initial: "S",
+      image: "/t2.webp",
       bgClass: "bg-gradient-to-br from-[#00b4ff] to-[#0084ff]",
       stat: "+22K followers in 60 days",
       quote: `"The hook leaderboard alone is worth the subscription. I went from 2% to 9% engagement rate by switching my opening style."`
     },
     {
-      name: "Maya Patel",
+      name: "Rahul Verma",
       role: "Lifestyle · Instagram Reels",
-      initial: "M",
+      image: "/t3.webp",
       bgClass: "bg-gradient-to-br from-[#a855f7] to-[#ec4899]",
       stat: "First reel hit 1.2M views",
       quote: `"I used to spend hours researching what to post. Now Trendsta does it in seconds — better than I ever could."`
@@ -1461,8 +1461,8 @@ function SuccessStoriesSection() {
               {/* Colored Header */}
               <div className={`h-32 w-full ${story.bgClass} relative`}>
                 {/* Avatar overlapping */}
-                <div className="absolute -bottom-6 left-6 w-14 h-14 rounded-full bg-[#ff5900] border-4 border-white flex items-center justify-center text-white font-bold text-xl shadow-sm z-10">
-                  {story.initial}
+                <div className="absolute -bottom-6 left-6 w-14 h-14 rounded-full bg-white border-4 border-white flex items-center justify-center shadow-sm z-10 overflow-hidden">
+                  <Image src={story.image} alt={story.name} width={56} height={56} className="w-full h-full object-cover" />
                 </div>
               </div>
 
