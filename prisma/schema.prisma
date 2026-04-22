@@ -13,8 +13,8 @@ datasource db {
 // ============================================
 
 enum ROLES {
-  ADMIN
-  USER
+  admin
+  user
 }
 
 model User {
@@ -56,7 +56,7 @@ model User {
   referrals    User[]       @relation("Referrals")
   commissions  Commission[] // Commissions earned by this user as referrer
 
-  role ROLES @default(USER)
+  role ROLES @default(user)
 
   banned     Boolean?  @default(false)
   banReason  String?
