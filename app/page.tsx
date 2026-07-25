@@ -261,10 +261,10 @@ function Hero() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4 w-full sm:w-auto z-20"
         >
-          <Link href={isLoggedIn ? "/analyse_my_profile" : "/signup?next=/analyse_my_profile"} className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-lg hover:scale-[1.03] hover:shadow-[0_12px_30px_-8px_rgba(255,89,0,0.7)] transition-all duration-300">
-            Analyse my profile for free
+          <Link href={isLoggedIn ? "/dashboard" : "/signup"} className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white font-bold text-lg hover:scale-[1.03] hover:shadow-[0_12px_30px_-8px_rgba(255,89,0,0.7)] transition-all duration-300 flex items-center justify-center">
+            {isLoggedIn ? "Go to Dashboard" : "Get started for free"}
           </Link>
-          <Link href="/dashboard" className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-lg hover:bg-gray-50 hover:scale-[1.02] transition-all duration-300 shadow-sm">
+          <Link href="/dashboard" className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-lg hover:bg-gray-50 hover:scale-[1.02] transition-all duration-300 shadow-sm flex items-center justify-center">
             Watch demo →
           </Link>
         </motion.div>
@@ -1631,10 +1631,10 @@ function CTASection() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-          <Link href="/signup" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-[#18181b] font-bold text-lg hover:-translate-y-0.5 transition-transform shadow-[0_4px_14px_0_rgba(255,255,255,0.1)]">
+          <Link href="/signup" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-[#18181b] font-bold text-lg hover:-translate-y-0.5 transition-transform shadow-[0_4px_14px_0_rgba(255,255,255,0.1)] flex items-center justify-center">
             Start for free today
           </Link>
-          <Link href="/dashboard" className="w-full sm:w-auto px-8 py-4 rounded-full bg-transparent border border-white/20 text-white font-semibold text-lg hover:bg-white/5 transition-colors">
+          <Link href="/dashboard" className="w-full sm:w-auto px-8 py-4 rounded-full bg-transparent border border-white/20 text-white font-bold text-lg hover:bg-white/5 transition-colors flex items-center justify-center">
             Watch the demo
           </Link>
         </div>

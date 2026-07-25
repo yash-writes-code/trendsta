@@ -96,9 +96,9 @@ export default function PricingPage() {
                         <Image src="/T_logo.png" width={40} height={40} alt="Logo" className="rounded-xl group-hover:scale-110 transition-transform" />
                         <span className="text-2xl font-bold tracking-tight">Trendsta</span>
                     </Link>
-                    <div className="flex items-center gap-4">
-                        <Link href="/signin" className="text-base font-semibold hover:text-[#ff5900] transition-colors">Sign In</Link>
-                        <Link href="/signup" className="px-6 py-3 bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white rounded-full text-base font-bold shadow-md hover:scale-105 transition-all">Start Free</Link>
+                    <div className="flex items-center gap-3">
+                        <Link href="/signin" className="px-6 py-3 rounded-full bg-white border border-gray-200 text-gray-900 font-bold text-[16px] hover:bg-gray-50 transition-all shadow-sm flex items-center justify-center">Sign In</Link>
+                        <Link href="/signup" className="px-6 py-3 bg-linear-to-r from-[#ff5900] to-[#ffb800] text-white rounded-full text-[16px] font-bold shadow-md hover:scale-105 transition-all flex items-center justify-center">Start Free</Link>
                     </div>
                 </nav>
             </div>

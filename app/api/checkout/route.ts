@@ -2,10 +2,12 @@ import {DodoPayments} from "dodopayments";
 import { NextResponse } from "next/server";
 
 
-const client = new DodoPayments({
-    bearerToken: process.env.DODO_PAYMENTS_API_KEY!,
-    environment : process.env.DODO_PAYMENTS_ENVIRONMENT! as "test_mode" | "live_mode"
-});
+function getDodoClient() {
+    return new DodoPayments({
+        bearerToken: process.env.DODO_PAYMENTS_API_KEY || "dummy_bearer_token",
+        environment: (process.env.DODO_PAYMENTS_ENVIRONMENT as "test_mode" | "live_mode") || "test_mode"
+    });
+}
 
 export async function POST(req: Request) {
     try {
@@ -28,6 +30,7 @@ export async function POST(req: Request) {
         // console.log("API Key first 10 chars:", process.env.DODO_PAYMENTS_API_KEY?.substring(0, 10));
         // console.log(`${process.env.BETTER_AUTH_URL}/dashboard/sucess`);
 
+        const client = getDodoClient();
         const session = await client.checkoutSessions.create({
             product_cart: [{ product_id: productId, quantity }],
             customer: { email, name },

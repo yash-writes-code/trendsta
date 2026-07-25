@@ -1,13 +1,15 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+    return new Resend(process.env.RESEND_API_KEY || "re_dummy");
+}
 
 // Use a verified domain for production, or onboarding@resend.dev for testing if no domain is verified yet.
 // If you verified your domain (e.g., trendsta.com), replace this with "no-reply@trendsta.com" or similar.
 const FROM_EMAIL = "info@trendsta.in";
 
 export async function sendWelcomeEmail(to: string, name: string) {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
         from: `Trendsta <${FROM_EMAIL}>`,
         to: [to],
         subject: "Welcome to Trendsta!",
@@ -36,7 +38,7 @@ export async function sendWelcomeEmail(to: string, name: string) {
 }
 
 export async function sendPasswordResetEmail(to: string, resetLink: string) {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
         from: `Trendsta <${FROM_EMAIL}>`,
         to: [to],
         subject: "Reset your Trendsta password",
