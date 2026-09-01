@@ -24,7 +24,8 @@ import {
 } from "@dodopayments/better-auth";
 import DodoPayments from "dodopayments";
 import { AUTH_PRODUCTS } from "@/lib/constants/products";
-import { sendPasswordResetEmail, sendWelcomeEmail } from "@/lib/email/resend";
+import { sendPasswordResetEmail } from "@/lib/email/resend";
+import { prisma as outboxPrisma } from "@/lib/prisma";
 
 // Custom Prisma wrapper that removes null/undefined id fields from create operations
 // This allows PostgreSQL's gen_random_uuid() default to take over
@@ -98,8 +99,20 @@ export const auth = betterAuth({
         user: {
             create: {
                 after: async (user) => {
-                    // Send welcome email asynchronously so it doesn't block the sign-up request
-                    sendWelcomeEmail(user.email, user.name || "Trendsta User").catch(console.error);
+                    // Write outbox event — relay will enqueue to BullMQ for reliable delivery
+                    await outboxPrisma.outboxEvent.create({
+                        data: {
+                            eventType: "WELCOME_EMAIL",
+                            payload: {
+                                userId: user.id,
+                                email: user.email,
+                                name: user.name || "Trendsta User",
+                            },
+                        },
+                    }).catch((err) => {
+                        // Log but don't block signup — welcome email is non-critical
+                        console.error("[Auth] Failed to create welcome email outbox event:", err);
+                    });
                 }
             }
         }

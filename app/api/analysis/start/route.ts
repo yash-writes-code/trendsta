@@ -116,21 +116,19 @@ export async function POST(request: NextRequest) {
 
         // Map Tier to Reel Count
         const reelCountMap = {
-            'LOW': 30,
+            'LOW': 3,
             'MEDIUM': 60,
             'HIGH': 90
         };
         const noOfReelsToScrape = reelCountMap[reelCountTier] || 30;
 
-        // 7. Call n8n research webhook
-        // Determine which Webhook URL to use
-        // If user wants competitors AND is eligible -> Use "Competitor" analysis webhook
-        // Else -> Use "Basic/No-Competitor" analysis webhook
+        // 7. Determine analysis configuration
         const isCompetitorAnalysis = competitorUsernames.length > 0 && plan.competitorAnalysisAccess;
 
+        // Validate n8n URL is configured (fail fast, don't waste credits)
         const n8nUrl = isCompetitorAnalysis
-            ? process.env.N8N_WEBHOOK_URL!
-            : process.env.N8N_WEBHOOK_URL_BASIC!; // Please ensure this ENV var is set
+            ? process.env.N8N_WEBHOOK_URL
+            : process.env.N8N_WEBHOOK_URL_BASIC;
 
         if (!n8nUrl) {
             console.error("Missing N8N Webhook URL configuration");
@@ -140,18 +138,12 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const n8nApiKey = process.env.N8N_API_KEY;
-        const apifyKey = process.env.APIFY_API_KEY;
-
         // Determine Model based on Plan
-        // Silver -> gemini-2.0-flash-001
-        // Gold/Platinum -> gemini-2.0-pro-exp-02-05 (using the user's requested string: google/gemini-3-pro-preview for now if that's what they meant, but checking the prompt "google/gemini-3-pro-preview". I'll use exactly what they asked.)
-
         const analysisModel = plan.tier === 1
             ? "google/gemini-2.5-flash"
             : "google/gemini-3.1-pro-preview";
-       
 
+        // Construct n8n payload (no secrets — worker injects apify_key at dispatch)
         const n8nPayload = {
             creator_niche: user.niche,
             sub_niche: user.subNiche,
@@ -169,56 +161,13 @@ export async function POST(request: NextRequest) {
             user_reels_to_scrape: 5,
             use_apify_transcript: false,
             socialAccountId: socialAccountId,
-            apify_key: apifyKey,
             callBackUrl: "https://trendsta.in",
             analysis_model_openrouter: analysisModel,
         };
 
-        let externalJobId: string;
-        let externalApiSuccess = false;
-
-        try {
-            const axios = (await import("axios")).default;
-
-            const n8nResponse = await axios.post(n8nUrl, n8nPayload, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": n8nApiKey,
-                },
-                timeout: 300000, // 5 minute timeout
-            });
-
-            //externalJobId = n8nResponse.data.jobId || `n8n-${Date.now()}`;
-            externalApiSuccess = n8nResponse.status === 200;
-
-        } catch (error: unknown) {
-            const { isAxiosError } = await import("axios");
-            if (isAxiosError(error)) {
-                if (error.code === "ECONNABORTED") {
-                    console.error("n8n API timeout");
-                    return NextResponse.json(
-                        { error: "Analysis service timeout. Please try again." },
-                        { status: 504 }
-                    );
-                }
-                console.error("n8n API error:", error.response?.status, error.response?.data);
-            } else {
-                console.error("n8n API request failed:", error);
-            }
-            return NextResponse.json(
-                { error: "Failed to start analysis. Please try again." },
-                { status: 500 }
-            );
-        }
-
-        if (!externalApiSuccess) {
-            return NextResponse.json(
-                { error: "Failed to start analysis. Please try again." },
-                { status: 500 }
-            );
-        }
-
-        // 8. Create AnalysisJob and HELD transactions in a single transaction
+        // 8. ATOMIC: Create AnalysisJob + hold credits + write outbox event
+        //    All three operations commit or roll back together.
+        //    The outbox relay will pick up the event and enqueue to BullMQ.
         const job = await prisma.$transaction(async (tx) => {
             // Create the analysis job
             const newJob = await tx.analysisJob.create({
@@ -229,7 +178,7 @@ export async function POST(request: NextRequest) {
                     stellaCost,
                 },
             });
-            //console.log("new analysis job created", newJob);
+
             const transactionMetadata = {
                 type: "analysis",
                 socialAccountId,
@@ -266,7 +215,7 @@ export async function POST(request: NextRequest) {
                 });
             }
 
-            // [NEW] Deduct from Wallet immediately
+            // Deduct from Wallet immediately
             if (deductionSplit.fromMonthly > 0 || deductionSplit.fromTopup > 0) {
                 await tx.wallet.update({
                     where: { userId },
@@ -277,16 +226,30 @@ export async function POST(request: NextRequest) {
                 });
             }
 
+            // Write outbox event — guarantees the analysis job will be dispatched
+            await tx.outboxEvent.create({
+                data: {
+                    eventType: "START_ANALYSIS",
+                    payload: {
+                        analysisJobId: newJob.id,
+                        userId,
+                        socialAccountId,
+                        n8nPayload,
+                        isCompetitorAnalysis,
+                    },
+                },
+            });
+
             return newJob;
         });
 
-        // 9. Return job info
+        // 9. Return job info (no external API call — response is instant)
         return NextResponse.json({
             success: true,
             jobId: job.id,
             status: job.status,
             estimatedCost: stellaCost,
-            message: "Analysis started. This typically takes 10-15 minutes.",
+            message: "Analysis queued. This typically takes 10-15 minutes.",
         });
 
     } catch (error) {

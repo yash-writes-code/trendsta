@@ -122,14 +122,40 @@ Trendsta includes a conversational AI consultant that allows users to interact w
 
 This allows the AI consultant to function as a **stateful, personalized assistant**, rather than a stateless chatbot.
 
+---
+
+## 7. Project Directory Structure
+
+Here is a high-level overview of how the Trendsta repository is structured:
+
+- **`/app`** - Next.js App Router root containing pages, layouts, and style tokens:
+  - **`/app/dashboard`** - Main user dashboard displaying trends, competitors, and growth analytics.
+  - **`/app/ai-consultant`** - Chat interface to interact with the AI assistant Stella.
+  - **`/app/components`** - Reusable UI components (buttons, input fields, modals, cards) styled with Tailwind CSS.
+  - **`/app/api`** - Backend route handlers for triggering research, processing webhooks, and interacting with the AI consultant.
+  - **`/app/checkout` & `/app/subscription`** - Dodo Payments integration pages and flows.
+- **`/lib`** - Core business logic, configuration modules, and helpers:
+  - **`/lib/auth.ts`** - User authentication configuration via Better Auth.
+  - **`/lib/prisma.ts`** - Single database client instance.
+  - **`/lib/research`** - Parsing and formatting utilities for n8n-generated research results.
+- **`/prisma`** - Database design:
+  - **`schema.prisma`** - Postgres schema definition detailing model relationships (Users, Wallets, StellaTransactions, Subscriptions, Commissions, Conversations, AnalysisJobs).
+  - **`seed.ts`** - Script to initialize default subscription plans (Silver, Gold, Platinum) and top-up Stella credit bundles.
+
+---
 
 ## 8. Tech Stack
 
-- **Webapp** : Next.js  
-- **Automation Layer:** n8n  
-- **Consultant AI** Langchain  
-- **State Management:** Zustand  
-- **Database:** PostgreSQL  
+- **Framework**: Next.js
+- **Auth**: Better Auth
+- **Database**: PostgreSQL (via Prisma ORM)
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand
+- **Automation & Pipelines**: n8n workflows
+- **AI/LLM orchestration**: LangChain & OpenRouter
+- **Payments**: Dodo Payments
+- **Email Dispatch**: Resend
+- **Analytics**: PostHog
 
 ---
 
@@ -138,6 +164,54 @@ This allows the AI consultant to function as a **stateful, personalized assistan
 - Replace n8n workflows with a **custom LangGraph-based pipeline** to improve efficiency
 - Improve scalability and performance of trend detection  
 - Multi-platform support (YouTube, LinkedIn, X)  
+
+---
+
+## 10. Getting Started & Running Locally
+
+Follow these steps to set up and run the Trendsta development server locally:
+
+### Prerequisites
+
+- **Node.js** (v18+ recommended)
+- **PostgreSQL** instance (running locally or hosted)
+
+### Steps
+
+1. **Clone the Repository & Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Configure Environment Variables**
+   Copy the template env file:
+   ```bash
+   cp .env.example .env
+   ```
+   Open `.env` and fill in the required configuration:
+   - `DATABASE_URL`: Connection URL for your PostgreSQL database.
+   - `BETTER_AUTH_SECRET` & `BETTER_AUTH_URL`: Configurations for user auth.
+   - `DODO_PAYMENTS_API_KEY`: Credentials for subscription checks.
+   - `OPENROUTER_API_KEY`: Key to invoke OpenRouter models.
+
+3. **Set Up Database Schema & Seed Data**
+   Run the following commands to initialize PostgreSQL tables and seed predefined plans (Silver, Gold, Platinum) along with credit bundles:
+   ```bash
+   # Push schema changes to your database
+   npx prisma db push
+
+   # Generate Prisma Client types
+   npx prisma generate
+
+   # Seed the database with plans and credit bundles
+   npx prisma db seed
+   ```
+
+4. **Start the Development Server**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) in your web browser.
 
 ---
 
@@ -156,7 +230,3 @@ This allows the AI consultant to function as a **stateful, personalized assistan
 - AI faceless channels  
 - Marketing teams and agencies  
 - Growth-focused startups  
-
-- AI-generated content  
-- Conversational AI consulting  
-- Actionable insights  

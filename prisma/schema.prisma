@@ -56,6 +56,9 @@ model User {
   referrals    User[]       @relation("Referrals")
   commissions  Commission[] // Commissions earned by this user as referrer
 
+  // Email tracking
+  welcomeEmailSentAt DateTime? // Set by email worker after sending welcome email (idempotency)
+
   role ROLES @default(user)
   banned     Boolean?  @default(false)
   banReason  String?
@@ -636,4 +639,23 @@ model AdminProfileAnalysis{
   instagramUsername String
   analysis Json
   createdAt DateTime @default(now())
+}
+
+// ============================================
+// TRANSACTIONAL OUTBOX
+// ============================================
+
+/// Guarantees at-least-once delivery of async jobs.
+/// Written atomically with business data in the same DB transaction.
+/// The outbox relay polls for unprocessed events and enqueues them to BullMQ.
+
+model OutboxEvent {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  eventType   String    // "WELCOME_EMAIL" | "START_ANALYSIS"
+  payload     Json      // Serialized job data (no secrets — worker injects env vars)
+  createdAt   DateTime  @default(now())
+  processedAt DateTime? // null = pending, set = relay successfully enqueued to BullMQ
+
+  @@index([processedAt, createdAt]) // Fast lookup: unprocessed events, oldest first
+  @@map("outbox_event")
 }
