@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
 
         // Map Tier to Reel Count
         const reelCountMap = {
-            'LOW': 30,
+            'LOW': 3,
             'MEDIUM': 60,
             'HIGH': 90
         };
@@ -164,7 +164,8 @@ export async function POST(request: NextRequest) {
             callBackUrl: "https://trendsta.in",
             analysis_model_openrouter: analysisModel,
         };
-
+        console.log("attempting transaction creation");
+        
         // 8. ATOMIC: Create AnalysisJob + hold credits + write outbox event
         //    All three operations commit or roll back together.
         //    The outbox relay will pick up the event and enqueue to BullMQ.
@@ -178,6 +179,8 @@ export async function POST(request: NextRequest) {
                     stellaCost,
                 },
             });
+            console.log("job created");
+            
 
             const transactionMetadata = {
                 type: "analysis",
@@ -225,7 +228,8 @@ export async function POST(request: NextRequest) {
                     },
                 });
             }
-
+            console.log("only outbox remains");
+            
             // Write outbox event — guarantees the analysis job will be dispatched
             await tx.outboxEvent.create({
                 data: {
