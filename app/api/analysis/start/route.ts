@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
 
         // Map Tier to Reel Count
         const reelCountMap = {
-            'LOW': 3,
+            'LOW': 30,
             'MEDIUM': 60,
             'HIGH': 90
         };
